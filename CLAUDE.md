@@ -38,6 +38,8 @@ Portal header/sidebar (mockup): search across programs and cached sub-sections, 
 
 Speed (2026-11-26): programs stay loaded after first open (keep-alive iframes in app.js: `frameFor`/`activate`, last 4 kept; `#frame` is always the active one, the static iframe is the blank placeholder; language toggle drops the parked ones, sign-out drops all). Gateway cache rules in `tools/make_gateway.py` (pages revalidate with a 60 s edge cache, js/css 10 min, images/fonts/vendor libraries 7 days); `tools/build.py` stamps `?v=<build>` on scripts/styles referenced from pages and on the portal-injected /ds files so deploys show at once. Large photos were recompressed (max 1200 px, quality 74). The portal prefetches each program page 4 s after sign-in.
 
+Chart COT tab (2026-11-26): `programs/chart/src/api/cot.js` (served as `/chart/api/cot`) reads the free CFTC Public Reporting (Socrata) datasets legacy `6dca-aqww`, disaggregated `72hh-3qpy`, TFF `gpe5-46if`, matching field names by pattern; latest-week list falls back to `https://www.cftc.gov/dea/newcot/deafut.txt`. UI `public/js/cot.js` (tab "COT" registered in app.js tabDefs): market list by group with funds net and weekly change, detail modal with 3-year net positions per trader category, price overlay, COT Index. Not verified live from the cloud session (CFTC hosts blocked there): check the tab after deploy.
+
 ## Hard rules
 1. Light theme only for the 7 programs (royal and sky blue, green for positive, gold for alerts, white cards, soft shadows, rounded corners). The Chart keeps its own look.
 2. Arabic mode must be 100% Arabic, English mode 100% English, no mixing. Typed user data stays as entered. Official organization and treaty names stay Latin.
