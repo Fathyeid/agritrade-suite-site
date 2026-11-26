@@ -11,11 +11,13 @@ Live URL (single, merged): https://agritrade-suite.vercel.app
 | 3 | Grain Storage | `programs/grain` | /grain/ |
 | 4 | Dispute and Arbitration Center | `programs/dispute` | /dispute/ |
 | 5 | Trade Institutions | `programs/inst` | /inst/ |
-| 6 | Feed Formulation | `programs/feed` (copy of repo Fathyeid/feed-formulation) | /feed/ |
-| 7 | Poultry Intelligence | NOT in this repo: https://github.com/Fathyeid/poultry-platform (served at /poultry/ by proxy) | /poultry/ |
+| 6 | Feed Formulation | `programs/feed/src` (snapshot of repo Fathyeid/feed-formulation, built into the suite) | /feed/ |
+| 7 | Poultry Intelligence | `programs/poultry/src` (snapshot of repo Fathyeid/poultry-platform) | /poultry/ |
 | 8 | Chart (market charts) | `programs/chart` | /chart/ |
 
-Other repos: Feed https://github.com/Fathyeid/feed-formulation , Poultry https://github.com/Fathyeid/poultry-platform .
+Original repos (still live with their own GitHub Pages, untouched): Feed https://github.com/Fathyeid/feed-formulation , Poultry https://github.com/Fathyeid/poultry-platform .
+
+Important: `/feed/` is built from `programs/feed/src` into `docs/feed`. `/poultry/` is still served by proxy from the ORIGINAL poultry repo's Pages (https://fathyeid.github.io/poultry-platform/), so the live poultry changes only when that repo changes. `programs/poultry/src` is a full copy so everything is in one place; to make the suite serve its own copy, add `programs/poultry` to the copy list in `tools/build.py` and change the `/poultry` rewrites in `tools/make_gateway.py`.
 
 Read `HANDOFF.md` (also copied as `CLAUDE.md`) before changing anything.
 

@@ -14,7 +14,8 @@ Do NOT touch the separate apps AgriTrade Pro, Lisan and Athar. The suite brand s
 - `portal/ds/ds.css` and `ds.js`: shared light design system injected into iom, team, grain, dispute, inst, feed by `tools/build.py`. It forces light theme, hides dark toggles, wraps tables with search, sort and pagination (8+ rows), and keeps phone layouts from overflowing sideways. The Chart keeps its own look.
 - `tools/build.py` copies each program into `docs/<program>/` and applies small patches (paths under `/<program>/`, Supabase project, redirects, language fixes). Edit sources in `programs/` or `portal/`, never `docs/`.
 - Language keys in localStorage: iom `iom.lang`, team `tw_lang`, dispute `dc_lang`, grain `gs_lang`, inst `ti_lang`, chart/feed/poultry `suite_lang`. The portal sets them all when the user toggles. Team used to override the portal language with the profile locale; build.py now prefers `tw_lang`.
-- Poultry is not here. `/poultry/*` proxies to https://fathyeid.github.io/poultry-platform/ (repo Fathyeid/poultry-platform, owned by another agent). The portal mirrors its sidebar through selector `aside.side a[data-a=go]`. Re-check the selectors if poultry's markup changes.
+- Poultry: `programs/poultry/src` is a copy of repo Fathyeid/poultry-platform (single file index.html). The live `/poultry/*` still proxies to the original repo's Pages (https://fathyeid.github.io/poultry-platform/), which another agent maintains; the original repo and its Pages are untouched. The portal mirrors its sidebar through selector `aside.side a[data-a=go]`. Re-check selectors if poultry's markup changes. To serve the copy from the suite instead, add it to `tools/build.py` and change the `/poultry` rewrites in `tools/make_gateway.py`.
+- Feed: `programs/feed/src` is a copy of repo Fathyeid/feed-formulation and is what the suite builds into `/feed/`. The Feed repo now has batch saving (commit 4240d9c, 'batch handling'); a Feed to Poultry feed-stock link may now be possible.
 - Hosting: GitHub Pages serves `docs/` (https://fathyeid.github.io/agritrade-suite-site/). The Vercel project is a thin gateway (`gateway/`): it proxies every page to Pages and runs the serverless functions (`/team/api/ask`, `/team/api/push`, `/grain/api/assistant`, `/inst/api/news`, `/chart/api/*`). Folder routes need explicit rewrites to `.../index.html` (done in `tools/make_gateway.py`), otherwise Pages redirects the browser to github.io and breaks same-origin login.
 - Backend: Supabase project `nimfkykshfijxbgwgkrg`. Tables: `iom_state` (JSON), `dc_*` (dispute), `gs_*` (grain), `poultry_*`, `feed_state`, `tasks`, `approvals`, `transactions`, `activity_log`, `notifications`, `suite_links`. SQL is in `database/`. RLS is on; changes must be additive.
 - Grain uses its own login token (`localStorage.gs_tok`, a different JWT subject than the Google user). Reads and writes to `gs_*` need it, so open Grain once after signing in.
@@ -37,12 +38,12 @@ Do NOT touch the separate apps AgriTrade Pro, Lisan and Athar. The suite brand s
 ## Known pending items
 - Chart standalone app (https://agrichart-pro.vercel.app, project agrichart-pro) is still on v3.50; v3.50b is only in the suite `/chart`.
 - The org profile redesign spec was never received.
-- Feed: needs a "save batch" feature before a Feed-to-Poultry feed stock link can exist (owned by the Feed repo).
+- Feed batch to poultry feed stock link: not built yet. The Feed repo now has saved batches, so check how they are stored, then build it with the same safeguards (traceable, idempotent, void not delete).
 - Arabic test on all programs after the Team language fix, the phone-width menu, and table tools on real rows outside Feed still need a full pass.
 - The design pass is a shared light skin (ds.css and ds.js), not a rebuild of each page. Hero photos are replaced by a light gradient.
 - Vercel free plan: more than 100 deploys per day are refused. This is why static files are served from GitHub Pages.
 
 ## Repos
 - This repo: https://github.com/Fathyeid/agritrade-suite-site
-- Feed: https://github.com/Fathyeid/feed-formulation
-- Poultry: https://github.com/Fathyeid/poultry-platform
+- Feed (original, still live): https://github.com/Fathyeid/feed-formulation
+- Poultry (original, still live): https://github.com/Fathyeid/poultry-platform

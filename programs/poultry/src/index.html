@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poultry Intelligence Platform</title>
+<style>
+:root{--bg:#f3f8fe;--card:#fff;--pri:#0b5cab;--pri2:#e8f2fc;--sky:#38a3f5;--gold:#c9a227;--gold2:#fff6d6;--tx:#14263b;--mu:#5f7389;--bd:#dce7f2;--ok:#1b8a4b;--wr:#d98a00;--er:#c0392b;--r:16px;--sh:0 2px 10px rgba(11,60,117,.07)}
+*{box-sizing:border-box}html{color-scheme:light}body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
+.shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+.side{background:#fff;border-inline-end:1px solid var(--bd);position:sticky;top:0;height:100vh;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:2px;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px}.brand .lg{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#0b5cab,#38a3f5);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px}
+.brand b{display:block;font-size:16px;color:var(--pri)}.brand small{color:var(--mu);font-size:12px}
+.grp{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--mu);padding:12px 10px 4px;text-transform:uppercase}
+.side a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;cursor:pointer;color:#27415b;font-weight:600;font-size:14px;white-space:nowrap}.side a i{font-style:normal;width:22px;text-align:center}
+.side a:hover{background:var(--pri2)}.side a.on{background:var(--pri);color:#fff;box-shadow:0 4px 12px rgba(11,92,171,.25)}
+.mainc{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:25;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:10px 18px;flex-wrap:wrap}
+.top .burger{display:none}.top .crumb{font-size:13px;color:var(--mu)}.top .crumb b{color:var(--tx)}
+.gs{position:relative;flex:1;min-width:160px;max-width:420px}.gs input{padding:9px 12px 9px 34px;border-radius:999px;background:var(--bg)}[dir=rtl] .gs input{padding:9px 34px 9px 12px}
+.gs .ic{position:absolute;inset-inline-start:12px;top:9px;color:var(--mu)}
+#gsres{position:absolute;inset-inline:0;top:44px;background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 12px 30px rgba(11,60,117,.15);max-height:340px;overflow:auto;display:none;z-index:40}
+#gsres div{padding:9px 14px;cursor:pointer;display:flex;justify-content:space-between;gap:8px;font-size:14px}#gsres div:hover{background:var(--pri2)}#gsres small{color:var(--mu)}
+.top .tm{font-size:13px;color:var(--mu);white-space:nowrap}
+.bell{position:relative}.bell .n{position:absolute;top:-4px;inset-inline-end:-4px;background:var(--er);color:#fff;border-radius:10px;font-size:11px;padding:0 5px;min-width:17px;text-align:center}
+#notif{position:absolute;inset-inline-end:0;top:44px;width:min(360px,86vw);background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 12px 30px rgba(11,60,117,.15);padding:10px;display:none;z-index:40;max-height:60vh;overflow:auto}
+.user{display:flex;align-items:center;gap:8px;font-size:13px}.user .av{width:32px;height:32px;border-radius:50%;background:var(--pri2);color:var(--pri);display:grid;place-items:center;font-weight:700}
+main{padding:18px;max-width:1300px;width:100%;margin:0 auto}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:9px 15px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;min-height:38px}.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--pri);border:1px solid var(--bd)}.btn.gold{background:var(--gold);color:#2b2200}.btn.red{background:#fbe0dc;color:var(--er)}.btn.sm{padding:4px 10px;font-size:12px;min-height:28px;border-radius:8px}
+.top .btn.ghost{padding:6px 11px}
+.grid{display:grid;gap:14px}.k{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.two{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.kpi{position:relative;overflow:hidden}.kpi:before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--sky),var(--pri))}
+.kpi .v{font-size:26px;font-weight:700;color:var(--pri)}.kpi .l{color:var(--mu);font-size:13px}.kpi .s{font-size:12px;color:var(--mu);margin-top:3px}
+h2{font-size:20px;margin:4px 0 10px}h3{font-size:15px;margin:0 0 10px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}th,td{padding:9px 10px;border-bottom:1px solid #edf3f9;text-align:start;white-space:nowrap}th{background:#f2f7fc;color:#234;position:sticky;top:0;z-index:1;font-weight:700;user-select:none}th.srt{cursor:pointer}th.srt:hover{background:var(--pri2)}tbody tr:hover td,tr:hover>td{background:#fafcff}
+th[data-s="1"]:after{content:" ▲";font-size:10px}th[data-s="-1"]:after{content:" ▼";font-size:10px}.tw{overflow:auto;max-height:70vh;border-radius:10px}
+.tt{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.tt input{max-width:240px;padding:6px 10px;border-radius:999px;background:var(--bg)}.tt small{color:var(--mu)}
+.pg{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:8px;font-size:13px;color:var(--mu)}
+.muted{color:var(--mu)}.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--pri2);color:var(--pri)}
+.tag.ok{background:#dff3e7;color:var(--ok)}.tag.wr{background:#fff0cf;color:#8a5a00}.tag.er{background:#fbe0dc;color:var(--er)}.tag.test{background:#ffe8a3;color:#6b4e00;font-weight:700}
+.alert{padding:10px 13px;border-radius:12px;margin:6px 0;font-size:14px;border:1px solid transparent}.alert.wr{background:var(--gold2);border-color:#f1dc93}.alert.er{background:#fdeceb;border-color:#f3c3be}.alert.ok{background:#e6f6ec;border-color:#bfe5cd}.alert.in{background:var(--pri2);border-color:#cfe2f5}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.mod{border-inline-start:4px solid var(--bd)}.mod.live{border-color:var(--ok)}.mod.part{border-color:var(--wr)}
+.modal{position:fixed;inset:0;background:rgba(20,50,90,.35);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;z-index:60}
+.modal .box{background:#fff;border-radius:18px;padding:20px;width:min(580px,100%);box-shadow:0 20px 50px rgba(11,60,117,.25)}
+label{display:block;font-size:13px;color:var(--mu);margin:9px 0 3px;font-weight:600}input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--bd);border-radius:10px;font:inherit;background:#fff;color:var(--tx);min-height:40px}
+input:focus,select:focus,textarea:focus{outline:2px solid #9cc9f3;border-color:var(--sky)}
+input[type=checkbox]{width:auto;min-height:0}.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero{background:linear-gradient(120deg,#0b5cab,#2b8be0 60%,#6cc0ff);color:#fff;border-radius:20px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;inset-inline-end:-40px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.12)}
+.center{max-width:520px;margin:60px auto;text-align:center}
+.toast{position:fixed;bottom:18px;inset-inline-start:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--bd);box-shadow:0 10px 30px rgba(11,60,117,.2);padding:10px 18px;border-radius:12px;z-index:80;font-weight:600}
+svg text{font-family:inherit}
+.sk{background:linear-gradient(90deg,#edf3f9,#f8fbff,#edf3f9);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:12px;height:90px;margin:10px 0}@keyframes sk{to{background-position:-200% 0}}
+@media(max-width:900px){.shell{grid-template-columns:minmax(0,1fr)}.side{position:fixed;inset-block:0;inset-inline-start:0;width:270px;transform:translateX(-105%);transition:.2s;box-shadow:0 0 40px rgba(0,0,0,.2)}[dir=rtl] .side{transform:translateX(105%)}.shell.open .side{transform:none}.top .burger{display:inline-block}.top .tm,.top .crumb{display:none}}
+@media(max-width:600px){.row2{grid-template-columns:1fr}.two{grid-template-columns:1fr}main{padding:12px}.btn{min-height:42px}.top{padding:8px 12px}.user span{display:none}}
+.grid.two,.grid.three{}
+@media(max-width:700px){.grid.two,.grid.three{grid-template-columns:1fr!important}.grid>*{min-width:0}}
+@media print{.side,.top,.btn,.tt,.pg{display:none!important}.shell{display:block}body{background:#fff}.card{break-inside:avoid;box-shadow:none}.tw{max-height:none}}
+.hero2{background-size:cover;background-position:center;border-radius:20px;color:#fff;padding:26px;margin-bottom:14px;position:relative;min-height:170px;display:flex;align-items:flex-end;box-shadow:0 8px 24px rgba(11,92,171,.18)}.hero2 h2{margin:2px 0 4px;font-size:26px;color:#fff}.hero2 p{margin:0 0 12px;opacity:.95}.hero2 .cr{position:absolute;inset-inline-end:12px;top:8px;opacity:.75;font-size:10px}.qa{display:flex;gap:8px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid #cfe0f5;background:#fff;color:#0b5cab;border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px}.chip.on{background:#0b5cab;color:#fff;border-color:#0b5cab}
+.dn{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.lgd{display:flex;align-items:center;gap:8px;margin:4px 0}.lgd i{width:12px;height:12px;border-radius:4px;display:inline-block}.gg{text-align:center}
+.act{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #eef3fa}.act i{font-style:normal;background:#eaf3ff;border-radius:10px;padding:6px}.act span{flex:1}.act small{color:#6b7f99}.empty{text-align:center;color:#6b7f99;padding:24px;background:#f6faff;border-radius:12px}
+.toast.ok{border-color:#2e9e5b;color:#1d7a44}.toast.err{border-color:#c0392b;color:#a32d20}.bad{border-color:#c0392b!important;background:#fff5f4}.fgrid.two{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.fgrid .fc:has(input[type=checkbox]){grid-column:1/-1}.modal .box:has(.fgrid.two){width:min(760px,100%)}@media(max-width:700px){.fgrid.two{grid-template-columns:1fr}}.btn.red{background:#c0392b;color:#fff}
+</style></head><body><div id="app"></div>
+<script>
+const CFG={URL:'https://nimfkykshfijxbgwgkrg.supabase.co',ANON:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWZreWtzaGZpanhiZ3dna3JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2ODY4NzgsImV4cCI6MjExMTI2Mjg3OH0.ubwLjgwwTGkbIHdYHGJ6oyZ7F_-rkhvuEtN-eun1dT0',FEED:'https://fathyeid.github.io/feed-formulation/'};
+const D={en:{
+app:'Poultry Intelligence Platform',sub:'Integrated poultry company management',signin:'Sign in with Google',signout:'Sign out',lang:'العربية',
+welcome:'One connected system for the whole poultry value chain',welcome2:'Sign in to see the control tower, flocks and daily records. Data is private and shared only with the members the administrator adds.',
+noaccess:'Your account has no access yet',noaccess2:'Ask the administrator to add your email as a member:',loading:'Loading…',loaderr:'Could not load data. Check the connection and reload.',
+n_dash:'Control Tower',n_flocks:'Flocks',n_daily:'Daily record',n_sites:'Sites & houses',n_mods:'Modules',n_users:'Members',n_audit:'Audit log',n_set:'Settings',
+k_open:'Open flocks',k_houses:'Houses',k_live:'Live birds',k_util:'Capacity used',k_mort:'Cumulative mortality',k_fcr:'Average FCR',k_adg:'Average ADG',k_feedtoday:'Feed today',k_feedtot:'Feed to date',k_cost:'Cost to date',k_cpk:'Cost per kg live',k_rec:'Flocks recorded today',
+u_birds:'birds',u_kg:'kg',u_g:'g',u_gd:'g/day',u_day:'days',u_t:'t',
+s_fcrdef:'feed ÷ live weight of remaining birds',s_costnote:'chicks, feed, vet and expenses charged to the flock',s_noprice:'enter chick and feed prices on the flock',s_nodata:'no weight records yet',s_weighted:'weighted by live birds',
+alerts:'Alerts',noalerts:'No alerts from the current rules.',a_missing:'No record today for flock {0}',a_mort:'Daily mortality {1}% on {2} in flock {0} is above the {3}% limit',a_cum:'Cumulative mortality {1}% in flock {0} is above the {2}% limit',a_wt:'No weight record for 7+ days in flock {0}',
+a_rules:'Rules and limits are adjustable in Settings. They are not breed standards.',
+flocks_t:'Flock performance',f_code:'Flock',f_site:'Site / house',f_breed:'Breed',f_placed:'Placed',f_age:'Age',f_live:'Live',f_mort:'Mortality %',f_feed:'Feed (kg)',f_w:'Avg weight (g)',f_fcr:'FCR',f_adg:'ADG (g/day)',f_epef:'EPEF',f_status:'Status',f_open:'Open',f_closed:'Closed',f_livab:'Livability',
+add_site:'Add site',add_house:'Add house',add_flock:'Add flock',add_rec:'Add daily record',edit:'Edit',del:'Delete',save:'Save',cancel:'Cancel',close_flock:'Close flock',export:'Export CSV',back:'Back',
+site_name:'Site name',site_kind:'Site type',site_loc:'Location',site_test:'This is test data',
+kind_broiler_farm:'Broiler farm',kind_parent_farm:'Parent stock farm',kind_layer_farm:'Layer farm',kind_hatchery:'Hatchery',kind_feed_mill:'Feed mill',kind_slaughterhouse:'Slaughterhouse',kind_processing:'Processing plant',kind_cold_store:'Cold store',kind_other:'Other',
+h_name:'House name',h_cap:'Capacity (birds)',h_area:'Area (m²)',h_site:'Site',
+fl_house:'House',fl_code:'Flock code',fl_breed:'Breed / strain',fl_date:'Placement date',fl_count:'Chicks placed',fl_cw:'Chick weight at placement (g), edit to your actual',fl_cp:'Chick price (per bird)',fl_fp:'Feed price (per kg)',fl_cur:'Currency',fl_notes:'Notes',
+r_flock:'Flock',r_date:'Date',r_mort:'Mortality (birds)',r_cull:'Culls (birds)',r_feed:'Feed consumed (kg)',r_water:'Water (litres)',r_wt:'Average weight (g)',r_temp:'Temperature (°C)',r_notes:'Notes',r_over:'Saving on a date that already has a record replaces it.',
+records:'Daily records',norec:'No records yet.',nodata:'No data yet. Add a site, a house, a flock and its daily records.',
+c_wt:'Average weight (g) by age',c_mort:'Daily mortality (birds)',c_feed:'Daily feed (kg)',c_day:'Day',
+closed_on:'Closing date',sure:'Delete this? This cannot be undone.',test_banner:'The system contains TEST data (marked). It is not real company data.',del_test:'Delete all test data',
+feedlink:'Formulate feed in Feed Formulation Intelligence',feedmill_note:'Feed formulation is done in the Feed Formulation Intelligence app; this platform will link its batches here in a later stage.',
+m_title:'Platform modules',m_live:'Live now',m_part:'Data model ready, screens later',m_plan:'Planned stage',
+m_desc:'One connected system. Stage 1 delivers the shared data model, the control tower and the broiler farm daily records. Each next stage adds modules on the same data.',
+mod1:'Control tower',mod2:'Broiler farms: flocks, houses, daily records, FCR, ADG',mod3:'Sites and houses (all site types)',mod4:'Roles, members and audit log',mod5:'Feed formulation (separate app, linked)',
+mod6:'Procurement and raw materials',mod7:'Feed mill production',mod8:'Parent stock and hatching eggs',mod9:'Hatchery',mod10:'Veterinary, vaccination and biosecurity',mod11:'Slaughterhouse and processing',mod12:'Cold storage and inventory',mod13:'Sales and customers',mod14:'Fleet and distribution',mod15:'Finance, costs and profitability',mod16:'Planning and forecasting',mod17:'Alerts and AI assistant',mod18:'Traceability',mod19:'Layer farms',mod20:'Reports and exports',
+u_add:'Add member',u_email:'Email',u_name:'Name',u_role:'Role',role_admin:'Administrator',role_manager:'Manager (can enter data)',role_viewer:'Viewer (read only)',u_note:'The administrator (fathyeid620@gmail.com) always has full access. Members sign in with the same Google email.',
+au_t:'Last 200 changes',au_time:'Time',au_user:'User',au_act:'Action',au_tbl:'Table',
+set_t:'Alert limits',set_dm:'Daily mortality limit (% of live birds)',set_cm:'Cumulative mortality limit (%)',set_note:'These are starting values you can change. They are not breed standards. Saved on this device.',
+role:'Role',err:'Error: ',saved:'Saved',
+help_fcr:'FCR = total feed to the date of the last weighing ÷ (live birds × average weight). It excludes the weight of dead birds.',
+help_adg:'ADG = (average weight − chick weight at placement) ÷ age in days.',help_epef:'EPEF = livability % × average weight (kg) × 100 ÷ (FCR × age in days).'
+},ar:{
+app:'منصة الدواجن الذكية',sub:'إدارة متكاملة لشركات الدواجن',signin:'تسجيل الدخول بجوجل',signout:'تسجيل الخروج',lang:'English',
+welcome:'منظومة واحدة مترابطة لكل سلسلة إنتاج الدواجن',welcome2:'سجّل الدخول لمشاهدة مركز القيادة والقطعان والسجلات اليومية. البيانات خاصة ولا يراها إلا الأعضاء الذين يضيفهم المدير.',
+noaccess:'حسابك ليس له صلاحية بعد',noaccess2:'اطلب من المدير إضافة بريدك كعضو:',loading:'جارٍ التحميل…',loaderr:'تعذّر تحميل البيانات. تحقق من الاتصال وأعد التحميل.',
+n_dash:'مركز القيادة',n_flocks:'القطعان',n_daily:'السجل اليومي',n_sites:'المواقع والعنابر',n_mods:'الوحدات',n_users:'الأعضاء',n_audit:'سجل التدقيق',n_set:'الإعدادات',
+k_open:'القطعان المفتوحة',k_houses:'العنابر',k_live:'الطيور الحية',k_util:'نسبة استغلال السعة',k_mort:'النفوق التراكمي',k_fcr:'متوسط معامل التحويل',k_adg:'متوسط الزيادة اليومية',k_feedtoday:'علف اليوم',k_feedtot:'العلف حتى الآن',k_cost:'التكلفة المباشرة حتى الآن',k_cpk:'التكلفة لكل كجم حي',k_rec:'قطعان سُجّلت اليوم',
+u_birds:'طائر',u_kg:'كجم',u_g:'جم',u_gd:'جم/يوم',u_day:'يوم',u_t:'طن',
+s_fcrdef:'العلف ÷ وزن الطيور الحية المتبقية',s_costnote:'الكتاكيت والعلف والبيطري والمصروفات المحمّلة على القطيع',s_noprice:'أدخل سعر الكتكوت والعلف في القطيع',s_nodata:'لا توجد أوزان مسجلة بعد',s_weighted:'مرجّح بعدد الطيور الحية',
+alerts:'التنبيهات',noalerts:'لا توجد تنبيهات حسب القواعد الحالية.',a_missing:'لا يوجد سجل اليوم للقطيع {0}',a_mort:'نفوق يومي {1}٪ بتاريخ {2} في القطيع {0} أعلى من الحد {3}٪',a_cum:'النفوق التراكمي {1}٪ في القطيع {0} أعلى من الحد {2}٪',a_wt:'لا يوجد وزن مسجل منذ 7 أيام أو أكثر في القطيع {0}',
+a_rules:'القواعد والحدود قابلة للتعديل من الإعدادات، وهي ليست معايير سلالة.',
+flocks_t:'أداء القطعان',f_code:'القطيع',f_site:'الموقع / العنبر',f_breed:'السلالة',f_placed:'تاريخ الاستلام',f_age:'العمر',f_live:'الحي',f_mort:'النفوق ٪',f_feed:'العلف (كجم)',f_w:'متوسط الوزن (جم)',f_fcr:'معامل التحويل',f_adg:'الزيادة اليومية (جم/يوم)',f_epef:'معامل الكفاءة EPEF',f_status:'الحالة',f_open:'مفتوح',f_closed:'مغلق',f_livab:'نسبة الحياة',
+add_site:'إضافة موقع',add_house:'إضافة عنبر',add_flock:'إضافة قطيع',add_rec:'إضافة سجل يومي',edit:'تعديل',del:'حذف',save:'حفظ',cancel:'إلغاء',close_flock:'إغلاق القطيع',export:'تصدير CSV',back:'رجوع',
+site_name:'اسم الموقع',site_kind:'نوع الموقع',site_loc:'المكان',site_test:'هذه بيانات تجريبية',
+kind_broiler_farm:'مزرعة تسمين',kind_parent_farm:'مزرعة أمهات',kind_layer_farm:'مزرعة بياض',kind_hatchery:'مفرخة',kind_feed_mill:'مصنع أعلاف',kind_slaughterhouse:'مجزر',kind_processing:'مصنع تصنيع',kind_cold_store:'ثلاجة تخزين',kind_other:'أخرى',
+h_name:'اسم العنبر',h_cap:'السعة (طائر)',h_area:'المساحة (م²)',h_site:'الموقع',
+fl_house:'العنبر',fl_code:'كود القطيع',fl_breed:'السلالة',fl_date:'تاريخ الاستلام',fl_count:'عدد الكتاكيت المستلمة',fl_cw:'وزن الكتكوت عند الاستلام (جم)، عدّله حسب الفعلي',fl_cp:'سعر الكتكوت (للطائر)',fl_fp:'سعر العلف (للكجم)',fl_cur:'العملة',fl_notes:'ملاحظات',
+r_flock:'القطيع',r_date:'التاريخ',r_mort:'النفوق (طائر)',r_cull:'المستبعد (طائر)',r_feed:'العلف المستهلك (كجم)',r_water:'المياه (لتر)',r_wt:'متوسط الوزن (جم)',r_temp:'الحرارة (°م)',r_notes:'ملاحظات',r_over:'الحفظ في تاريخ له سجل سابق يستبدل السجل.',
+records:'السجلات اليومية',norec:'لا توجد سجلات بعد.',nodata:'لا توجد بيانات بعد. أضف موقعاً ثم عنبراً ثم قطيعاً وسجلاته اليومية.',
+c_wt:'متوسط الوزن (جم) حسب العمر',c_mort:'النفوق اليومي (طائر)',c_feed:'العلف اليومي (كجم)',c_day:'اليوم',
+closed_on:'تاريخ الإغلاق',sure:'حذف هذا العنصر؟ لا يمكن التراجع.',test_banner:'النظام يحتوي على بيانات تجريبية (عليها علامة). وهي ليست بيانات الشركة الحقيقية.',del_test:'حذف كل البيانات التجريبية',
+feedlink:'تركيب العليقة في تطبيق تركيب الأعلاف',feedmill_note:'تركيب الأعلاف يتم في تطبيق تركيب الأعلاف، وستُربط دفعاته هنا في مرحلة لاحقة.',
+m_title:'وحدات المنصة',m_live:'تعمل الآن',m_part:'نموذج البيانات جاهز والشاشات لاحقاً',m_plan:'مرحلة قادمة',
+m_desc:'منظومة واحدة مترابطة. المرحلة الأولى تقدم نموذج البيانات المشترك ومركز القيادة والسجلات اليومية لمزارع التسمين. كل مرحلة قادمة تضيف وحدات على نفس البيانات.',
+mod1:'مركز القيادة',mod2:'مزارع التسمين: القطعان والعنابر والسجلات اليومية ومعامل التحويل والزيادة اليومية',mod3:'المواقع والعنابر (كل أنواع المواقع)',mod4:'الصلاحيات والأعضاء وسجل التدقيق',mod5:'تركيب الأعلاف (تطبيق منفصل ومربوط)',
+mod6:'المشتريات والمواد الخام',mod7:'إنتاج مصنع الأعلاف',mod8:'الأمهات وبيض التفريخ',mod9:'المفرخة',mod10:'الطب البيطري والتحصينات والأمن الحيوي',mod11:'المجزر والتصنيع',mod12:'التخزين والتبريد والمخزون',mod13:'المبيعات والعملاء',mod14:'النقل والتوزيع',mod15:'المالية والتكاليف والربحية',mod16:'التخطيط والتنبؤ',mod17:'التنبيهات والمساعد الذكي',mod18:'التتبع',mod19:'مزارع البياض',mod20:'التقارير والتصدير',
+u_add:'إضافة عضو',u_email:'البريد',u_name:'الاسم',u_role:'الدور',role_admin:'مدير النظام',role_manager:'مدير تشغيل (يدخل البيانات)',role_viewer:'مشاهد (قراءة فقط)',u_note:'مدير النظام (fathyeid620@gmail.com) له صلاحية كاملة دائماً. الأعضاء يدخلون بنفس بريد جوجل.',
+au_t:'آخر 200 تغيير',au_time:'الوقت',au_user:'المستخدم',au_act:'الإجراء',au_tbl:'الجدول',
+set_t:'حدود التنبيه',set_dm:'حد النفوق اليومي (٪ من الطيور الحية)',set_cm:'حد النفوق التراكمي (٪)',set_note:'قيم ابتدائية يمكنك تغييرها، وهي ليست معايير سلالة. تُحفظ على هذا الجهاز.',
+role:'الدور',err:'خطأ: ',saved:'تم الحفظ',
+help_fcr:'معامل التحويل = العلف الكلي حتى تاريخ آخر وزن ÷ (الطيور الحية × متوسط الوزن). لا يشمل وزن الطيور النافقة.',
+help_adg:'الزيادة اليومية = (متوسط الوزن − وزن الكتكوت عند الاستلام) ÷ العمر بالأيام.',help_epef:'EPEF = نسبة الحياة ٪ × متوسط الوزن (كجم) × 100 ÷ (معامل التحويل × العمر بالأيام).'
+}};
+Object.assign(D.en,{
+n_stock:'Stock & feed mill',n_vet:'Veterinary',n_sales:'Sales & slaughter',n_fin:'Finance',
+mat_add:'Add material',mat_name:'Material name',mat_kind:'Type',mat_unit:'Unit',kind_raw:'Raw material',kind_feed:'Finished feed',kind_medicine:'Medicine / vaccine',kind_other:'Other',
+st_purchase:'Record purchase',st_adjust:'Stock adjustment',st_batch:'Feed production batch',st_date:'Date',st_qty:'Quantity',st_cost:'Unit cost',st_partner:'Supplier',st_mat:'Material',st_bal:'Balance',st_avg:'Average cost',st_val:'Value',st_moves:'Stock movements',st_type:'Movement',
+mv_purchase:'Purchase',mv_production_in:'Used in production',mv_production_out:'Produced',mv_issue_flock:'Fed to flock',mv_adjust:'Adjustment',
+st_note:'Average cost = weighted average of purchases and production. Feed given to a flock is deducted when a daily record names the feed used.',
+st_out:'Output feed',st_outq:'Output quantity (kg)',st_in:'Input {0}: material',st_inq:'Input {0}: quantity',st_over:'Input exceeds stock for: {0}. Save anyway?',st_nomat:'Add materials first.',st_bnote:'Cost of the output = cost of the inputs ÷ output quantity. Formulas come from Feed Formulation Intelligence.',
+r_feedmat:'Feed used (from stock, optional)',r_nofeed:'— not tracked in stock —',
+k_stockval:'Stock value',k_sales:'Sales to date',k_recv:'Receivables',k_cover:'Feed cover',k_vetdue:'Vet items due',u_days:'days',
+a_vetdue:'Vet item due or overdue: {0} {1} for flock {2} ({3})',a_wd:'Withdrawal period active for flock {0} until {1}. Do not sell or slaughter before then.',a_cover:'Feed stock covers about {0} days at the recent feed rate of the open flocks',
+v_add:'Add vet record',v_kind:'Type',v_prod:'Product / description',v_status:'Status',v_planned:'Planned',v_done:'Done',v_wd:'Withdrawal period (days)',v_cost:'Cost',v_done_btn:'Mark done',v_title:'Vaccinations and treatments',kind_vaccination:'Vaccination',kind_treatment:'Treatment',kind_vet_visit:'Vet visit',kind_lab:'Lab test',v_until:'Withdrawal until',
+s_add:'Record sale',s_kind:'Sale type',s_birds:'Birds',s_wkg:'Weight (kg)',s_price:'Price per kg',s_paid:'Amount paid',s_cust:'Customer',s_total:'Total',s_due:'Balance due',sk_live:'Live birds',sk_carcass:'Carcass',sk_product:'Processed product',s_title:'Sales',
+sl_add:'Record slaughter',sl_title:'Slaughter and yield',sl_in:'Birds slaughtered',sl_live:'Live weight in (kg)',sl_out:'Carcass weight out (kg)',sl_cond:'Condemned birds',sl_yield:'Dressing yield',
+p_add:'Add customer or supplier',p_title:'Customers and suppliers',p_kind:'Type',pk_supplier:'Supplier',pk_customer:'Customer',pk_both:'Both',p_phone:'Phone',
+fin_title:'Profit by flock',fin_rev:'Revenue',fin_chick:'Chicks',fin_feed:'Feed',fin_vet:'Vet',fin_exp:'Other expenses',fin_cost:'Total cost',fin_profit:'Profit to date',fin_per:'Profit per bird placed',fin_add:'Add expense',fin_cat:'Category',fin_amt:'Amount',fin_note:'Profit to date = sales of the flock minus chicks, feed, vet and expenses charged to the flock. Overheads not charged to a flock are listed below. Open flocks show a partial result.',fin_over:'Unallocated expenses',fin_recv:'Customers owing',fin_cur:'Currency',
+cat_labor:'Labor',cat_electricity:'Electricity',cat_fuel:'Fuel',cat_water:'Water',cat_maintenance:'Maintenance',cat_transport:'Transport',cat_rent:'Rent',cat_other:'Other',
+f_none:'— none —',nof:'Add a flock first.',
+mod_live2:'Live now',
+help_sold:'Birds sold live or sent to slaughter are removed from the live count. FCR then uses live weight plus weight sold.'
+});
+Object.assign(D.ar,{
+n_stock:'المخزون ومصنع الأعلاف',n_vet:'الطب البيطري',n_sales:'المبيعات والمجزر',n_fin:'المالية',
+mat_add:'إضافة صنف',mat_name:'اسم الصنف',mat_kind:'النوع',mat_unit:'الوحدة',kind_raw:'مادة خام',kind_feed:'علف جاهز',kind_medicine:'دواء / لقاح',kind_other:'أخرى',
+st_purchase:'تسجيل شراء',st_adjust:'تسوية مخزون',st_batch:'دفعة إنتاج علف',st_date:'التاريخ',st_qty:'الكمية',st_cost:'تكلفة الوحدة',st_partner:'المورد',st_mat:'الصنف',st_bal:'الرصيد',st_avg:'متوسط التكلفة',st_val:'القيمة',st_moves:'حركة المخزون',st_type:'الحركة',
+mv_purchase:'شراء',mv_production_in:'مستخدم في الإنتاج',mv_production_out:'منتج',mv_issue_flock:'علف لقطيع',mv_adjust:'تسوية',
+st_note:'متوسط التكلفة = المتوسط المرجّح للمشتريات والإنتاج. العلف المصروف للقطيع يُخصم عندما يحدد السجل اليومي نوع العلف المستخدم.',
+st_out:'العلف الناتج',st_outq:'كمية الناتج (كجم)',st_in:'مدخل {0}: الصنف',st_inq:'مدخل {0}: الكمية',st_over:'المدخلات تتجاوز المخزون للصنف: {0}. هل تحفظ رغم ذلك؟',st_nomat:'أضف الأصناف أولاً.',st_bnote:'تكلفة الناتج = تكلفة المدخلات ÷ كمية الناتج. التركيبات تأتي من تطبيق تركيب الأعلاف.',
+r_feedmat:'العلف المستخدم (من المخزون، اختياري)',r_nofeed:'— غير مرتبط بالمخزون —',
+k_stockval:'قيمة المخزون',k_sales:'المبيعات حتى الآن',k_recv:'مستحقات العملاء',k_cover:'تغطية العلف',k_vetdue:'بنود بيطرية مستحقة',u_days:'يوم',
+a_vetdue:'بند بيطري مستحق أو متأخر: {0} {1} للقطيع {2} ({3})',a_wd:'فترة السحب سارية للقطيع {0} حتى {1}. لا تبع ولا تذبح قبل ذلك.',a_cover:'مخزون العلف يكفي نحو {0} يوم بمعدل الاستهلاك الأخير للقطعان المفتوحة',
+v_add:'إضافة سجل بيطري',v_kind:'النوع',v_prod:'المنتج / الوصف',v_status:'الحالة',v_planned:'مخطط',v_done:'تم',v_wd:'فترة السحب (أيام)',v_cost:'التكلفة',v_done_btn:'تم التنفيذ',v_title:'التحصينات والعلاجات',kind_vaccination:'تحصين',kind_treatment:'علاج',kind_vet_visit:'زيارة بيطرية',kind_lab:'تحليل معملي',v_until:'السحب حتى',
+s_add:'تسجيل بيع',s_kind:'نوع البيع',s_birds:'الطيور',s_wkg:'الوزن (كجم)',s_price:'السعر للكجم',s_paid:'المبلغ المدفوع',s_cust:'العميل',s_total:'الإجمالي',s_due:'المتبقي',sk_live:'طيور حية',sk_carcass:'ذبائح',sk_product:'منتج مصنّع',s_title:'المبيعات',
+sl_add:'تسجيل ذبح',sl_title:'الذبح ونسبة التصافي',sl_in:'الطيور المذبوحة',sl_live:'الوزن الحي الداخل (كجم)',sl_out:'وزن الذبائح الخارج (كجم)',sl_cond:'طيور مستبعدة',sl_yield:'نسبة التصافي',
+p_add:'إضافة عميل أو مورد',p_title:'العملاء والموردون',p_kind:'النوع',pk_supplier:'مورد',pk_customer:'عميل',pk_both:'الاثنان',p_phone:'الهاتف',
+fin_title:'الربح حسب القطيع',fin_rev:'الإيراد',fin_chick:'الكتاكيت',fin_feed:'العلف',fin_vet:'البيطري',fin_exp:'مصروفات أخرى',fin_cost:'إجمالي التكلفة',fin_profit:'الربح حتى الآن',fin_per:'الربح لكل طائر مستلم',fin_add:'إضافة مصروف',fin_cat:'البند',fin_amt:'المبلغ',fin_note:'الربح حتى الآن = مبيعات القطيع ناقص الكتاكيت والعلف والبيطري والمصروفات المحمّلة عليه. المصروفات العامة غير المحمّلة على قطيع مذكورة أدناه. القطعان المفتوحة تعرض نتيجة جزئية.',fin_over:'مصروفات غير محمّلة',fin_recv:'عملاء عليهم مبالغ',fin_cur:'العملة',
+cat_labor:'عمالة',cat_electricity:'كهرباء',cat_fuel:'وقود',cat_water:'مياه',cat_maintenance:'صيانة',cat_transport:'نقل',cat_rent:'إيجار',cat_other:'أخرى',
+f_none:'— لا يوجد —',nof:'أضف قطيعاً أولاً.',
+mod_live2:'تعمل الآن',
+help_sold:'الطيور المباعة حية أو المرسلة للذبح تُخصم من العدد الحي، ويستخدم معامل التحويل الوزن الحي والوزن المباع.'
+});
+D.en.m_basic='Basic version live';D.ar.m_basic='نسخة أساسية تعمل';
+Object.assign(D.en,{
+n_hatch:'Parent stock & hatchery',n_fleet:'Fleet & distribution',n_trace:'Traceability',n_ai:'Assistant',
+ps_add:'Add parent flock',ps_females:'Hens placed',ps_males:'Roosters placed',ps_rec:'Add parent daily record',ps_mf:'Hen mortality',ps_mm:'Rooster mortality',ps_eggs:'Eggs produced',ps_he:'Hatching eggs',ps_title:'Parent stock flocks',ps_hens:'Live hens',ps_hd:'Hen-day production % (7 days)',ps_hep:'Hatching eggs % (7 days)',ps_fg:'Feed g/hen/day (7 days)',ps_age:'Age (weeks)',ps_none:'Add a parent flock first.',ps_recs:'Parent daily records',
+h_title:'Hatchery batches',h_add:'Set eggs (new batch)',h_set:'Set date',h_eggs:'Eggs set',h_res:'Record hatch result',h_hdate:'Hatch date',h_inf:'Infertile eggs (candling)',h_hat:'Chicks hatched',h_cull:'Culled chicks (grade B)',h_fert:'Fertility %',h_hof:'Hatch of fertile %',h_hos:'Hatch of set %',h_gA:'Saleable chicks',h_pend:'Result pending',h_src:'Source hatch batch',h_nosrc:'— not recorded —',h_parent:'Parent flock',
+k_hatch:'Hatchability (hatched of set)',k_hd:'Hen-day production',
+fl_title:'Vehicles',fl_vadd:'Add vehicle',fl_plate:'Plate / ID',fl_vkind:'Vehicle type',fl_cap:'Capacity (kg)',tr_add:'Record trip',tr_title:'Trips',tr_driver:'Driver',tr_purpose:'Purpose',tr_origin:'From',tr_dest:'To',tr_sale:'Linked sale',tr_load:'Load (kg)',tr_km:'Distance (km)',tr_fuel:'Fuel (litres)',tr_fcost:'Fuel cost',tr_ocost:'Other cost (tolls, driver)',tr_total:'Trip cost',tr_perkm:'Cost per km',tr_perkg:'Cost per kg',tr_l100:'Litres per 100 km',tr_veh:'Vehicle',tr_sum:'Fleet summary',tr_nov:'Add a vehicle first.',
+pu_feed:'Feed',pu_birds:'Birds',pu_products:'Products',pu_chicks:'Chicks',pu_other:'Other',
+tc_title:'Traceability by flock',tc_origin:'1. Origin',tc_feed:'2. Feed given',tc_health:'3. Health',tc_out:'4. Outputs and delivery',tc_check:'Chain completeness',tc_ok:'recorded',tc_no:'missing',tc_note:'Feed is traced by material and production batch date, not by individual bag or lot number. Raw materials link to the supplier on their purchase records.',tc_kg:'kg fed',tc_batches:'Production batches',tc_inputs:'Inputs',tc_sup:'Suppliers',tc_age:'Parent age at setting (weeks)',
+c_origin:'Source hatch batch',c_feed:'Feed days linked to stock',c_vet:'Vet records',c_sales:'Sales',c_deliv:'Delivery trip linked to a sale',
+ai_title:'Assistant',ai_ph:'Ask about your data (English or Arabic)',ai_ask:'Ask',ai_note:'This assistant answers from the data in this system using fixed rules. It is not a language model and does not guess. If the data is missing it says so.',ai_unknown:'I can answer about: FCR, mortality, feed stock and cover, profit, money owed, vet items and withdrawal, hatchery results, fleet costs, or what needs attention today.',ai_s1:'What needs attention today?',ai_s2:'FCR by flock',ai_s3:'Feed stock cover',ai_s4:'Profit by flock',ai_s5:'Who owes us money?',ai_s6:'Hatchery results',ai_s7:'Fleet cost per km',ai_s8:'Mortality by flock',ai_nodata:'No data for this yet.',ai_q:'You asked',ai_best:'best',ai_worst:'worst'
+});
+Object.assign(D.ar,{
+n_hatch:'الأمهات والمفرخة',n_fleet:'النقل والتوزيع',n_trace:'التتبع',n_ai:'المساعد',
+ps_add:'إضافة قطيع أمهات',ps_females:'عدد الدجاج المستلم',ps_males:'عدد الديوك المستلم',ps_rec:'إضافة سجل يومي للأمهات',ps_mf:'نفوق الدجاج',ps_mm:'نفوق الديوك',ps_eggs:'البيض المنتج',ps_he:'بيض التفريخ',ps_title:'قطعان الأمهات',ps_hens:'الدجاج الحي',ps_hd:'نسبة الإنتاج يومياً ٪ (7 أيام)',ps_hep:'نسبة بيض التفريخ ٪ (7 أيام)',ps_fg:'علف جم/دجاجة/يوم (7 أيام)',ps_age:'العمر (أسابيع)',ps_none:'أضف قطيع أمهات أولاً.',ps_recs:'السجلات اليومية للأمهات',
+h_title:'دفعات المفرخة',h_add:'تحميل بيض (دفعة جديدة)',h_set:'تاريخ التحميل',h_eggs:'البيض المحمّل',h_res:'تسجيل نتيجة التفريخ',h_hdate:'تاريخ الفقس',h_inf:'بيض غير مخصب (من الفحص)',h_hat:'الكتاكيت الفاقسة',h_cull:'كتاكيت مستبعدة (درجة ثانية)',h_fert:'الخصوبة ٪',h_hof:'الفقس من المخصب ٪',h_hos:'الفقس من المحمّل ٪',h_gA:'كتاكيت صالحة للبيع',h_pend:'النتيجة معلقة',h_src:'دفعة التفريخ المصدر',h_nosrc:'— غير مسجلة —',h_parent:'قطيع الأمهات',
+k_hatch:'نسبة الفقس (الفاقس من المحمّل)',k_hd:'الإنتاج اليومي للدجاج',
+fl_title:'المركبات',fl_vadd:'إضافة مركبة',fl_plate:'اللوحة / الكود',fl_vkind:'نوع المركبة',fl_cap:'السعة (كجم)',tr_add:'تسجيل رحلة',tr_title:'الرحلات',tr_driver:'السائق',tr_purpose:'الغرض',tr_origin:'من',tr_dest:'إلى',tr_sale:'البيع المرتبط',tr_load:'الحمولة (كجم)',tr_km:'المسافة (كم)',tr_fuel:'الوقود (لتر)',tr_fcost:'تكلفة الوقود',tr_ocost:'تكلفة أخرى (رسوم، سائق)',tr_total:'تكلفة الرحلة',tr_perkm:'التكلفة لكل كم',tr_perkg:'التكلفة لكل كجم',tr_l100:'لتر لكل 100 كم',tr_veh:'المركبة',tr_sum:'ملخص النقل',tr_nov:'أضف مركبة أولاً.',
+pu_feed:'علف',pu_birds:'طيور',pu_products:'منتجات',pu_chicks:'كتاكيت',pu_other:'أخرى',
+tc_title:'التتبع حسب القطيع',tc_origin:'1. المصدر',tc_feed:'2. العلف المقدم',tc_health:'3. الصحة',tc_out:'4. المخرجات والتسليم',tc_check:'اكتمال السلسلة',tc_ok:'مسجل',tc_no:'ناقص',tc_note:'يُتتبع العلف حسب الصنف وتاريخ دفعة الإنتاج، وليس حسب الكيس أو رقم اللوط. المواد الخام ترتبط بالمورد في سجلات الشراء.',tc_kg:'كجم علف',tc_batches:'دفعات الإنتاج',tc_inputs:'المدخلات',tc_sup:'الموردون',tc_age:'عمر الأمهات عند التحميل (أسابيع)',
+c_origin:'دفعة التفريخ المصدر',c_feed:'أيام العلف المرتبطة بالمخزون',c_vet:'السجلات البيطرية',c_sales:'المبيعات',c_deliv:'رحلة تسليم مرتبطة ببيع',
+ai_title:'المساعد',ai_ph:'اسأل عن بياناتك (بالعربي أو الإنجليزي)',ai_ask:'اسأل',ai_note:'هذا المساعد يجيب من بيانات النظام بقواعد ثابتة. هو ليس نموذج لغة ولا يخمّن. وإذا كانت البيانات ناقصة يقول ذلك.',ai_unknown:'أستطيع الإجابة عن: معامل التحويل، النفوق، مخزون العلف وتغطيته، الربح، المبالغ المستحقة، البنود البيطرية وفترة السحب، نتائج المفرخة، تكاليف النقل، أو ما يحتاج انتباهاً اليوم.',ai_s1:'ما الذي يحتاج انتباهاً اليوم؟',ai_s2:'معامل التحويل لكل قطيع',ai_s3:'تغطية مخزون العلف',ai_s4:'الربح لكل قطيع',ai_s5:'من عليه مبالغ لنا؟',ai_s6:'نتائج المفرخة',ai_s7:'تكلفة النقل لكل كم',ai_s8:'النفوق لكل قطيع',ai_nodata:'لا توجد بيانات لهذا السؤال بعد.',ai_q:'سؤالك',ai_best:'الأفضل',ai_worst:'الأسوأ'
+});
+Object.assign(D.en,{n_layers:'Layers',ly_add:'Add layer flock',ly_rec:'Add layer daily record',ly_title:'Layer flocks',ly_hens:'Live hens',ly_age:'Age (weeks)',ly_hd:'Hen-day production % (7 days)',ly_ga:'Grade A % (7 days)',ly_gb:'Grade B % (7 days)',ly_cr:'Cracked % (7 days)',ly_fg:'Feed g/hen/day (7 days)',ly_fd:'Feed kg per dozen eggs (7 days)',ly_mort:'Mortality % (cumulative)',ly_recs:'Layer daily records',ly_mort1:'Mortality',ly_eggs:'Eggs collected',ly_crk:'Cracked eggs',ly_b:'Grade B eggs',ly_a:'Grade A eggs',ly_count:'Hens placed',ly_note:'Grade A = eggs collected minus cracked minus grade B. Hen-day % = eggs / live hens. These are calculations from your records, not breed standards.',ly_none:'No layer flocks yet.'});
+Object.assign(D.ar,{n_layers:'البياض',ly_add:'إضافة قطيع بياض',ly_rec:'إضافة سجل يومي للبياض',ly_title:'قطعان البياض',ly_hens:'الدجاج الحي',ly_age:'العمر (أسابيع)',ly_hd:'نسبة الإنتاج اليومي ٪ (٧ أيام)',ly_ga:'الدرجة الأولى ٪ (٧ أيام)',ly_gb:'الدرجة الثانية ٪ (٧ أيام)',ly_cr:'المكسور ٪ (٧ أيام)',ly_fg:'علف جم/دجاجة/يوم (٧ أيام)',ly_fd:'علف كجم لكل دستة بيض (٧ أيام)',ly_mort:'النفوق ٪ (تراكمي)',ly_recs:'السجلات اليومية للبياض',ly_mort1:'النفوق',ly_eggs:'البيض المجمّع',ly_crk:'بيض مكسور',ly_b:'بيض درجة ثانية',ly_a:'بيض درجة أولى',ly_count:'عدد الدجاج المستلم',ly_note:'الدرجة الأولى = البيض المجمّع ناقص المكسور ناقص الدرجة الثانية. نسبة الإنتاج = البيض ÷ الدجاج الحي. هذه حسابات من سجلاتك وليست معايير سلالة.',ly_none:'لا توجد قطعان بياض بعد.'});
+Object.assign(D.en,{n_cold:'Cold storage',cs_addroom:'Add cold room',cs_move:'Record stock movement',cs_temp:'Log temperature',cs_rooms:'Cold rooms',cs_code:'Room',cs_kind:'Type',cs_chilled:'Chilled',cs_frozen:'Frozen',cs_cap:'Capacity (kg)',cs_min:'Min °C',cs_max:'Max °C',cs_stock:'Stock (kg)',cs_util:'Used %',cs_last:'Last temperature °C',cs_ok:'In range',cs_bad:'OUT OF RANGE',cs_nolog:'No reading',cs_prod:'Product balance',cs_product:'Product',cs_bal:'Balance (kg)',cs_exp:'Earliest expiry of received lots',cs_moves:'Stock movements',cs_in:'In',cs_out:'Out',cs_waste:'Waste',cs_qty:'Quantity (kg)',cs_pd:'Production date',cs_ed:'Expiry date',cs_temps:'Temperature log',cs_alert_t:'Cold room %1 last reading %2 °C is outside %3 to %4 °C',cs_alert_e:'Lots in %1 expire within 7 days: %2',cs_none:'No cold rooms yet.',cs_note:'Balances come from recorded movements. Expiry is the earliest date among received lots, not netted against what left (no lot-level FIFO).'});
+Object.assign(D.ar,{n_cold:'التبريد والتخزين',cs_addroom:'إضافة غرفة تبريد',cs_move:'تسجيل حركة مخزون',cs_temp:'تسجيل درجة حرارة',cs_rooms:'غرف التبريد',cs_code:'الغرفة',cs_kind:'النوع',cs_chilled:'مبرد',cs_frozen:'مجمد',cs_cap:'السعة (كجم)',cs_min:'أدنى °م',cs_max:'أعلى °م',cs_stock:'المخزون (كجم)',cs_util:'نسبة الاستخدام ٪',cs_last:'آخر درجة حرارة °م',cs_ok:'ضمن النطاق',cs_bad:'خارج النطاق',cs_nolog:'لا توجد قراءة',cs_prod:'رصيد المنتجات',cs_product:'المنتج',cs_bal:'الرصيد (كجم)',cs_exp:'أقرب انتهاء للدفعات المستلمة',cs_moves:'حركات المخزون',cs_in:'وارد',cs_out:'صادر',cs_waste:'هالك',cs_qty:'الكمية (كجم)',cs_pd:'تاريخ الإنتاج',cs_ed:'تاريخ الانتهاء',cs_temps:'سجل درجات الحرارة',cs_alert_t:'غرفة التبريد %1 آخر قراءة %2 °م خارج النطاق %3 إلى %4 °م',cs_alert_e:'دفعات في %1 تنتهي خلال ٧ أيام: %2',cs_none:'لا توجد غرف تبريد بعد.',cs_note:'الأرصدة محسوبة من الحركات المسجلة. تاريخ الانتهاء هو أقرب تاريخ بين الدفعات المستلمة دون خصم ما خرج (لا يوجد تتبع للدفعات بنظام الأقدم أولاً).'});
+Object.assign(D.en,{n_ledger:'Ledger',lg_add:'Add ledger entry',lg_month:'Month',lg_act:'Activity',lg_kind:'Type',lg_income:'Income',lg_expense:'Expense',lg_cat:'Category',lg_amt:'Amount (EGP)',lg_net:'Net',lg_sum:'Monthly result by activity',lg_entries:'Ledger entries',lg_total:'Total',lg_auto_s:'Broiler and product sales (from Sales tab)',lg_auto_e:'Expenses entered on the Finance tab',lg_note:'Do not re-enter sales or Finance-tab expenses here, they are added automatically. Chick, feed and vet costs of broiler flocks stay on the Profit by flock table. All amounts are assumed to be in EGP. This is a management ledger, not an accounting or tax record.',lg_none:'No entries this month.',a_procurement:'Procurement',a_feed_mill:'Feed mill',a_parent_stock:'Parent stock',a_hatchery:'Hatchery',a_broilers:'Broilers',a_layers:'Layers',a_slaughter:'Slaughter and processing',a_cold_storage:'Cold storage',a_distribution:'Distribution',a_admin:'Administration',a_other:'Other'});
+Object.assign(D.ar,{n_ledger:'دفتر الحسابات',lg_add:'إضافة قيد',lg_month:'الشهر',lg_act:'النشاط',lg_kind:'النوع',lg_income:'إيراد',lg_expense:'مصروف',lg_cat:'البند',lg_amt:'المبلغ (جنيه)',lg_net:'الصافي',lg_sum:'نتيجة الشهر حسب النشاط',lg_entries:'قيود الدفتر',lg_total:'الإجمالي',lg_auto_s:'مبيعات الدواجن والمنتجات (من تبويب المبيعات)',lg_auto_e:'المصروفات المدخلة في تبويب المالية',lg_note:'لا تعد إدخال المبيعات أو مصروفات تبويب المالية هنا، فهي تضاف تلقائياً. تكاليف الكتاكيت والعلف والبيطري لقطعان التسمين تبقى في جدول الربح حسب القطيع. كل المبالغ تعتبر بالجنيه المصري. هذا دفتر إدارة وليس سجلاً محاسبياً أو ضريبياً.',lg_none:'لا توجد قيود هذا الشهر.',a_procurement:'المشتريات',a_feed_mill:'مصنع العلف',a_parent_stock:'الأمهات',a_hatchery:'المفرخة',a_broilers:'التسمين',a_layers:'البياض',a_slaughter:'الذبح والتصنيع',a_cold_storage:'التبريد والتخزين',a_distribution:'التوزيع',a_admin:'الإدارة',a_other:'أخرى'});
+Object.assign(D.en,{k_lay:'Layers hen-day % (7 days)',k_cold:'Cold rooms out of range',k_net:'This month net (ledger + sales - expenses)'});
+Object.assign(D.ar,{k_lay:'إنتاج البياض اليومي ٪ (٧ أيام)',k_cold:'غرف تبريد خارج النطاق',k_net:'صافي هذا الشهر (الدفتر + المبيعات - المصروفات)'});
+Object.assign(D.en,{n_reports:'Reports and exports',rp_title:'Download data as CSV (opens in Excel)',rp_perf:'Flock performance summary',rp_print:'Print or save as PDF',rp_printnote:'Prints the page you are on. Open the Ledger or Control Tower tab first, then use this button.',rp_note:'Each CSV is the stored table as is, with row ids, so it can be re-imported or analysed. The flock performance file uses the same calculated figures as the app. Files are made in your browser and are not sent anywhere.',rp_rows:'rows',d_flocks:'Broiler flocks',d_daily:'Broiler daily records',d_sales:'Sales',d_moves:'Stock movements',d_vet:'Veterinary records',d_ledger:'Ledger entries',d_cmoves:'Cold storage movements',d_ctemps:'Temperature log',d_trips:'Trips',d_ldaily:'Layer daily records',d_hatches:'Hatch batches',d_pdaily:'Parent daily records',d_expenses:'Finance-tab expenses',d_slaughter:'Slaughter records'});
+Object.assign(D.ar,{n_reports:'التقارير والتصدير',rp_title:'تنزيل البيانات بصيغة CSV (تفتح في إكسل)',rp_perf:'ملخص أداء القطعان',rp_print:'طباعة أو حفظ PDF',rp_printnote:'تطبع الصفحة المفتوحة حالياً. افتح تبويب دفتر الحسابات أو مركز القيادة أولاً ثم استخدم هذا الزر.',rp_note:'كل ملف CSV هو الجدول المخزّن كما هو مع معرّفات الصفوف ليمكن إعادة استيراده أو تحليله. ملف أداء القطعان يستخدم نفس الأرقام المحسوبة في التطبيق. الملفات تُنشأ في متصفحك ولا تُرسل لأي جهة.',rp_rows:'صف',d_flocks:'قطعان التسمين',d_daily:'السجلات اليومية للتسمين',d_sales:'المبيعات',d_moves:'حركات المخزون',d_vet:'السجلات البيطرية',d_ledger:'قيود الدفتر',d_cmoves:'حركات التبريد',d_ctemps:'سجل درجات الحرارة',d_trips:'الرحلات',d_ldaily:'السجلات اليومية للبياض',d_hatches:'دفعات التفريخ',d_pdaily:'السجلات اليومية للأمهات',d_expenses:'مصروفات تبويب المالية',d_slaughter:'سجلات الذبح'});
+Object.assign(D.en,{n_plan:'Planning',pl_title:'Forecast for open broiler flocks',pl_tw:'Target live weight (g)',pl_cd:'Cleaning and rest days between flocks',pl_w:'Last weight (g)',pl_adg:'Recent gain (g/day)',pl_left:'Days to target',pl_ready:'Expected ready date',pl_feed:'Feed still needed (kg)',pl_next:'House free for next flock from',pl_tot:'Total feed still needed (kg)',pl_nodata:'Needs at least one weight record',pl_reached:'Target reached',pl_note:'Forecast = days to reach the target weight at the recent daily gain (last two weighings at least 3 days apart, otherwise the flock average gain). Feed needed = weight still to gain x live birds x the flock FCR so far. This is a straight-line estimate and ignores mortality changes, heat, feed quality and breed curves. Target weight and rest days are saved in this browser only.',pl_houses:'House availability'});
+Object.assign(D.ar,{n_plan:'التخطيط',pl_title:'توقعات قطعان التسمين المفتوحة',pl_tw:'وزن التسويق المستهدف (جم)',pl_cd:'أيام التنظيف والراحة بين القطعان',pl_w:'آخر وزن (جم)',pl_adg:'الزيادة الحديثة (جم/يوم)',pl_left:'أيام حتى الهدف',pl_ready:'تاريخ الجاهزية المتوقع',pl_feed:'العلف المتبقي المطلوب (كجم)',pl_next:'العنبر متاح للقطيع التالي من',pl_tot:'إجمالي العلف المتبقي المطلوب (كجم)',pl_nodata:'يحتاج سجل وزن واحد على الأقل',pl_reached:'تم بلوغ الهدف',pl_note:'التوقع = عدد الأيام لبلوغ الوزن المستهدف بمعدل الزيادة الحديث (آخر وزنتين بينهما ٣ أيام على الأقل، وإلا متوسط زيادة القطيع). العلف المطلوب = الوزن المتبقي × الطيور الحية × معامل التحويل للقطيع حتى الآن. هذا تقدير خطي ولا يراعي تغير النفوق أو الحرارة أو جودة العلف أو منحنى السلالة. الوزن المستهدف وأيام الراحة محفوظان في هذا المتصفح فقط.',pl_houses:'توافر العنابر'});
+Object.assign(D.en,{app:'Agritrade Pro | Poultry',sub:'Poultry business management',brand_mod:'Poultry',g_ov:'Overview',g_op:'Operations',g_fi:'Finance',g_ad:'Administration',gs_ph:'Search flocks, customers, materials...',gs_none:'No results',notif:'Notifications',nonotif:'No alerts right now.',t_search:'Filter this table...',t_rows:'rows',t_prev:'Previous',t_next:'Next',t_page:'Page',t_nomatch:'No matching rows',crumb_home:'Agritrade Pro',hello:'Welcome'});
+Object.assign(D.ar,{app:'Agritrade Pro | الدواجن',sub:'إدارة أعمال الدواجن',brand_mod:'الدواجن',g_ov:'نظرة عامة',g_op:'العمليات',g_fi:'المالية',g_ad:'الإدارة',gs_ph:'ابحث عن قطيع أو عميل أو خامة...',gs_none:'لا نتائج',notif:'الإشعارات',nonotif:'لا توجد تنبيهات حالياً.',t_search:'تصفية هذا الجدول...',t_rows:'صف',t_prev:'السابق',t_next:'التالي',t_page:'صفحة',t_nomatch:'لا توجد صفوف مطابقة',crumb_home:'Agritrade Pro',hello:'مرحباً'});
+Object.assign(D.en,{qa_sale:'Record sale',qa_vet:'Record vet item',photo_cr:'Photo: Tiger Gang, CC BY-SA 4.0, Wikimedia Commons',empty_p:'No records in this period yet.',p_all:'All',trend_t:'Trends (all open and closed flocks)',c_feed2:'Feed per day (kg)',c_mort2:'Mortality per day (birds)',mix_t:'Live birds by flock',act_t:'Recent activity',act_rec:'Daily record',act_sale:'Sale',act_vet:'Vet item done',act_exp:'Expense'});
+Object.assign(D.ar,{qa_sale:'تسجيل بيع',qa_vet:'تسجيل بند بيطري',photo_cr:'الصورة: Tiger Gang، رخصة CC BY-SA 4.0، ويكيميديا كومنز',empty_p:'لا توجد سجلات في هذه الفترة بعد.',p_all:'الكل',trend_t:'الاتجاهات (كل القطعان)',c_feed2:'العلف يومياً (كجم)',c_mort2:'النفوق يومياً (طائر)',mix_t:'الطيور الحية حسب القطيع',act_t:'آخر الأنشطة',act_rec:'سجل يومي',act_sale:'بيع',act_vet:'تم بند بيطري',act_exp:'مصروف'});
+Object.assign(D.en,{deleted:'Deleted',req_f:'Required field',confirm_t:'Please confirm',confirm_y:'Yes, continue'});
+Object.assign(D.ar,{deleted:'تم الحذف',req_f:'حقل مطلوب',confirm_t:'يرجى التأكيد',confirm_y:'نعم، تابع'});
+const SK='pl_sb_session',LS=localStorage;
+let LANG=LS.getItem('suite_lang')==='ar'?'ar':'en';
+const t=(k,...a)=>{let s=(D[LANG][k]!==undefined?D[LANG][k]:k);a.forEach((v,i)=>s=s.replace('{'+i+'}',v));return s};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf=(v,d=0)=>v==null||isNaN(v)?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+const S={route:'dash',flock:null,user:null,role:null,data:null,err:null,modal:null,chart:'wt',busy:true};
+let sess=null;try{sess=JSON.parse(LS.getItem(SK)||'null')}catch(e){}
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dayDiff=(a,b)=>Math.round((new Date(b+'T00:00:00Z')-new Date(a+'T00:00:00Z'))/864e5);
+const H=tok=>({apikey:CFG.ANON,Authorization:'Bearer '+(tok||CFG.ANON),'Content-Type':'application/json'});
+async function refresh(){const r=await fetch(CFG.URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:H(),body:JSON.stringify({refresh_token:sess.refresh_token})});if(!r.ok)throw new Error('auth');const j=await r.json();sess={access_token:j.access_token,refresh_token:j.refresh_token};LS.setItem(SK,JSON.stringify(sess))}
+async function api(path,o={}){
+  const go=()=>fetch(CFG.URL+'/rest/v1/'+path,{method:o.method||'GET',headers:Object.assign(H(sess.access_token),o.prefer?{Prefer:o.prefer}:{},o.range?{Range:o.range}:{}),body:o.body?JSON.stringify(o.body):undefined});
+  let r=await go();if(r.status===401){await refresh();r=await go()}
+  if(!r.ok){let m=await r.text();try{m=JSON.parse(m).message||m}catch(e){}throw new Error(m)}
+  const x=await r.text();return x?JSON.parse(x):null}
+async function all(tbl,order){let out=[],i=0;for(;;){const p=await api(tbl+'?select=*&order='+order,{range:i+'-'+(i+999)});out=out.concat(p);if(p.length<1000)break;i+=1000}return out}
+async function load(){
+  S.busy=true;draw();
+  try{
+    const [sites,houses,flocks,daily,partners,materials,moves,batches,vet,sales,slaughter,expenses,pflocks,pdaily,hatches,vehicles,trips,lflocks,ldaily,crooms,cmoves,ctemps,ledger]=await Promise.all([all('poultry_sites','created_at'),all('poultry_houses','created_at'),all('poultry_flocks','placed_on.desc'),all('poultry_daily','rec_date'),all('poultry_partners','name'),all('poultry_materials','name'),all('poultry_stock_moves','move_date.desc'),all('poultry_batches','batch_date.desc'),all('poultry_vet','rec_date.desc'),all('poultry_sales','sale_date.desc'),all('poultry_slaughter','slaughter_date.desc'),all('poultry_expenses','exp_date.desc'),all('poultry_parent_flocks','created_at'),all('poultry_parent_daily','rec_date'),all('poultry_hatch_batches','set_date.desc'),all('poultry_vehicles','created_at'),all('poultry_trips','trip_date.desc'),all('poultry_layer_flocks','created_at'),all('poultry_layer_daily','rec_date'),all('poultry_cold_rooms','created_at'),all('poultry_cold_moves','move_date.desc'),all('poultry_cold_temps','logged_at.desc'),all('poultry_ledger','entry_date.desc')]);
+    S.data={sites,houses,flocks,daily,partners,materials,moves,batches,vet,sales,slaughter,expenses,pflocks,pdaily,hatches,vehicles,trips,lflocks,ldaily,crooms,cmoves,ctemps,ledger,members:[],audit:[]};
+    if(S.role==='admin'){S.data.members=await all('poultry_members','email')}
+    S.err=null;
+  }catch(e){S.err=e.message}
+  S.busy=false;draw()}
+async function init(){
+  if(location.hash.includes('access_token=')){const p=new URLSearchParams(location.hash.slice(1));sess={access_token:p.get('access_token'),refresh_token:p.get('refresh_token')};LS.setItem(SK,JSON.stringify(sess));history.replaceState(null,'',location.pathname+location.search)}
+  if(!sess){S.busy=false;return draw()}
+  try{
+    let r=await fetch(CFG.URL+'/auth/v1/user',{headers:H(sess.access_token)});
+    if(r.status===401){await refresh();r=await fetch(CFG.URL+'/auth/v1/user',{headers:H(sess.access_token)})}
+    if(!r.ok)throw 0;const u=await r.json();S.user={email:(u.email||'').toLowerCase(),name:(u.user_metadata&&u.user_metadata.full_name)||u.email,id:u.id};
+    S.role=await api('rpc/poultry_role',{method:'POST',body:{}});
+    if(!S.role){S.busy=false;return draw()}
+    await load()
+  }catch(e){LS.removeItem(SK);sess=null;S.user=null;S.busy=false;draw()}}
+/* ---------- calculations ---------- */
+function calc(f){
+  const dd=S.data;
+  const recs=dd.daily.filter(d=>d.flock_id===f.id).sort((a,b)=>a.rec_date<b.rec_date?-1:1);
+  const sales=dd.sales.filter(s=>s.flock_id===f.id),sl=dd.slaughter.filter(s=>s.flock_id===f.id),vets=dd.vet.filter(v=>v.flock_id===f.id&&v.status==='done'),exps=dd.expenses.filter(x=>x.flock_id===f.id);
+  const dead=recs.reduce((s,r)=>s+r.mortality,0),culls=recs.reduce((s,r)=>s+r.culls,0),feed=recs.reduce((s,r)=>s+Number(r.feed_kg),0);
+  const exitB=(d)=>sales.filter(s=>s.kind==='live'&&(!d||s.sale_date<=d)).reduce((a,s)=>a+s.birds,0)+sl.filter(s=>!d||s.slaughter_date<=d).reduce((a,s)=>a+s.birds_in,0);
+  const exitKg=(d)=>sales.filter(s=>s.kind==='live'&&(!d||s.sale_date<=d)).reduce((a,s)=>a+Number(s.weight_kg),0)+sl.filter(s=>!d||s.slaughter_date<=d).reduce((a,s)=>a+Number(s.live_kg_in),0);
+  const sold=exitB(),live=f.placed_count-dead-culls-sold;const last=recs[recs.length-1];
+  const wr=[...recs].reverse().find(r=>r.avg_weight_g!=null);
+  const lastEvt=[...recs.map(r=>r.rec_date),...sales.map(s=>s.sale_date),...sl.map(s=>s.slaughter_date)].sort().pop();
+  const end=f.status==='closed'&&f.closed_on?f.closed_on:today();
+  const age=Math.max(0,dayDiff(f.placed_on,end));
+  let w=null,fcr=null,adg=null,epef=null,wAge=null;
+  if(wr){w=Number(wr.avg_weight_g);wAge=dayDiff(f.placed_on,wr.rec_date);
+    const upto=recs.filter(r=>r.rec_date<=wr.rec_date);
+    const liveW=f.placed_count-upto.reduce((s,r)=>s+r.mortality+r.culls,0)-exitB(wr.rec_date);
+    const feedW=upto.reduce((s,r)=>s+Number(r.feed_kg),0);
+    const prodKg=liveW*w/1000+exitKg(wr.rec_date);
+    if(prodKg>0&&feedW>0)fcr=feedW/prodKg;
+    if(wAge>0)adg=(w-Number(f.chick_weight_g||0))/wAge;
+    if(fcr&&wAge>0)epef=((liveW+exitB(wr.rec_date))/f.placed_count*100)*(w/1000)*100/(fcr*wAge)}
+  let feedCost=0,feedCostKnown=true;
+  recs.forEach(r=>{const mv=dd.moves.find(m=>m.daily_id===r.id);if(mv)feedCost+=-Number(mv.qty)*Number(mv.unit_cost||0);else if(Number(r.feed_kg)>0){if(f.feed_price_per_kg!=null)feedCost+=Number(r.feed_kg)*Number(f.feed_price_per_kg);else feedCostKnown=false}});
+  const chickCost=f.chick_price!=null?f.placed_count*Number(f.chick_price):null;
+  const vetCost=vets.reduce((s,v)=>s+Number(v.cost||0),0),expCost=exps.reduce((s,x)=>s+Number(x.amount),0);
+  const revenue=sales.reduce((s,x)=>s+Number(x.weight_kg)*Number(x.price_per_kg),0);
+  const cost=(chickCost!=null&&feedCostKnown)?chickCost+feedCost+vetCost+expCost:null;
+  const liveKg=w!=null?live*w/1000:null;
+  const house=dd.houses.find(h=>h.id===f.house_id)||{},site=dd.sites.find(s=>s.id===house.site_id)||{};
+  const wdEnd=vets.filter(v=>v.withdrawal_days>0).map(v=>{const d=new Date(v.rec_date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+Number(v.withdrawal_days));return d.toISOString().slice(0,10)}).sort().pop();
+  return{f,recs,dead,culls,feed,sold,live,last,w,wAge,fcr,adg,epef,age,cost,chickCost,feedCost,feedCostKnown,vetCost,expCost,revenue,profit:cost!=null?revenue-cost:null,wdEnd:wdEnd&&wdEnd>=today()?wdEnd:null,liveKg,prodKg:(liveKg||0)+exitKg(),cpk:cost!=null&&((liveKg||0)+exitKg())>0?cost/((liveKg||0)+exitKg()):null,mortPct:dead/f.placed_count*100,totLossPct:(dead+culls)/f.placed_count*100,livab:(live+sold)/f.placed_count*100,house,site,today:recs.find(r=>r.rec_date===today())}}
+const LIM=()=>({dm:Number(LS.getItem('pl_dm')||0.5),cm:Number(LS.getItem('pl_cm')||5)});
+function alerts(cs){const L=LIM(),out=[];
+  cs.filter(c=>c.f.status==='open').forEach(c=>{
+    if(!c.today)out.push(['wr',t('a_missing',c.f.code)]);
+    let liveB=c.f.placed_count;c.recs.forEach(r=>{const p=r.mortality/liveB*100;if(p>L.dm&&dayDiff(r.rec_date,today())<=7)out.push(['er',t('a_mort',c.f.code,nf(p,2),r.rec_date,L.dm)]);liveB-=r.mortality+r.culls});
+    if(c.mortPct>L.cm)out.push(['er',t('a_cum',c.f.code,nf(c.mortPct,2),L.cm)]);
+    const lw=[...c.recs].reverse().find(r=>r.avg_weight_g!=null);if(c.age>=7&&(!lw||dayDiff(lw.rec_date,today())>=7))out.push(['wr',t('a_wt',c.f.code)])});
+  return out}
+/* ---------- charts ---------- */
+function chart(pts,{bars=false,color='#0b5cab',xl='',yl=''}){
+  if(!pts.length)return '<div class="muted">'+t('norec')+'</div>';
+  const W=560,Hh=220,p=36,xs=pts.map(a=>a[0]),ys=pts.map(a=>a[1]),x0=Math.min(...xs),x1=Math.max(...xs,x0+1),y1=Math.max(...ys,1)*1.1;
+  const X=x=>p+(x-x0)/(x1-x0||1)*(W-p-10),Y=y=>Hh-24-(y/y1)*(Hh-40);let g='';
+  for(let i=0;i<=4;i++){const v=y1/1.1*i/4,yy=Y(v);g+=`<line x1="${p}" x2="${W-6}" y1="${yy}" y2="${yy}" stroke="#e1eaf3"/><text x="${p-4}" y="${yy+4}" font-size="10" text-anchor="end" fill="#5d7186">${nf(v,v<10?1:0)}</text>`}
+  let body='';
+  if(bars){const bw=Math.max(2,(W-p-10)/(x1-x0+1)*.7);pts.forEach(a=>body+=`<rect x="${X(a[0])-bw/2}" y="${Y(a[1])}" width="${bw}" height="${Hh-24-Y(a[1])}" fill="${color}" rx="1"/>`)}
+  else{body=`<polyline fill="none" stroke="${color}" stroke-width="2.5" points="${pts.map(a=>X(a[0])+','+Y(a[1])).join(' ')}"/>`+pts.map(a=>`<circle cx="${X(a[0])}" cy="${Y(a[1])}" r="3" fill="${color}"/>`).join('')}
+  return `<svg viewBox="0 0 ${W} ${Hh}" width="100%" style="direction:ltr"><text x="${W/2}" y="${Hh-4}" font-size="11" text-anchor="middle" fill="#5d7186">${esc(xl)}</text>${g}${body}<text x="${p}" y="${Hh-10}" font-size="10" fill="#5d7186">${x0}</text><text x="${W-8}" y="${Hh-10}" font-size="10" text-anchor="end" fill="#5d7186">${x1}</text></svg>`}
+/* ---------- views ---------- */
+const kpi=(l,v,s,u)=>`<div class="card kpi"><div class="l">${l}</div><div class="v">${v}${u?' <small style="font-size:13px;color:#5d7186">'+u+'</small>':''}</div>${s?'<div class="s">'+s+'</div>':''}</div>`;
+/* ---------- dashboard redesign blocks ---------- */
+const HERO_IMG='https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Chickens_in_poultry_farm.jpg/1280px-Chickens_in_poultry_farm.jpg';
+function heroBlock(op,al){const ar=LANG==='ar';
+ return `<div class="hero2" style="background-image:linear-gradient(100deg,rgba(11,92,171,.92),rgba(11,92,171,.55) 60%,rgba(11,92,171,.15)),url('${HERO_IMG}')"><div><small>${t('hello')}</small><h2>${esc(S.user.email.split('@')[0])}</h2><p>${op.length} ${t('n_flocks')} · ${al.length} ${t('notif')}</p>
+ ${canW()?`<div class="qa"><button class="btn gold" data-a="m_rec">＋ ${t('add_rec')}</button><button class="btn" data-a="m_sale">${t('qa_sale')}</button><button class="btn ghost" data-a="m_vet">${t('qa_vet')}</button><button class="btn ghost" data-a="m_flock">${t('add_flock')}</button></div>`:''}</div><small class="cr">${t('photo_cr')}</small></div>`}
+function periodDays(){return S.per||30}
+function svgAxis(w,h,p,max,xl){let g='';for(let i=0;i<=4;i++){const y=p+(h-2*p)*i/4;g+=`<line x1="${p}" x2="${w-p}" y1="${y}" y2="${y}" stroke="#e3ecf7"/><text x="${p-4}" y="${y+3}" font-size="9" text-anchor="end" fill="#6b7f99">${nf(max*(1-i/4),max<10?1:0)}</text>`}return g}
+function dateSeries(field,days){const d=S.data,from=days?new Date(Date.now()-days*864e5).toISOString().slice(0,10):'0';const m={};d.daily.filter(r=>r.rec_date>=from).forEach(r=>{m[r.rec_date]=(m[r.rec_date]||0)+Number(r[field]||0)});return Object.keys(m).sort().map(k=>[k,m[k]])}
+function tsChart(ser,color,bars){if(!ser.length)return `<div class="empty">📭 ${t('empty_p')}</div>`;const w=560,h=210,p=34,max=Math.max(...ser.map(x=>x[1]))||1,n=ser.length,bw=(w-2*p)/n;
+ const X=i=>p+bw*(i+.5),Y=v=>h-p-(h-2*p)*v/max;let body='';
+ if(bars)body=ser.map((s,i)=>`<rect x="${X(i)-Math.max(1,bw*.35)}" y="${Y(s[1])}" width="${Math.max(2,bw*.7)}" height="${h-p-Y(s[1])}" rx="2" fill="${color}"><title>${s[0]}: ${nf(s[1],1)}</title></rect>`).join('');
+ else{const pts=ser.map((s,i)=>X(i)+','+Y(s[1])).join(' ');body=`<polygon points="${X(0)},${h-p} ${pts} ${X(n-1)},${h-p}" fill="${color}" opacity=".12"/><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.5"/>`+ser.map((s,i)=>`<circle cx="${X(i)}" cy="${Y(s[1])}" r="3.5" fill="${color}"><title>${s[0]}: ${nf(s[1],1)}</title></circle>`).join('')}
+ return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto">${svgAxis(w,h,p,max)}${body}<text x="${p}" y="${h-8}" font-size="9" fill="#6b7f99">${ser[0][0]}</text><text x="${w-p}" y="${h-8}" font-size="9" text-anchor="end" fill="#6b7f99">${ser[n-1][0]}</text></svg>`}
+function donut(items){const tot=items.reduce((s,x)=>s+x.v,0);if(!tot)return `<div class="empty">📭 ${t('empty_p')}</div>`;const cols=['#0b5cab','#2e9e5b','#c9a227','#6cc0ff','#e08a2e','#7a6bd6'];let a=0,R=60,C=2*Math.PI*R;
+ const arcs=items.map((x,i)=>{const len=x.v/tot*C,s=`<circle r="${R}" cx="80" cy="80" fill="none" stroke="${cols[i%6]}" stroke-width="26" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-a}" transform="rotate(-90 80 80)"><title>${esc(x.l)}: ${nf(x.v)} (${nf(x.v/tot*100,1)}%)</title></circle>`;a+=len;return s}).join('');
+ return `<div class="dn"><svg viewBox="0 0 160 160" width="160" height="160">${arcs}<text x="80" y="78" text-anchor="middle" font-size="18" font-weight="700" fill="#0f2a4a">${nf(tot)}</text><text x="80" y="94" text-anchor="middle" font-size="9" fill="#6b7f99">${t('u_birds')}</text></svg><div>${items.map((x,i)=>`<div class="lgd"><i style="background:${cols[i%6]}"></i>${esc(x.l)} <b>${nf(x.v/tot*100,0)}%</b></div>`).join('')}</div></div>`}
+function gauge(pct,label){const p=Math.max(0,Math.min(100,pct)),R=70,C=Math.PI*R,col=p>95?'#c0392b':p>=70?'#2e9e5b':'#c9a227';return `<div class="gg"><svg viewBox="0 0 180 110" width="220"><path d="M20 95 A70 70 0 0 1 160 95" fill="none" stroke="#e3ecf7" stroke-width="16" stroke-linecap="round"/><path d="M20 95 A70 70 0 0 1 160 95" fill="none" stroke="${col}" stroke-width="16" stroke-linecap="round" stroke-dasharray="${C*p/100} ${C}"/><text x="90" y="88" text-anchor="middle" font-size="26" font-weight="700" fill="#0f2a4a">${nf(pct,0)}%</text></svg><small class="muted">${label}</small></div>`}
+function activity(){const d=S.data,fc=id=>(d.flocks.find(f=>f.id===id)||{}).code||'';const it=[];
+ d.daily.forEach(r=>it.push({dt:r.rec_date,ic:'📝',tx:`${t('act_rec')} · ${fc(r.flock_id)} · ${t('c_mort2').split(' ')[0]} ${r.mortality} · ${nf(r.feed_kg,0)} ${t('u_kg')}`}));
+ d.sales.forEach(s=>it.push({dt:s.sale_date,ic:'🛒',tx:`${t('act_sale')} · ${fc(s.flock_id)} · ${nf(saleTot(s),0)} ${s.currency||''}`}));
+ d.vet.filter(v=>v.status==='done').forEach(v=>it.push({dt:v.rec_date,ic:'💉',tx:`${t('act_vet')} · ${fc(v.flock_id)}`}));
+ d.expenses.forEach(x=>it.push({dt:x.exp_date||x.expense_date||'',ic:'💸',tx:`${t('act_exp')}${fc(x.flock_id)?' · '+fc(x.flock_id):''} · ${nf(x.amount,0)}`}));
+ it.sort((a,b)=>a.dt<b.dt?1:-1);return it.slice(0,8)}
+function dashCharts(cs,op){const days=periodDays(),d=S.data;
+ const per=[7,30,90,0].map(n=>`<button class="chip ${days===n?'on':''}" data-a="per" data-n="${n}">${n?n+' '+t('u_day'):t('p_all')}</button>`).join('');
+ const items=op.map(c=>({l:c.f.code,v:c.live})),cap=[...new Set(op.map(c=>c.house.id))].reduce((s,id)=>s+(d.houses.find(h=>h.id===id).capacity||0),0),live=op.reduce((s,c)=>s+c.live,0);
+ const act=activity();
+ return `<div class="card" style="margin-top:12px"><div class="bar"><h3 style="flex:1;margin:0">${t('trend_t')}</h3><div class="chips">${per}</div></div><div class="grid two"><div><b class="muted">${t('c_feed2')}</b>${tsChart(dateSeries('feed_kg',days),'#c9a227',true)}</div><div><b class="muted">${t('c_mort2')}</b>${tsChart(dateSeries('mortality',days),'#c0392b',false)}</div></div></div>
+ <div class="grid two" style="margin-top:12px"><div class="card"><h3>${t('mix_t')}</h3>${donut(items)}<h3 style="margin-top:14px">${t('k_util')}</h3>${gauge(cap?live/cap*100:0,nf(live)+' / '+nf(cap))}</div>
+ <div class="card"><h3>${t('act_t')}</h3>${act.length?act.map(a=>`<div class="act"><i>${a.ic}</i><span>${esc(a.tx)}</span><small>${esc(a.dt)}</small></div>`).join(''):`<div class="empty">📭 ${t('empty_p')}</div>`}</div></div>`}
+
+function vDash(){const o=vDash0();if(!S.data.flocks.length)return o;const cs=S.data.flocks.map(calc),op=cs.filter(c=>c.f.status==='open');const al=allAlerts();const k=o.indexOf('<div class="grid k">');const e=o.lastIndexOf('<div class="grid two" style="margin-top:12px">');return o.slice(0,k)+heroBlock(op,al)+o.slice(k,e)+dashCharts(cs,op)+o.slice(e)}
+function vDash0(){
+  const d=S.data,cs=d.flocks.map(calc),op=cs.filter(c=>c.f.status==='open');
+  if(!d.flocks.length)return `<div class="card"><h2>${t('n_dash')}</h2><p>${t('nodata')}</p><div class="bar">${canW()?`<button class="btn" data-a="m_site">${t('add_site')}</button> <button class="btn ghost" data-a="m_house" style="color:#0b5cab">${t('add_house')}</button> <button class="btn ghost" data-a="m_flock" style="color:#0b5cab">${t('add_flock')}</button>`:''}</div></div>`;
+  const live=op.reduce((s,c)=>s+c.live,0),placed=op.reduce((s,c)=>s+c.f.placed_count,0),dead=op.reduce((s,c)=>s+c.dead,0);
+  const cap=[...new Set(op.map(c=>c.house.id))].reduce((s,id)=>s+(d.houses.find(h=>h.id===id).capacity||0),0);
+  const wc=op.filter(c=>c.fcr!=null),fcr=wc.length?wc.reduce((s,c)=>s+c.fcr*c.live,0)/wc.reduce((s,c)=>s+c.live,0):null;
+  const wa=op.filter(c=>c.adg!=null),adg=wa.length?wa.reduce((s,c)=>s+c.adg*c.live,0)/wa.reduce((s,c)=>s+c.live,0):null;
+  const ft=op.reduce((s,c)=>s+(c.today?Number(c.today.feed_kg):0),0),fa=op.reduce((s,c)=>s+c.feed,0);
+  const priced=op.filter(c=>c.cost!=null),cost=priced.reduce((s,c)=>s+c.cost,0),cur=priced[0]?priced[0].f.currency:'';
+  const pk=op.filter(c=>c.cpk!=null),cpk=pk.length&&pk.every(c=>c.f.currency===pk[0].f.currency)?pk.reduce((s,c)=>s+c.cost,0)/pk.reduce((s,c)=>s+c.liveKg,0):null;
+  const al=alerts(cs).concat(alerts2(cs)),test=d.sites.some(s=>s.is_test);
+  const sel=cs.find(c=>c.f.id===S.flock)||op[0]||cs[0];
+  return (test?`<div class="alert wr">⚠ ${t('test_banner')}</div>`:'')+`
+  <div class="grid k">
+  ${kpi(t('k_open'),op.length,'',t('n_flocks'))}${kpi(t('k_live'),nf(live),placed?nf(live/placed*100,1)+'% '+t('f_livab'):'',t('u_birds'))}
+  ${kpi(t('k_util'),cap?nf(live/cap*100,0)+'%':'—','',cap?nf(live)+' / '+nf(cap):'')}${kpi(t('k_mort'),placed?nf(dead/placed*100,2)+'%':'—',nf(dead)+' '+t('u_birds'))}
+  ${kpi(t('k_fcr'),fcr!=null?nf(fcr,2):'—',fcr!=null?t('s_weighted'):t('s_nodata'))}${kpi(t('k_adg'),adg!=null?nf(adg,1):'—',adg!=null?t('s_weighted'):t('s_nodata'),adg!=null?t('u_gd'):'')}
+  ${kpi(t('k_feedtoday'),nf(ft,0),nf(op.filter(c=>c.today).length)+' / '+op.length+' '+t('k_rec'),t('u_kg'))}${kpi(t('k_feedtot'),nf(fa/1000,1),'',t('u_t'))}
+  ${kpi(t('k_cost'),priced.length?nf(cost,0):'—',priced.length?cur+' · '+t('s_costnote'):t('s_noprice'))}${kpi(t('k_cpk'),cpk!=null?nf(cpk,2):'—',cpk!=null?pk[0].f.currency:t('s_noprice'))}
+  </div>
+  ${dash2(cs,op)}<div class="grid two" style="margin-top:12px"><div class="card"><h3>${t('alerts')}</h3>${al.length?al.map(a=>`<div class="alert ${a[0]}">${esc(a[1])}</div>`).join(''):`<div class="alert ok">${t('noalerts')}</div>`}<div class="muted" style="font-size:12px">${t('a_rules')}</div></div>
+  <div class="card"><h3>${sel?esc(sel.f.code):''} — ${t('c_wt')}</h3>${chart(sel?sel.recs.filter(r=>r.avg_weight_g!=null).map(r=>[dayDiff(sel.f.placed_on,r.rec_date),Number(r.avg_weight_g)]):[],{xl:t('c_day')})}
+  <div class="bar"><select data-a="pick">${cs.map(c=>`<option value="${c.f.id}" ${sel&&c.f.id===sel.f.id?'selected':''}>${esc(c.f.code)}</option>`).join('')}</select></div></div></div>
+  <div class="card" style="margin-top:12px"><h3>${t('flocks_t')}</h3>${flockTable(cs)}</div>`}
+function flockTable(cs){return `<div class="tw"><table><tr><th>${t('f_code')}</th><th>${t('f_site')}</th><th>${t('f_age')}</th><th>${t('f_live')}</th><th>${t('f_mort')}</th><th>${t('f_feed')}</th><th>${t('f_w')}</th><th title="${esc(t('help_fcr'))}">${t('f_fcr')}</th><th title="${esc(t('help_adg'))}">${t('f_adg')}</th><th title="${esc(t('help_epef'))}">${t('f_epef')}</th><th>${t('f_status')}</th></tr>`+
+  cs.map(c=>`<tr style="cursor:pointer" data-a="flock" data-id="${c.f.id}"><td><b>${esc(c.f.code)}</b> ${c.site.is_test?'<span class="tag test">TEST</span>':''}</td><td>${esc(c.site.name)} / ${esc(c.house.name)}</td><td>${c.age}</td><td>${nf(c.live)}</td><td>${nf(c.mortPct,2)}</td><td>${nf(c.feed)}</td><td>${nf(c.w)}</td><td>${nf(c.fcr,2)}</td><td>${nf(c.adg,1)}</td><td>${nf(c.epef,0)}</td><td><span class="tag ${c.f.status==='open'?'ok':''}">${t(c.f.status==='open'?'f_open':'f_closed')}</span></td></tr>`).join('')+'</table></div>'}
+function vFlocks(){const cs=S.data.flocks.map(calc);return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_flocks')}</h2>${canW()?`<button class="btn" data-a="m_flock">${t('add_flock')}</button>`:''}</div><div class="card">${cs.length?flockTable(cs):t('nodata')}</div>`}
+function vFlock(){const f=S.data.flocks.find(x=>x.id===S.flock);if(!f){S.route='flocks';return vFlocks()}
+  const c=calc(f);
+  return `<div class="bar"><button class="btn ghost" style="color:#0b5cab" data-a="go" data-r="flocks">← ${t('back')}</button><h2 style="margin:0;flex:1">${esc(f.code)} ${c.site.is_test?'<span class="tag test">TEST</span>':''} <small class="muted">${esc(c.site.name)} / ${esc(c.house.name)}${f.breed?' · '+esc(f.breed):''}</small></h2>
+  ${canW()?`<button class="btn" data-a="m_rec" data-id="${f.id}">${t('add_rec')}</button>`:''} ${canW()&&f.status==='open'?`<button class="btn gold" data-a="m_close" data-id="${f.id}">${t('close_flock')}</button>`:''} <button class="btn ghost" style="color:#0b5cab" data-a="csv" data-id="${f.id}">${t('export')}</button></div>
+  ${(()=>{const hb=S.data.hatches.find(h=>h.id===f.hatch_batch_id),pf=hb&&S.data.pflocks.find(p=>p.id===hb.pflock_id);return `<div class="alert in">${t('h_src')}: ${hb?`<b>${hb.set_date}</b> · ${esc(pf?pf.code:'')} · ${t('h_eggs')} ${nf(hb.eggs_set)}`:`<span class="tag wr">${t('h_nosrc')}</span>`}</div>`})()}
+  <div class="grid k">${kpi(t('f_age'),c.age,'',t('u_day'))}${kpi(t('f_live'),nf(c.live),nf(c.livab,1)+'% '+t('f_livab'),t('u_birds'))}${kpi(t('f_mort'),nf(c.mortPct,2)+'%',nf(c.dead)+' + '+nf(c.culls)+' '+t('r_cull'))}${kpi(t('f_w'),nf(c.w),c.wAge!=null?t('f_age')+' '+c.wAge:t('s_nodata'),t('u_g'))}${kpi(t('f_fcr'),nf(c.fcr,2),t('s_fcrdef'))}${kpi(t('f_adg'),nf(c.adg,1),'',t('u_gd'))}${kpi(t('f_epef'),nf(c.epef,0))}${kpi(t('f_feed'),nf(c.feed),c.feed?nf(c.feed/f.placed_count*1000,0)+' '+t('u_g')+'/'+t('u_birds'):'')}${kpi(t('k_cost'),c.cost!=null?nf(c.cost,0):'—',c.cost!=null?f.currency+' · '+t('s_costnote'):t('s_noprice'))}${kpi(t('k_cpk'),c.cpk!=null?nf(c.cpk,2):'—',c.cpk!=null?f.currency:'')}${kpi(t('fin_rev'),nf(c.revenue,0),c.sold?nf(c.sold)+' '+t('u_birds')+' ↗':'')}${kpi(t('fin_profit'),c.profit!=null?nf(c.profit,0):'—',c.profit!=null?f.currency+' · '+(f.status==='open'?t('f_open'):t('f_closed')):t('s_noprice'))}${c.wdEnd?`<div class="card kpi"><div class="l">${t('v_until')}</div><div class="v" style="color:#d98a00">${c.wdEnd}</div></div>`:''}</div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>${t('c_wt')}</h3>${chart(c.recs.filter(r=>r.avg_weight_g!=null).map(r=>[dayDiff(f.placed_on,r.rec_date),Number(r.avg_weight_g)]),{xl:t('c_day')})}</div>
+  <div class="card"><h3>${t('c_mort')}</h3>${chart(c.recs.map(r=>[dayDiff(f.placed_on,r.rec_date),r.mortality]),{bars:true,color:'#c0392b',xl:t('c_day')})}</div>
+  <div class="card"><h3>${t('c_feed')}</h3>${chart(c.recs.map(r=>[dayDiff(f.placed_on,r.rec_date),Number(r.feed_kg)]),{bars:true,color:'#c9a227',xl:t('c_day')})}</div>
+  <div class="card"><h3>🌾 ${t('feedlink')}</h3><p class="muted">${t('feedmill_note')}</p><a class="btn gold" style="text-decoration:none;display:inline-block" href="${CFG.FEED}" target="_blank" rel="noopener">${t('feedlink')}</a><p class="muted" style="font-size:12px;margin-top:12px">${t('help_fcr')}<br>${t('help_adg')}<br>${t('help_epef')}</p></div></div>
+  <div class="card" style="margin-top:12px"><h3>${t('records')}</h3>${c.recs.length?`<div class="tw"><table><tr><th>${t('r_date')}</th><th>${t('f_age')}</th><th>${t('r_mort')}</th><th>${t('r_cull')}</th><th>${t('r_feed')}</th><th>${t('r_water')}</th><th>${t('r_wt')}</th><th>${t('r_temp')}</th><th>${t('r_notes')}</th><th></th></tr>`+[...c.recs].reverse().map(r=>`<tr><td>${r.rec_date}</td><td>${dayDiff(f.placed_on,r.rec_date)}</td><td>${r.mortality}</td><td>${r.culls}</td><td>${nf(r.feed_kg,1)}</td><td>${nf(r.water_l,0)}</td><td>${nf(r.avg_weight_g,0)}</td><td>${nf(r.temp_c,1)}</td><td>${esc(r.notes||'')}</td><td>${canW()?`<button class="btn sm" data-a="m_rec" data-id="${f.id}" data-d="${r.rec_date}">${t('edit')}</button>`:''} ${S.role==='admin'?`<button class="btn sm red" data-a="delrec" data-id="${r.id}">${t('del')}</button>`:''}</td></tr>`).join('')+'</table></div>':t('norec')}</div>`}
+function vSites(){const d=S.data;return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_sites')}</h2>${canW()?`<button class="btn" data-a="m_site">${t('add_site')}</button> <button class="btn ghost" style="color:#0b5cab" data-a="m_house">${t('add_house')}</button>`:''}${S.role==='admin'&&d.sites.some(s=>s.is_test)?` <button class="btn red sm" data-a="deltest">${t('del_test')}</button>`:''}</div>`+
+  (d.sites.length?d.sites.map(s=>`<div class="card" style="margin-bottom:10px"><h3>${esc(s.name)} <span class="tag">${t('kind_'+s.kind)}</span> ${s.is_test?'<span class="tag test">TEST</span>':''} <span class="muted">${esc(s.location||'')}</span> ${S.role==='admin'?`<button class="btn sm red" data-a="delsite" data-id="${s.id}">${t('del')}</button>`:''}</h3>`+
+   (d.houses.filter(h=>h.site_id===s.id).map(h=>`<div class="muted">• ${esc(h.name)} — ${nf(h.capacity)} ${t('u_birds')}${h.area_m2?' · '+nf(h.area_m2)+' m²':''} ${S.role==='admin'?`<button class="btn sm red" data-a="delhouse" data-id="${h.id}">${t('del')}</button>`:''}</div>`).join('')||'')+'</div>').join(''):`<div class="card">${t('nodata')}</div>`)}
+function vMods(){
+  const L=[[1,'live'],[2,'live'],[3,'live'],[4,'live'],[5,'part']];for(let i=6;i<=20;i++)L.push([i,[6,7,8,9,10,11,12,13,14,15,12,16,17,18,19,20].includes(i)?'basic':'plan']);
+  return `<div class="hero"><h2 style="margin:0 0 6px">${t('m_title')}</h2><div>${t('m_desc')}</div></div><div class="grid two">`+L.map(([i,s])=>`<div class="card mod ${s==='live'?'live':s==='part'?'part':''}"><b>${i}. ${t('mod'+i)}</b><div style="margin-top:5px"><span class="tag ${s==='live'?'ok':s==='part'||s==='basic'?'wr':''}">${t(s==='live'?'m_live':s==='part'?'m_part':s==='basic'?'m_basic':'m_plan')}</span>${i===5?` <a href="${CFG.FEED}" target="_blank" rel="noopener">↗</a>`:''}</div></div>`).join('')+'</div>'}
+function vUsers(){return `<div class="card"><h3>${t('n_users')}</h3><p class="muted">${t('u_note')}</p><div class="tw"><table><tr><th>${t('u_email')}</th><th>${t('u_name')}</th><th>${t('u_role')}</th><th></th></tr>`+S.data.members.map(m=>`<tr><td>${esc(m.email)}</td><td>${esc(m.name||'')}</td><td>${t('role_'+m.role)}</td><td><button class="btn sm red" data-a="delmember" data-id="${esc(m.email)}">${t('del')}</button></td></tr>`).join('')+`</table></div><div class="bar"><button class="btn" data-a="m_member">${t('u_add')}</button></div></div>`}
+function vSet(){const L=LIM();return `<div class="card" style="max-width:520px"><h3>${t('set_t')}</h3><label>${t('set_dm')}</label><input id="s_dm" type="number" step="0.05" value="${L.dm}"><label>${t('set_cm')}</label><input id="s_cm" type="number" step="0.5" value="${L.cm}"><p class="muted">${t('set_note')}</p><button class="btn" data-a="saveset">${t('save')}</button></div>`}
+let AUD=[];
+function vAudit(){return `<div class="card"><h3>${t('au_t')}</h3><div class="tw"><table><tr><th>${t('au_time')}</th><th>${t('au_user')}</th><th>${t('au_act')}</th><th>${t('au_tbl')}</th></tr>`+AUD.map(a=>`<tr><td>${new Date(a.at).toLocaleString('en-GB')}</td><td>${esc(a.user_email||'')}</td><td>${a.action}</td><td>${a.tbl}</td></tr>`).join('')+'</table></div></div>'}
+const canW=()=>S.role==='admin'||S.role==='manager';
+/* ---------- forms ---------- */
+function toast(m,k){const d=document.createElement('div');d.className='toast '+(k||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),k==='err'?5000:2500)}
+function askc(m){return new Promise(r=>{const d=document.createElement('div');d.className='modal';d.innerHTML=`<div class="box" style="max-width:420px"><h3>${t('confirm_t')}</h3><p>${esc(m)}</p><div class="bar"><button class="btn red" id="cy">${t('confirm_y')}</button><button class="btn ghost" id="cn">${t('cancel')}</button></div></div>`;document.body.appendChild(d);const e=v=>{d.remove();r(v)};d.querySelector('#cy').onclick=()=>e(true);d.querySelector('#cn').onclick=()=>e(false)})}
+window.alert=m=>toast(String(m),'err');
+function fld0(f){const v=f.v==null?'':f.v;
+  if(f.type==='select')return `<label>${f.l}</label><select id="f_${f.k}">${f.o.map(o=>`<option value="${esc(o[0])}" ${String(o[0])===String(v)?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+  if(f.type==='check')return `<label><input type="checkbox" id="f_${f.k}" ${v?'checked':''}> ${f.l}</label>`;
+  return `<label>${f.l}</label><input id="f_${f.k}" type="${f.type||'text'}" ${f.step?'step="'+f.step+'"':''} value="${esc(v)}">`}
+function form(title,fields,onsave,note){S.modal={title,fields,onsave,note};draw()}
+function fld(f){return `<div class="fc">${fld0(Object.assign({},f,{l:f.l+(f.req?' *':'')}))}</div>`}
+function readForm(fields){const o={};for(const f of fields){const e=document.getElementById('f_'+f.k);let v=f.type==='check'?e.checked:e.value.trim();if(f.type==='number')v=v===''?null:Number(v);else if(v===''&&f.type!=='check')v=null;if(f.req&&(v===null||v===''))throw new Error(f.l);o[f.k]=v}return o}
+const houseOpts=()=>S.data.houses.map(h=>[h.id,(S.data.sites.find(s=>s.id===h.site_id)||{}).name+' / '+h.name]);
+const flockOpts=()=>S.data.flocks.filter(f=>f.status==='open').map(f=>[f.id,f.code]);
+async function insR(tbl,o,up){return api(tbl+(up?'?on_conflict='+up:''),{method:'POST',body:o,prefer:(up?'resolution=merge-duplicates,':'')+'return=representation'})}
+async function ins(tbl,o,up){await insR(tbl,o,up);await load()}
+async function del(tbl,col,id){if(!await askc(t('sure')))return;await api(tbl+'?'+col+'=eq.'+encodeURIComponent(id),{method:'DELETE'});await load();toast(t('deleted'),'ok')}
+const ACT={
+ go:e=>{S.route=e.dataset.r;if(S.route==='audit')loadAudit();draw()},
+ flock:e=>{S.flock=e.dataset.id;S.route='flock';draw();scrollTo(0,0)},
+ pick:e=>{S.flock=e.value;draw()},
+ m_site:()=>form(t('add_site'),[{k:'name',l:t('site_name'),req:1},{k:'kind',l:t('site_kind'),type:'select',o:['broiler_farm','parent_farm','layer_farm','hatchery','feed_mill','slaughterhouse','processing','cold_store','other'].map(k=>[k,t('kind_'+k)])},{k:'location',l:t('site_loc')},{k:'is_test',l:t('site_test'),type:'check'}],o=>ins('poultry_sites',o)),
+ m_house:()=>{if(!S.data.sites.length)return alert(t('nodata'));form(t('add_house'),[{k:'site_id',l:t('h_site'),type:'select',o:S.data.sites.map(s=>[s.id,s.name])},{k:'name',l:t('h_name'),req:1},{k:'capacity',l:t('h_cap'),type:'number'},{k:'area_m2',l:t('h_area'),type:'number'}],o=>ins('poultry_houses',o))},
+ m_flock:()=>{if(!S.data.houses.length)return alert(t('nodata'));form(t('add_flock'),[{k:'house_id',l:t('fl_house'),type:'select',o:houseOpts()},{k:'code',l:t('fl_code'),req:1},{k:'breed',l:t('fl_breed')},{k:'placed_on',l:t('fl_date'),type:'date',v:today(),req:1},{k:'placed_count',l:t('fl_count'),type:'number',req:1},{k:'chick_weight_g',l:t('fl_cw'),type:'number',v:42},{k:'chick_price',l:t('fl_cp'),type:'number',step:'any'},{k:'feed_price_per_kg',l:t('fl_fp'),type:'number',step:'any'},{k:'currency',l:t('fl_cur'),v:'EGP'},{k:'hatch_batch_id',l:t('h_src'),type:'select',o:[['',t('h_nosrc')]].concat(S.data.hatches.map(h=>[h.id,h.set_date+' · '+pfCode(h.pflock_id)+' · '+nf(h.eggs_set)]))},{k:'notes',l:t('fl_notes')}],o=>ins('poultry_flocks',o))},
+ m_rec:e=>{const fid=e.dataset.id||S.flock;const d=e.dataset.d||today();const ex=S.data.daily.find(r=>r.flock_id===fid&&r.rec_date===d)||{};
+  if(!fid&&!flockOpts().length)return alert(t('nodata'));
+  form(t('add_rec'),[{k:'flock_id',l:t('r_flock'),type:'select',o:S.data.flocks.map(f=>[f.id,f.code]),v:fid||(flockOpts()[0]||[])[0]},{k:'rec_date',l:t('r_date'),type:'date',v:d,req:1},{k:'mortality',l:t('r_mort'),type:'number',v:ex.mortality??0},{k:'culls',l:t('r_cull'),type:'number',v:ex.culls??0},{k:'feed_kg',l:t('r_feed'),type:'number',step:'any',v:ex.feed_kg??0},{k:'water_l',l:t('r_water'),type:'number',step:'any',v:ex.water_l},{k:'avg_weight_g',l:t('r_wt'),type:'number',step:'any',v:ex.avg_weight_g},{k:'temp_c',l:t('r_temp'),type:'number',step:'any',v:ex.temp_c},{k:'notes',l:t('r_notes'),v:ex.notes}],o=>{o.mortality=o.mortality||0;o.culls=o.culls||0;o.feed_kg=o.feed_kg||0;return ins('poultry_daily',o,'flock_id,rec_date')},t('r_over'))},
+ m_close:e=>form(t('close_flock'),[{k:'closed_on',l:t('closed_on'),type:'date',v:today(),req:1}],async o=>{await api('poultry_flocks?id=eq.'+e.dataset.id,{method:'PATCH',body:{status:'closed',closed_on:o.closed_on}});await load()}),
+ m_member:()=>form(t('u_add'),[{k:'email',l:t('u_email'),type:'email',req:1},{k:'name',l:t('u_name')},{k:'role',l:t('u_role'),type:'select',o:['viewer','manager','admin'].map(r=>[r,t('role_'+r)])}],o=>{o.email=o.email.toLowerCase();return ins('poultry_members',o)}),
+ delrec:e=>del('poultry_daily','id',e.dataset.id),delsite:e=>del('poultry_sites','id',e.dataset.id),delhouse:e=>del('poultry_houses','id',e.dataset.id),delmember:e=>del('poultry_members','email',e.dataset.id),
+ deltest:()=>del('poultry_sites','is_test','true'),
+ saveset:()=>{LS.setItem('pl_dm',document.getElementById('s_dm').value);LS.setItem('pl_cm',document.getElementById('s_cm').value);toast(t('saved'),'ok')},
+ csv:e=>{const c=calc(S.data.flocks.find(f=>f.id===e.dataset.id));const rows=[['date','age_days','mortality','culls','feed_kg','water_l','avg_weight_g','temp_c','notes']].concat(c.recs.map(r=>[r.rec_date,dayDiff(c.f.placed_on,r.rec_date),r.mortality,r.culls,r.feed_kg,r.water_l??'',r.avg_weight_g??'',r.temp_c??'',(r.notes||'').replace(/"/g,'""')]));
+  const b=new Blob(['\ufeff'+rows.map(r=>r.map(x=>'"'+x+'"').join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=c.f.code+'.csv';a.click()},
+ lang:()=>{LANG=LANG==='ar'?'en':'ar';LS.setItem('suite_lang',LANG);draw()},
+ signin:()=>{location.href=CFG.URL+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)},
+ signout:()=>{LS.removeItem(SK);location.reload()},
+ msave:async()=>{document.querySelectorAll('.bad').forEach(x=>x.classList.remove('bad'));let o;try{o=readForm(S.modal.fields)}catch(e){const f=S.modal.fields.find(x=>x.l===e.message),el=f&&document.getElementById('f_'+f.k);if(el){el.classList.add('bad');el.focus()}toast(t('req_f')+': '+e.message,'err');return}
+  const fn=S.modal.onsave,keep=S.modal;S.modal=null;try{await fn(o);toast(t('saved'),'ok')}catch(e){S.modal=keep;draw();toast(t('err')+e.message,'err')}},
+ mcancel:()=>{S.modal=null;draw()}};
+async function loadAudit(){try{AUD=await api('poultry_audit?select=*&order=at.desc&limit=200');draw()}catch(e){}}
+/* ---------- stage 2 ---------- */
+const bal=mid=>S.data.moves.filter(m=>m.material_id===mid).reduce((s,m)=>s+Number(m.qty),0);
+const avgCost=mid=>{const p=S.data.moves.filter(m=>m.material_id===mid&&Number(m.qty)>0&&m.unit_cost!=null&&m.kind!=='adjust');const q=p.reduce((s,m)=>s+Number(m.qty),0);return q?p.reduce((s,m)=>s+Number(m.qty)*Number(m.unit_cost),0)/q:null};
+const matName=id=>(S.data.materials.find(m=>m.id===id)||{}).name||'';
+const partName=id=>(S.data.partners.find(m=>m.id===id)||{}).name||'';
+const flockCode=id=>(S.data.flocks.find(m=>m.id===id)||{}).code||'';
+const matOpts=k=>S.data.materials.filter(m=>!k||m.kind===k).map(m=>[m.id,m.name]);
+const partOpts=ks=>[['',t('f_none')]].concat(S.data.partners.filter(p=>ks.includes(p.kind)||p.kind==='both').map(p=>[p.id,p.name]));
+const addDays=(d,n)=>{const x=new Date(d+'T00:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const stockVal=()=>S.data.materials.reduce((s,m)=>{const b=bal(m.id),a=avgCost(m.id);return s+(b>0&&a!=null?b*a:0)},0);
+const saleTot=s=>Number(s.weight_kg)*Number(s.price_per_kg);
+function coverDays(op){
+  const fm=S.data.materials.filter(m=>m.kind==='feed');if(!fm.length)return null;
+  const stock=fm.reduce((s,m)=>s+Math.max(0,bal(m.id)),0);
+  const from=addDays(today(),-3);const days=new Set();let tot=0;
+  op.forEach(c=>c.recs.filter(r=>r.rec_date>=from&&r.rec_date<=today()).forEach(r=>{tot+=Number(r.feed_kg);days.add(r.rec_date)}));
+  if(!days.size||tot<=0)return null;return stock/(tot/days.size)}
+function dash2(cs,op){const hr=hatchRate;
+  const d=S.data,rev=d.sales.reduce((s,x)=>s+saleTot(x),0),paid=d.sales.reduce((s,x)=>s+Number(x.paid),0);
+  const cv=coverDays(op),due=d.vet.filter(v=>v.status==='planned'&&v.rec_date<=addDays(today(),3)).length;
+  return `<div class="grid k" style="margin-top:12px">${kpi(t('k_stockval'),d.materials.length?nf(stockVal(),0):'—',d.materials.length?'':t('st_nomat'))}${kpi(t('k_cover'),cv!=null?nf(cv,1):'—','',cv!=null?t('u_days'):'')}${kpi(t('k_sales'),d.sales.length?nf(rev,0):'—',d.sales.length?nf(d.sales.reduce((s,x)=>s+Number(x.weight_kg),0),0)+' '+t('u_kg'):'')}${kpi(t('k_recv'),d.sales.length?nf(rev-paid,0):'—')}${kpi(t('k_vetdue'),nf(due,0))}${kpi(t('k_hatch'),hatchRate()!=null?nf(hatchRate(),1)+'%':'—')}${(()=>{const L=S.data.lflocks.filter(p=>p.status==='open').map(lcalc).filter(c=>c.hd!=null),hd=L.length?L.reduce((a,c)=>a+c.hd,0)/L.length:null,bad=S.data.crooms.map(ccalc).filter(c=>c.bad).length,m=today().slice(0,7),le=S.data.ledger.filter(x=>x.entry_date.slice(0,7)===m),net=le.reduce((a,x)=>a+(x.kind==='income'?1:-1)*Number(x.amount),0)+S.data.sales.filter(x=>x.sale_date.slice(0,7)===m).reduce((a,x)=>a+saleTot(x),0)-S.data.expenses.filter(x=>x.exp_date.slice(0,7)===m).reduce((a,x)=>a+Number(x.amount),0);return kpi(t('k_lay'),hd!=null?nf(hd,1)+'%':'—',L.length?'':t('ly_none'))+kpi(t('k_cold'),S.data.crooms.length?nf(bad,0):'—',S.data.crooms.length?'':t('cs_none'))+kpi(t('k_net'),S.data.ledger.length||S.data.sales.length?nf(net,0):'—','EGP')})()}</div>`}
+function alerts2(cs){const out=[],d=S.data;
+  d.vet.filter(v=>v.status==='planned'&&v.rec_date<=addDays(today(),3)).forEach(v=>out.push([v.rec_date<today()?'er':'wr',t('a_vetdue',t('kind_'+v.kind),v.product||'',flockCode(v.flock_id),v.rec_date)]));
+  cs.filter(c=>c.f.status==='open'&&c.wdEnd).forEach(c=>out.push(['wr',t('a_wd',c.f.code,c.wdEnd)]));
+  const cv=coverDays(cs.filter(c=>c.f.status==='open'));if(cv!=null&&cv<3)out.push(['er',t('a_cover',nf(cv,1))]);return out.concat(coldAlerts())}
+const tb=(h,rows)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.join('')}</table></div>`;
+const dx=(tbl,id)=>`<button class="btn sm red" data-a="delx" data-t="${tbl}" data-id="${id}">${t('del')}</button>`;
+function vStock(){const d=S.data;
+  const mats=d.materials.map(m=>{const b=bal(m.id),a=avgCost(m.id);return `<tr><td><b>${esc(m.name)}</b></td><td>${t('kind_'+m.kind)}</td><td>${esc(m.unit)}</td><td>${nf(b,1)}</td><td>${nf(a,2)}</td><td>${a!=null?nf(b*a,0):'—'}</td><td>${canW()?dx('poultry_materials',m.id):''}</td></tr>`});
+  const mv=d.moves.slice(0,100).map(m=>`<tr><td>${m.move_date}</td><td>${esc(matName(m.material_id))}</td><td>${t('mv_'+m.kind)}</td><td>${nf(m.qty,1)}</td><td>${nf(m.unit_cost,2)}</td><td>${esc(partName(m.partner_id)||flockCode(m.flock_id))}</td><td>${esc(m.notes||'')}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_stock')}</h2>${canW()?`<button class="btn" data-a="m_mat">${t('mat_add')}</button><button class="btn" data-a="m_purch">${t('st_purchase')}</button><button class="btn gold" data-a="m_batch">${t('st_batch')}</button><button class="btn ghost" style="color:#0b5cab" data-a="m_adj">${t('st_adjust')}</button>`:''}</div>
+  <div class="alert in">${t('st_note')} <a href="${CFG.FEED}" target="_blank" rel="noopener">${t('feedlink')} ↗</a></div>
+  <div class="card">${d.materials.length?tb([t('st_mat'),t('mat_kind'),t('mat_unit'),t('st_bal'),t('st_avg'),t('st_val'),''],mats):t('st_nomat')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('st_moves')}</h3>${d.moves.length?tb([t('st_date'),t('st_mat'),t('st_type'),t('st_qty'),t('st_cost'),t('st_partner')+' / '+t('r_flock'),t('r_notes')],mv):t('norec')}</div>`}
+function vVet(){const d=S.data;
+  const rows=d.vet.map(v=>`<tr><td>${v.rec_date}</td><td>${esc(flockCode(v.flock_id))}</td><td>${t('kind_'+v.kind)}</td><td>${esc(v.product||'')}</td><td><span class="tag ${v.status==='done'?'ok':'wr'}">${t('v_'+v.status)}</span></td><td>${v.withdrawal_days?addDays(v.rec_date,Number(v.withdrawal_days)):'—'}</td><td>${nf(v.cost,0)}</td><td>${esc(v.notes||'')}</td><td>${canW()?(v.status==='planned'?`<button class="btn sm" data-a="vdone" data-id="${v.id}">${t('v_done_btn')}</button> `:'')+dx('poultry_vet',v.id):''}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('v_title')}</h2>${canW()?`<button class="btn" data-a="m_vet">${t('v_add')}</button>`:''}</div><div class="card">${d.vet.length?tb([t('r_date'),t('r_flock'),t('v_kind'),t('v_prod'),t('v_status'),t('v_until'),t('v_cost'),t('r_notes'),''],rows):t('norec')}</div>`}
+function vSales(){const d=S.data;
+  const sr=d.sales.map(s=>`<tr><td>${s.sale_date}</td><td>${esc(partName(s.partner_id))}</td><td>${esc(flockCode(s.flock_id))}</td><td>${t('sk_'+s.kind)}</td><td>${nf(s.birds)}</td><td>${nf(s.weight_kg,1)}</td><td>${nf(s.price_per_kg,2)}</td><td>${nf(saleTot(s),0)} ${esc(s.currency||'')}</td><td>${nf(s.paid,0)}</td><td>${nf(saleTot(s)-Number(s.paid),0)}</td><td>${canW()?dx('poultry_sales',s.id):''}</td></tr>`);
+  const sl=d.slaughter.map(s=>`<tr><td>${s.slaughter_date}</td><td>${esc(flockCode(s.flock_id))}</td><td>${nf(s.birds_in)}</td><td>${nf(s.live_kg_in,1)}</td><td>${nf(s.carcass_kg_out,1)}</td><td><b>${nf(s.carcass_kg_out/s.live_kg_in*100,1)}%</b></td><td>${nf(s.condemned_birds)}</td><td>${canW()?dx('poultry_slaughter',s.id):''}</td></tr>`);
+  const pr=d.partners.map(p=>`<tr><td>${esc(p.name)}</td><td>${t('pk_'+p.kind)}</td><td>${esc(p.phone||'')}</td><td>${canW()?dx('poultry_partners',p.id):''}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_sales')}</h2>${canW()?`<button class="btn" data-a="m_sale">${t('s_add')}</button><button class="btn gold" data-a="m_slaughter">${t('sl_add')}</button><button class="btn ghost" style="color:#0b5cab" data-a="m_partner">${t('p_add')}</button>`:''}</div>
+  <div class="alert in">${t('help_sold')}</div>
+  <div class="card"><h3>${t('s_title')}</h3>${d.sales.length?tb([t('r_date'),t('s_cust'),t('r_flock'),t('s_kind'),t('s_birds'),t('s_wkg'),t('s_price'),t('s_total'),t('s_paid'),t('s_due'),''],sr):t('norec')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('sl_title')}</h3>${d.slaughter.length?tb([t('r_date'),t('r_flock'),t('sl_in'),t('sl_live'),t('sl_out'),t('sl_yield'),t('sl_cond'),''],sl):t('norec')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('p_title')}</h3>${d.partners.length?tb([t('u_name'),t('p_kind'),t('p_phone'),''],pr):t('norec')}</div>`}
+function vFin(){const d=S.data,cs=d.flocks.map(calc);
+  const rows=cs.map(c=>`<tr><td><b>${esc(c.f.code)}</b> ${c.site.is_test?'<span class="tag test">TEST</span>':''}</td><td><span class="tag ${c.f.status==='open'?'ok':''}">${t(c.f.status==='open'?'f_open':'f_closed')}</span></td><td>${nf(c.revenue,0)}</td><td>${nf(c.chickCost,0)}</td><td>${c.feedCostKnown?nf(c.feedCost,0):'—'}</td><td>${nf(c.vetCost,0)}</td><td>${nf(c.expCost,0)}</td><td>${nf(c.cost,0)}</td><td><b style="color:${c.profit==null?'inherit':c.profit>=0?'#1b8a4b':'#c0392b'}">${nf(c.profit,0)}</b></td><td>${c.profit!=null?nf(c.profit/c.f.placed_count,2):'—'}</td><td>${esc(c.f.currency||'')}</td></tr>`);
+  const un=d.expenses.filter(x=>!x.flock_id),unT=un.reduce((s,x)=>s+Number(x.amount),0);
+  const owing={};d.sales.forEach(s=>{const k=partName(s.partner_id)||'—';owing[k]=(owing[k]||0)+saleTot(s)-Number(s.paid)});
+  const ex=d.expenses.slice(0,50).map(x=>`<tr><td>${x.exp_date}</td><td>${t('cat_'+x.category)}</td><td>${esc(flockCode(x.flock_id)||t('f_none'))}</td><td>${nf(x.amount,0)} ${esc(x.currency||'')}</td><td>${esc(x.notes||'')}</td><td>${canW()?dx('poultry_expenses',x.id):''}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('fin_title')}</h2>${canW()?`<button class="btn" data-a="m_exp">${t('fin_add')}</button>`:''}</div>
+  <div class="alert in">${t('fin_note')}</div>
+  <div class="card">${cs.length?tb([t('f_code'),t('f_status'),t('fin_rev'),t('fin_chick'),t('fin_feed'),t('fin_vet'),t('fin_exp'),t('fin_cost'),t('fin_profit'),t('fin_per'),t('fin_cur')],rows):t('nodata')}</div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>${t('fin_recv')}</h3>${Object.keys(owing).some(k=>owing[k]>0.5)?tb([t('s_cust'),t('s_due')],Object.keys(owing).filter(k=>owing[k]>0.5).map(k=>`<tr><td>${esc(k)}</td><td>${nf(owing[k],0)}</td></tr>`)):t('norec')}</div>
+  <div class="card"><h3>${t('fin_over')}</h3><div class="kpi"><div class="v">${nf(unT,0)}</div></div></div></div>
+  <div class="card" style="margin-top:12px"><h3>${t('fin_exp')}</h3>${d.expenses.length?tb([t('r_date'),t('fin_cat'),t('r_flock'),t('fin_amt'),t('r_notes'),''],ex):t('norec')}</div>`}
+const flOpts=(o)=>[['',t('f_none')]].concat(S.data.flocks.map(f=>[f.id,f.code]));
+Object.assign(ACT,{
+ delx:e=>del(e.dataset.t,'id',e.dataset.id),
+ vdone:async e=>{await api('poultry_vet?id=eq.'+e.dataset.id,{method:'PATCH',body:{status:'done'}});await load()},
+ m_mat:()=>form(t('mat_add'),[{k:'name',l:t('mat_name'),req:1},{k:'kind',l:t('mat_kind'),type:'select',o:['raw','feed','medicine','other'].map(k=>[k,t('kind_'+k)])},{k:'unit',l:t('mat_unit'),v:'kg',req:1}],o=>ins('poultry_materials',o)),
+ m_purch:()=>{if(!S.data.materials.length)return alert(t('st_nomat'));form(t('st_purchase'),[{k:'material_id',l:t('st_mat'),type:'select',o:matOpts()},{k:'move_date',l:t('st_date'),type:'date',v:today(),req:1},{k:'qty',l:t('st_qty'),type:'number',step:'any',req:1},{k:'unit_cost',l:t('st_cost'),type:'number',step:'any',req:1},{k:'partner_id',l:t('st_partner'),type:'select',o:partOpts(['supplier'])},{k:'notes',l:t('r_notes')}],o=>{o.kind='purchase';return ins('poultry_stock_moves',o)})},
+ m_adj:()=>{if(!S.data.materials.length)return alert(t('st_nomat'));form(t('st_adjust'),[{k:'material_id',l:t('st_mat'),type:'select',o:matOpts()},{k:'move_date',l:t('st_date'),type:'date',v:today(),req:1},{k:'qty',l:t('st_qty')+' (+/−)',type:'number',step:'any',req:1},{k:'notes',l:t('r_notes')}],o=>{o.kind='adjust';o.unit_cost=avgCost(o.material_id);return ins('poultry_stock_moves',o)})},
+ m_batch:()=>{if(!matOpts('feed').length||!matOpts().length)return alert(t('st_nomat'));
+  const f=[{k:'out',l:t('st_out'),type:'select',o:matOpts('feed')},{k:'date',l:t('st_date'),type:'date',v:today(),req:1},{k:'qty',l:t('st_outq'),type:'number',step:'any',req:1}];
+  for(let i=1;i<=5;i++){f.push({k:'i'+i+'m',l:t('st_in',i),type:'select',o:[['',t('f_none')]].concat(matOpts())},{k:'i'+i+'q',l:t('st_inq',i),type:'number',step:'any'})}
+  f.push({k:'notes',l:t('r_notes')});
+  form(t('st_batch'),f,async o=>{const ins_=[];for(let i=1;i<=5;i++)if(o['i'+i+'m']&&o['i'+i+'q']>0)ins_.push({m:o['i'+i+'m'],q:o['i'+i+'q']});
+   if(!ins_.length)throw new Error(t('st_inq',1));
+   const need={};ins_.forEach(x=>need[x.m]=(need[x.m]||0)+x.q);const over=Object.keys(need).filter(m=>bal(m)<need[m]-1e-9).map(matName);
+   if(over.length&&!await askc(t('st_over',over.join(', '))))return load();
+   const id=crypto.randomUUID();let tot=0;const mv=ins_.map(x=>{const c=avgCost(x.m)||0;tot+=c*x.q;return{material_id:x.m,move_date:o.date,qty:-x.q,unit_cost:c,kind:'production_in',batch_id:id}});
+   mv.push({material_id:o.out,move_date:o.date,qty:o.qty,unit_cost:tot/o.qty,kind:'production_out',batch_id:id});
+   await api('poultry_batches',{method:'POST',body:{id,batch_date:o.date,output_material_id:o.out,output_qty:o.qty,notes:o.notes},prefer:'return=minimal'});
+   await api('poultry_stock_moves',{method:'POST',body:mv,prefer:'return=minimal'});await load()},t('st_bnote'))},
+ m_vet:()=>{if(!S.data.flocks.length)return alert(t('nof'));form(t('v_add'),[{k:'flock_id',l:t('r_flock'),type:'select',o:S.data.flocks.map(f=>[f.id,f.code])},{k:'rec_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'kind',l:t('v_kind'),type:'select',o:['vaccination','treatment','vet_visit','lab'].map(k=>[k,t('kind_'+k)])},{k:'product',l:t('v_prod')},{k:'status',l:t('v_status'),type:'select',o:[['done',t('v_done')],['planned',t('v_planned')]]},{k:'withdrawal_days',l:t('v_wd'),type:'number',v:0},{k:'cost',l:t('v_cost'),type:'number',step:'any'},{k:'notes',l:t('r_notes')}],o=>ins('poultry_vet',o))},
+ m_partner:()=>form(t('p_add'),[{k:'name',l:t('u_name'),req:1},{k:'kind',l:t('p_kind'),type:'select',o:['customer','supplier','both'].map(k=>[k,t('pk_'+k)])},{k:'phone',l:t('p_phone')}],o=>ins('poultry_partners',o)),
+ m_sale:()=>form(t('s_add'),[{k:'sale_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'flock_id',l:t('r_flock'),type:'select',o:flOpts()},{k:'partner_id',l:t('s_cust'),type:'select',o:partOpts(['customer'])},{k:'kind',l:t('s_kind'),type:'select',o:['live','carcass','product'].map(k=>[k,t('sk_'+k)])},{k:'birds',l:t('s_birds'),type:'number',v:0},{k:'weight_kg',l:t('s_wkg'),type:'number',step:'any',req:1},{k:'price_per_kg',l:t('s_price'),type:'number',step:'any',req:1},{k:'currency',l:t('fl_cur'),v:'EGP'},{k:'paid',l:t('s_paid'),type:'number',step:'any',v:0},{k:'notes',l:t('r_notes')}],o=>{o.birds=o.birds||0;o.paid=o.paid||0;return ins('poultry_sales',o)}),
+ m_slaughter:()=>{if(!S.data.flocks.length)return alert(t('nof'));form(t('sl_add'),[{k:'flock_id',l:t('r_flock'),type:'select',o:S.data.flocks.map(f=>[f.id,f.code])},{k:'slaughter_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'birds_in',l:t('sl_in'),type:'number',req:1},{k:'live_kg_in',l:t('sl_live'),type:'number',step:'any',req:1},{k:'carcass_kg_out',l:t('sl_out'),type:'number',step:'any',req:1},{k:'condemned_birds',l:t('sl_cond'),type:'number',v:0},{k:'notes',l:t('r_notes')}],o=>{o.condemned_birds=o.condemned_birds||0;return ins('poultry_slaughter',o)},t('help_sold'))},
+ m_exp:()=>form(t('fin_add'),[{k:'exp_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'category',l:t('fin_cat'),type:'select',o:['labor','electricity','fuel','water','maintenance','transport','rent','other'].map(k=>[k,t('cat_'+k)])},{k:'flock_id',l:t('r_flock'),type:'select',o:flOpts()},{k:'amount',l:t('fin_amt'),type:'number',step:'any',req:1},{k:'currency',l:t('fl_cur'),v:'EGP'},{k:'notes',l:t('r_notes')}],o=>ins('poultry_expenses',o))});
+/* ---------- stage 3 ---------- */
+const pfCode=id=>(S.data.pflocks.find(p=>p.id===id)||{}).code||'';
+const vehName=id=>(S.data.vehicles.find(v=>v.id===id)||{}).plate||'';
+function pcalc(p){
+  const recs=S.data.pdaily.filter(r=>r.pflock_id===p.id).sort((a,b)=>a.rec_date<b.rec_date?-1:1);
+  let liveF=p.females,live7=[];recs.forEach(r=>{liveF-=r.mortality_f;r._live=liveF});
+  const from=addDays(today(),-6),w=recs.filter(r=>r.rec_date>=from);
+  const eggs=w.reduce((s,r)=>s+r.eggs_total,0),hen=w.reduce((s,r)=>s+r._live,0),he=w.reduce((s,r)=>s+r.hatching_eggs,0),feed=w.reduce((s,r)=>s+Number(r.feed_kg),0);
+  return{p,recs,liveF,ageW:Math.floor(dayDiff(p.placed_on,today())/7),hd:hen?eggs/hen*100:null,hep:eggs?he/eggs*100:null,fg:hen?feed*1000/hen:null,today:recs.find(r=>r.rec_date===today())}}
+function hcalc(h){const inf=h.infertile,hat=h.hatched;const fert=inf!=null?(h.eggs_set-inf)/h.eggs_set*100:null;
+  return{h,fert,hof:hat!=null&&inf!=null&&h.eggs_set>inf?hat/(h.eggs_set-inf)*100:null,hos:hat!=null?hat/h.eggs_set*100:null,sale:hat!=null?hat-(h.culls||0):null}}
+function hatchRate(){const hs=S.data.hatches.filter(h=>h.hatched!=null);const e=hs.reduce((s,h)=>s+h.eggs_set,0);return e?hs.reduce((s,h)=>s+h.hatched,0)/e*100:null}
+function vHatch(){const d=S.data,ps=d.pflocks.map(pcalc);
+  const prow=ps.map(c=>`<tr><td><b>${esc(c.p.code)}</b> ${c.p.notes==='TEST'?'<span class="tag test">TEST</span>':''}</td><td>${esc(c.p.breed||'')}</td><td>${c.ageW}</td><td>${nf(c.liveF)}</td><td>${nf(c.hd,1)}</td><td>${nf(c.hep,1)}</td><td>${nf(c.fg,0)}</td><td>${canW()?`<button class="btn sm" data-a="m_prec" data-id="${c.p.id}">${t('ps_rec')}</button> `+dx('poultry_parent_flocks',c.p.id):''}</td></tr>`);
+  const hrow=d.hatches.map(hcalc).map(c=>`<tr><td>${c.h.set_date}</td><td>${esc(pfCode(c.h.pflock_id))}</td><td>${nf(c.h.eggs_set)}</td><td>${nf(c.fert,1)}</td><td>${nf(c.hof,1)}</td><td><b>${nf(c.hos,1)}</b></td><td>${c.h.hatched!=null?nf(c.sale):'<span class="tag wr">'+t('h_pend')+'</span>'}</td><td>${c.h.hatch_date||''}</td><td>${canW()?(c.h.hatched==null?`<button class="btn sm" data-a="m_hres" data-id="${c.h.id}">${t('h_res')}</button> `:'')+dx('poultry_hatch_batches',c.h.id):''}</td></tr>`);
+  const drow=d.pdaily.slice().sort((a,b)=>a.rec_date<b.rec_date?1:-1).slice(0,40).map(r=>`<tr><td>${r.rec_date}</td><td>${esc(pfCode(r.pflock_id))}</td><td>${r.mortality_f}</td><td>${r.mortality_m}</td><td>${nf(r.feed_kg,0)}</td><td>${nf(r.eggs_total)}</td><td>${nf(r.hatching_eggs)}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_hatch')}</h2>${canW()?`<button class="btn" data-a="m_pf">${t('ps_add')}</button><button class="btn gold" data-a="m_hatch">${t('h_add')}</button>`:''}</div>
+  <div class="card"><h3>${t('ps_title')}</h3>${ps.length?tb([t('f_code'),t('f_breed'),t('ps_age'),t('ps_hens'),t('ps_hd'),t('ps_hep'),t('ps_fg'),''],prow):t('norec')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('h_title')}</h3>${d.hatches.length?tb([t('h_set'),t('h_parent'),t('h_eggs'),t('h_fert'),t('h_hof'),t('h_hos'),t('h_gA'),t('h_hdate'),''],hrow):t('norec')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('ps_recs')}</h3>${d.pdaily.length?tb([t('r_date'),t('f_code'),t('ps_mf'),t('ps_mm'),t('r_feed'),t('ps_eggs'),t('ps_he')],drow):t('norec')}</div>`}
+function trcalc(x){const cost=Number(x.fuel_cost||0)+Number(x.other_cost||0);return{x,cost,perkm:x.distance_km>0?cost/x.distance_km:null,perkg:x.load_kg>0?cost/x.load_kg:null,l100:x.distance_km>0&&x.fuel_l!=null?x.fuel_l/x.distance_km*100:null}}
+function vFleet(){const d=S.data,tr=d.trips.map(trcalc);
+  const km=d.trips.reduce((s,x)=>s+Number(x.distance_km||0),0),cost=tr.reduce((s,c)=>s+c.cost,0),fuel=d.trips.reduce((s,x)=>s+Number(x.fuel_l||0),0);
+  const vr=d.vehicles.map(v=>{const ts=tr.filter(c=>c.x.vehicle_id===v.id),k=ts.reduce((s,c)=>s+Number(c.x.distance_km||0),0),c=ts.reduce((s,c)=>s+c.cost,0);return `<tr><td><b>${esc(v.plate)}</b></td><td>${esc(v.kind||'')}</td><td>${nf(v.capacity_kg)}</td><td>${ts.length}</td><td>${nf(k)}</td><td>${nf(c,0)}</td><td>${k?nf(c/k,2):'—'}</td><td>${canW()?dx('poultry_vehicles',v.id):''}</td></tr>`});
+  const rows=tr.map(c=>{const x=c.x,s=d.sales.find(s=>s.id===x.sale_id);return `<tr><td>${x.trip_date}</td><td>${esc(vehName(x.vehicle_id))}</td><td>${esc(x.driver||'')}</td><td>${t('pu_'+x.purpose)}</td><td>${esc(x.origin||'')} → ${esc(x.destination||'')}</td><td>${s?esc(flockCode(s.flock_id))+' '+s.sale_date:''}</td><td>${nf(x.load_kg)}</td><td>${nf(x.distance_km)}</td><td>${nf(c.cost,0)}</td><td>${nf(c.perkm,2)}</td><td>${nf(c.perkg,3)}</td><td>${nf(c.l100,1)}</td><td>${canW()?dx('poultry_trips',x.id):''}</td></tr>`});
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_fleet')}</h2>${canW()?`<button class="btn" data-a="m_trip">${t('tr_add')}</button><button class="btn ghost" style="color:#0b5cab" data-a="m_veh">${t('fl_vadd')}</button>`:''}</div>
+  <div class="grid k">${kpi(t('tr_title'),nf(d.trips.length))}${kpi(t('tr_km'),nf(km),'','km')}${kpi(t('tr_total'),nf(cost,0))}${kpi(t('tr_perkm'),km?nf(cost/km,2):'—')}${kpi(t('tr_l100'),km&&fuel?nf(fuel/km*100,1):'—')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('fl_title')}</h3>${d.vehicles.length?tb([t('fl_plate'),t('fl_vkind'),t('fl_cap'),t('tr_title'),t('tr_km'),t('tr_total'),t('tr_perkm'),''],vr):t('norec')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('tr_title')}</h3>${d.trips.length?tb([t('r_date'),t('tr_veh'),t('tr_driver'),t('tr_purpose'),t('tr_origin')+' → '+t('tr_dest'),t('tr_sale'),t('tr_load'),t('tr_km'),t('tr_total'),t('tr_perkm'),t('tr_perkg'),t('tr_l100'),''],rows):t('norec')}</div>`}
+function vTrace(){const d=S.data;if(!d.flocks.length)return `<div class="card">${t('nodata')}</div>`;
+  const f=d.flocks.find(x=>x.id===S.tflock)||d.flocks[0];S.tflock=f.id;const c=calc(f);
+  const hb=d.hatches.find(h=>h.id===f.hatch_batch_id),pf=hb&&d.pflocks.find(p=>p.id===hb.pflock_id);
+  const moves=d.moves.filter(m=>m.flock_id===f.id&&m.kind==='issue_flock');const byMat={};moves.forEach(m=>byMat[m.material_id]=(byMat[m.material_id]||0)+(-Number(m.qty)));
+  const feedDays=c.recs.filter(r=>Number(r.feed_kg)>0),linked=feedDays.filter(r=>d.moves.some(m=>m.daily_id===r.id));
+  const feedHtml=Object.keys(byMat).length?Object.keys(byMat).map(mid=>{
+    const bs=d.moves.filter(m=>m.material_id===mid&&m.kind==='production_out'&&m.batch_id);
+    const bh=bs.map(b=>{const ins=d.moves.filter(m=>m.batch_id===b.batch_id&&m.kind==='production_in');
+      const insTxt=ins.map(i=>{const sup=[...new Set(d.moves.filter(m=>m.material_id===i.material_id&&m.kind==='purchase'&&m.partner_id).map(m=>partName(m.partner_id)))];return esc(matName(i.material_id))+' '+nf(-i.qty)+' kg'+(sup.length?' ('+t('tc_sup')+': '+esc(sup.join(', '))+')':'')}).join('; ');
+      return `<div class="muted">• ${t('tc_batches')} ${b.move_date}: ${nf(b.qty)} kg — ${t('tc_inputs')}: ${insTxt||'—'}</div>`}).join('');
+    return `<div style="margin:6px 0"><b>${esc(matName(mid))}</b>: ${nf(byMat[mid])} ${t('tc_kg')}${bh}</div>`}).join(''):`<span class="tag er">${t('tc_no')}</span>`;
+  const vets=d.vet.filter(v=>v.flock_id===f.id);
+  const sales=d.sales.filter(s=>s.flock_id===f.id),trips=d.trips.filter(x=>sales.some(s=>s.id===x.sale_id));
+  const ck=(label,ok,extra)=>`<div>${ok?'✅':'⚠️'} ${label}: <span class="tag ${ok?'ok':'wr'}">${ok?t('tc_ok'):t('tc_no')}</span> ${extra||''}</div>`;
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('tc_title')}</h2><select data-a="tpick" style="width:auto">${d.flocks.map(x=>`<option value="${x.id}" ${x.id===f.id?'selected':''}>${esc(x.code)}</option>`).join('')}</select></div>
+  <div class="alert in">${t('tc_note')}</div>
+  <div class="grid two"><div class="card"><h3>${t('tc_check')}</h3>${ck(t('c_origin'),!!hb)}${ck(t('c_feed'),feedDays.length>0&&linked.length===feedDays.length,nf(linked.length)+' / '+nf(feedDays.length))}${ck(t('c_vet'),vets.length>0)}${ck(t('c_sales'),sales.length>0)}${ck(t('c_deliv'),trips.length>0)}</div>
+  <div class="card"><h3>${t('tc_origin')}</h3>${hb?`<div>${t('h_src')}: <b>${hb.set_date}</b> · ${t('h_eggs')} ${nf(hb.eggs_set)} · ${t('h_hat')} ${nf(hb.hatched)}</div><div>${t('h_parent')}: <b>${esc(pf?pf.code:'—')}</b> ${pf?esc(pf.breed||'')+' · '+t('tc_age')+' '+Math.floor(dayDiff(pf.placed_on,hb.set_date)/7):''}</div>`:`<span class="tag wr">${t('h_nosrc')}</span>`}<div class="muted" style="margin-top:6px">${t('fl_date')}: ${f.placed_on} · ${nf(f.placed_count)} ${t('u_birds')}</div></div>
+  <div class="card"><h3>${t('tc_feed')}</h3>${feedHtml}</div>
+  <div class="card"><h3>${t('tc_health')}</h3>${vets.length?vets.map(v=>`<div>• ${v.rec_date} ${t('kind_'+v.kind)} ${esc(v.product||'')} <span class="tag ${v.status==='done'?'ok':'wr'}">${t('v_'+v.status)}</span>${v.withdrawal_days?' · '+t('v_until')+' '+addDays(v.rec_date,Number(v.withdrawal_days)):''}</div>`).join(''):`<span class="tag wr">${t('tc_no')}</span>`}</div>
+  <div class="card"><h3>${t('tc_out')}</h3>${sales.length?sales.map(s=>{const tp=d.trips.filter(x=>x.sale_id===s.id);return `<div>• ${s.sale_date} ${t('sk_'+s.kind)} → <b>${esc(partName(s.partner_id)||'—')}</b> · ${nf(s.weight_kg,0)} ${t('u_kg')}${tp.map(x=>` · 🚚 ${esc(vehName(x.vehicle_id))} ${x.trip_date}`).join('')}</div>`}).join(''):`<span class="tag wr">${t('tc_no')}</span>`}${d.slaughter.filter(s=>s.flock_id===f.id).map(s=>`<div>• ${s.slaughter_date} ${t('sl_title')}: ${nf(s.birds_in)} ${t('u_birds')} · ${nf(s.carcass_kg_out/s.live_kg_in*100,1)}%</div>`).join('')}</div></div>`}
+/* assistant */
+function answer(q){const d=S.data,l=q.toLowerCase(),cs=d.flocks.map(calc),op=cs.filter(c=>c.f.status==='open');
+  const H=x=>`<h3>${x}</h3>`,none=`<div class="muted">${t('ai_nodata')}</div>`;
+  const list=(rows)=>rows.length?'<div>'+rows.map(r=>`<div style="padding:3px 0">• ${r}</div>`).join('')+'</div>':none;
+  if(/attention|today|alert|summary|اليوم|تنبيه|ملخص|انتباه/.test(l)){const al=alerts(cs).concat(alerts2(cs));return H(t('alerts'))+(al.length?al.map(a=>`<div class="alert ${a[0]}">${esc(a[1])}</div>`).join(''):`<div class="alert ok">${t('noalerts')}</div>`)}
+  if(/fcr|conversion|تحويل/.test(l)){const r=cs.filter(c=>c.fcr!=null).sort((a,b)=>a.fcr-b.fcr);return H(t('k_fcr'))+list(r.map((c,i)=>`<b>${esc(c.f.code)}</b>: ${nf(c.fcr,2)} (${t('f_age')} ${c.wAge}) ${i===0&&r.length>1?'← '+t('ai_best'):i===r.length-1&&r.length>1?'← '+t('ai_worst'):''}`))}
+  if(/mortal|death|نفوق|وفيات/.test(l)){const r=cs.slice().sort((a,b)=>a.mortPct-b.mortPct);return H(t('ai_s8'))+list(r.map(c=>`<b>${esc(c.f.code)}</b>: ${nf(c.mortPct,2)}% (${nf(c.dead)} ${t('u_birds')})`))}
+  if(/cover|stock|مخزون|يكفي/.test(l)){const cv=coverDays(op);return H(t('n_stock'))+list(d.materials.map(m=>`<b>${esc(m.name)}</b>: ${nf(bal(m.id),0)} ${esc(m.unit)}`).concat(cv!=null?[`${t('k_cover')}: <b>${nf(cv,1)} ${t('u_days')}</b>`]:[]))}
+  if(/profit|loss|margin|ربح|خسار|ارباح/.test(l)){return H(t('fin_title'))+list(cs.filter(c=>c.profit!=null).map(c=>`<b>${esc(c.f.code)}</b>: ${nf(c.profit,0)} ${esc(c.f.currency||'')} (${t(c.f.status==='open'?'f_open':'f_closed')})`))}
+  if(/owe|receiv|debt|owing|مستحق|مديون|يدين|عملاء|فلوس/.test(l)){const ow={};d.sales.forEach(s=>{const k=partName(s.partner_id)||'—';ow[k]=(ow[k]||0)+saleTot(s)-Number(s.paid)});return H(t('fin_recv'))+list(Object.keys(ow).filter(k=>ow[k]>0.5).map(k=>`<b>${esc(k)}</b>: ${nf(ow[k],0)}`))}
+  if(/vet|vaccin|withdraw|treat|تحصين|بيطر|سحب|علاج/.test(l)){const r=d.vet.filter(v=>v.status==='planned').map(v=>`${v.rec_date} <b>${esc(flockCode(v.flock_id))}</b> ${t('kind_'+v.kind)} ${esc(v.product||'')}`).concat(cs.filter(c=>c.f.status==='open'&&c.wdEnd).map(c=>t('a_wd',c.f.code,c.wdEnd)));return H(t('n_vet'))+list(r)}
+  if(/hatch|fertil|egg|تفريخ|مفرخ|بيض|خصوبة|فقس/.test(l)){const hr=hatchRate();return H(t('h_title'))+list(d.hatches.map(hcalc).map(c=>`${c.h.set_date} ${esc(pfCode(c.h.pflock_id))}: ${t('h_fert')} ${nf(c.fert,1)} · ${t('h_hos')} ${nf(c.hos,1)}`).concat(hr!=null?[`<b>${t('k_hatch')}: ${nf(hr,1)}%</b>`]:[]))}
+  if(/fleet|truck|trip|fuel|vehicle|نقل|شاحن|رحل|وقود|سيار/.test(l)){const tr=d.trips.map(trcalc),km=d.trips.reduce((s,x)=>s+Number(x.distance_km||0),0),c=tr.reduce((s,x)=>s+x.cost,0);return H(t('n_fleet'))+list(km?[`${t('tr_perkm')}: <b>${nf(c/km,2)}</b>`,`${t('tr_total')}: ${nf(c,0)} · ${nf(km)} km`]:[])}
+  return `<div class="muted">${t('ai_unknown')}</div>`}
+Object.assign(ACT,{
+ tpick:e=>{S.tflock=e.value;draw()},
+ ask:()=>{const q=document.getElementById('aiq').value.trim();if(!q)return;S.ai={q,a:answer(q)};draw()},
+ askq:e=>{S.ai={q:t(e.dataset.k),a:answer(t(e.dataset.k))};draw()},
+ m_pf:()=>form(t('ps_add'),[{k:'code',l:t('fl_code'),req:1},{k:'breed',l:t('fl_breed')},{k:'house_id',l:t('fl_house'),type:'select',o:[['',t('f_none')]].concat(houseOpts())},{k:'placed_on',l:t('fl_date'),type:'date',v:today(),req:1},{k:'females',l:t('ps_females'),type:'number',req:1},{k:'males',l:t('ps_males'),type:'number',v:0}],o=>ins('poultry_parent_flocks',o)),
+ m_prec:e=>{const ex=S.data.pdaily.find(r=>r.pflock_id===e.dataset.id&&r.rec_date===today())||{};form(t('ps_rec'),[{k:'pflock_id',l:t('f_code'),type:'select',o:S.data.pflocks.map(p=>[p.id,p.code]),v:e.dataset.id},{k:'rec_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'mortality_f',l:t('ps_mf'),type:'number',v:ex.mortality_f??0},{k:'mortality_m',l:t('ps_mm'),type:'number',v:ex.mortality_m??0},{k:'feed_kg',l:t('r_feed'),type:'number',step:'any',v:ex.feed_kg??0},{k:'eggs_total',l:t('ps_eggs'),type:'number',v:ex.eggs_total??0},{k:'hatching_eggs',l:t('ps_he'),type:'number',v:ex.hatching_eggs??0}],o=>{['mortality_f','mortality_m','feed_kg','eggs_total','hatching_eggs'].forEach(k=>o[k]=o[k]||0);return ins('poultry_parent_daily',o,'pflock_id,rec_date')},t('r_over'))},
+ m_hatch:()=>{if(!S.data.pflocks.length)return alert(t('ps_none'));form(t('h_add'),[{k:'pflock_id',l:t('h_parent'),type:'select',o:S.data.pflocks.map(p=>[p.id,p.code])},{k:'set_date',l:t('h_set'),type:'date',v:today(),req:1},{k:'eggs_set',l:t('h_eggs'),type:'number',req:1},{k:'notes',l:t('r_notes')}],o=>ins('poultry_hatch_batches',o))},
+ m_hres:e=>form(t('h_res'),[{k:'hatch_date',l:t('h_hdate'),type:'date',v:today(),req:1},{k:'infertile',l:t('h_inf'),type:'number',req:1},{k:'hatched',l:t('h_hat'),type:'number',req:1},{k:'culls',l:t('h_cull'),type:'number',v:0}],async o=>{o.culls=o.culls||0;await api('poultry_hatch_batches?id=eq.'+e.dataset.id,{method:'PATCH',body:o});await load()}),
+ m_veh:()=>form(t('fl_vadd'),[{k:'plate',l:t('fl_plate'),req:1},{k:'kind',l:t('fl_vkind'),v:'truck'},{k:'capacity_kg',l:t('fl_cap'),type:'number'}],o=>ins('poultry_vehicles',o)),
+ m_trip:()=>{if(!S.data.vehicles.length)return alert(t('tr_nov'));form(t('tr_add'),[{k:'trip_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'vehicle_id',l:t('tr_veh'),type:'select',o:S.data.vehicles.map(v=>[v.id,v.plate])},{k:'driver',l:t('tr_driver')},{k:'purpose',l:t('tr_purpose'),type:'select',o:['birds','feed','products','chicks','other'].map(k=>[k,t('pu_'+k)])},{k:'origin',l:t('tr_origin')},{k:'destination',l:t('tr_dest')},{k:'sale_id',l:t('tr_sale'),type:'select',o:[['',t('f_none')]].concat(S.data.sales.map(s=>[s.id,s.sale_date+' '+flockCode(s.flock_id)+' '+partName(s.partner_id)]))},{k:'load_kg',l:t('tr_load'),type:'number',step:'any'},{k:'distance_km',l:t('tr_km'),type:'number',step:'any'},{k:'fuel_l',l:t('tr_fuel'),type:'number',step:'any'},{k:'fuel_cost',l:t('tr_fcost'),type:'number',step:'any',v:0},{k:'other_cost',l:t('tr_ocost'),type:'number',step:'any',v:0},{k:'notes',l:t('r_notes')}],o=>{o.fuel_cost=o.fuel_cost||0;o.other_cost=o.other_cost||0;return ins('poultry_trips',o)})}});
+function vAi(){return `<div class="card"><h3>🤖 ${t('ai_title')}</h3><div class="alert in">${t('ai_note')}</div><div class="bar"><input id="aiq" style="flex:1;min-width:220px" placeholder="${esc(t('ai_ph'))}" onkeydown="if(event.key==='Enter')ACT.ask()"><button class="btn" data-a="ask">${t('ai_ask')}</button></div><div class="bar">${[1,2,3,4,5,6,7,8].map(i=>`<button class="btn sm ghost" style="color:#0b5cab" data-a="askq" data-k="ai_s${i}">${t('ai_s'+i)}</button>`).join('')}</div>${S.ai?`<div class="card" style="background:#f6fafe;margin-top:8px"><div class="muted" style="font-size:12px">${t('ai_q')}: ${esc(S.ai.q)}</div>${S.ai.a}</div>`:''}</div>`}
+/* ---------- stage 4: layers ---------- */
+const lyCode=id=>(S.data.lflocks.find(p=>p.id===id)||{}).code||'';
+function lcalc(p){const recs=S.data.ldaily.filter(r=>r.lflock_id===p.id).sort((a,b)=>a.rec_date<b.rec_date?-1:1);
+  let live=p.placed_count,dead=0;recs.forEach(r=>{live-=r.mortality;dead+=r.mortality;r._live=live});
+  const from=addDays(today(),-6),w=recs.filter(r=>r.rec_date>=from),sum=k=>w.reduce((s,r)=>s+Number(r[k]),0);
+  const eggs=sum('eggs_total'),hen=w.reduce((s,r)=>s+r._live,0),cr=sum('eggs_cracked'),gb=sum('eggs_gradeb'),feed=sum('feed_kg');
+  return{p,live,ageW:Math.floor(dayDiff(p.placed_on,today())/7),mort:dead/p.placed_count*100,hd:hen?eggs/hen*100:null,ga:eggs?(eggs-cr-gb)/eggs*100:null,gb:eggs?gb/eggs*100:null,cr:eggs?cr/eggs*100:null,fg:hen?feed*1000/hen:null,fd:eggs?feed/(eggs/12):null}}
+function vLayers(){const d=S.data,cs=d.lflocks.map(lcalc);
+  const rows=cs.map(c=>`<tr><td><b>${esc(c.p.code)}</b> ${c.p.notes==='TEST'?'<span class="tag test">TEST</span>':''}</td><td>${c.ageW}</td><td>${nf(c.live)}</td><td>${nf(c.hd,1)}</td><td>${nf(c.ga,1)}</td><td>${nf(c.gb,1)}</td><td>${nf(c.cr,1)}</td><td>${nf(c.fg,0)}</td><td>${nf(c.fd,2)}</td><td>${nf(c.mort,2)}</td><td>${canW()?`<button class="btn sm" data-a="m_lrec" data-id="${c.p.id}">${t('ly_rec')}</button> `+dx('poultry_layer_flocks',c.p.id):''}</td></tr>`);
+  const dr=d.ldaily.slice().sort((a,b)=>a.rec_date<b.rec_date?1:-1).slice(0,30).map(r=>`<tr><td>${r.rec_date}</td><td>${esc(lyCode(r.lflock_id))}</td><td>${r.mortality}</td><td>${nf(r.feed_kg,0)}</td><td>${nf(r.eggs_total)}</td><td>${nf(r.eggs_total-r.eggs_cracked-r.eggs_gradeb)}</td><td>${nf(r.eggs_gradeb)}</td><td>${nf(r.eggs_cracked)}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_layers')}</h2>${canW()?`<button class="btn" data-a="m_lf">${t('ly_add')}</button>`:''}</div><div class="alert in">${t('ly_note')}</div>
+  <div class="card"><h3>${t('ly_title')}</h3>${cs.length?tb([t('f_code'),t('ly_age'),t('ly_hens'),t('ly_hd'),t('ly_ga'),t('ly_gb'),t('ly_cr'),t('ly_fg'),t('ly_fd'),t('ly_mort'),''],rows):t('ly_none')}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('ly_recs')}</h3>${d.ldaily.length?tb([t('r_date'),t('f_code'),t('ly_mort1'),t('r_feed'),t('ly_eggs'),t('ly_a'),t('ly_b'),t('ly_crk')],dr):t('norec')}</div>`}
+Object.assign(ACT,{
+ m_lf:()=>form(t('ly_add'),[{k:'code',l:t('fl_code'),req:1},{k:'breed',l:t('fl_breed')},{k:'house_id',l:t('fl_house'),type:'select',o:[['',t('f_none')]].concat(houseOpts())},{k:'placed_on',l:t('fl_date'),type:'date',v:today(),req:1},{k:'placed_count',l:t('ly_count'),type:'number',req:1}],o=>ins('poultry_layer_flocks',o)),
+ m_lrec:e=>{const ex=S.data.ldaily.find(r=>r.lflock_id===e.dataset.id&&r.rec_date===today())||{};form(t('ly_rec'),[{k:'lflock_id',l:t('f_code'),type:'select',o:S.data.lflocks.map(p=>[p.id,p.code]),v:e.dataset.id},{k:'rec_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'mortality',l:t('ly_mort1'),type:'number',v:ex.mortality??0},{k:'feed_kg',l:t('r_feed'),type:'number',step:'any',v:ex.feed_kg??0},{k:'eggs_total',l:t('ly_eggs'),type:'number',v:ex.eggs_total??0},{k:'eggs_gradeb',l:t('ly_b'),type:'number',v:ex.eggs_gradeb??0},{k:'eggs_cracked',l:t('ly_crk'),type:'number',v:ex.eggs_cracked??0}],o=>{['mortality','feed_kg','eggs_total','eggs_gradeb','eggs_cracked'].forEach(k=>o[k]=o[k]||0);if(o.eggs_gradeb+o.eggs_cracked>o.eggs_total){alert(t('err')+'grade B + cracked > total');return}return ins('poultry_layer_daily',o,'lflock_id,rec_date')},t('r_over'))}});
+/* ---------- stage 4: cold storage ---------- */
+const crName=id=>(S.data.crooms.find(r=>r.id===id)||{}).code||'';
+function ccalc(r){const ms=S.data.cmoves.filter(m=>m.room_id===r.id);const stock=ms.reduce((s,m)=>s+(m.kind==='in'?1:-1)*Number(m.qty_kg),0);
+  const tp=S.data.ctemps.filter(x=>x.room_id===r.id).sort((a,b)=>a.logged_at<b.logged_at?1:-1)[0];
+  const bad=tp&&(Number(tp.temp_c)<Number(r.min_c)||Number(tp.temp_c)>Number(r.max_c));
+  const prods={};ms.forEach(m=>{const p=prods[m.product]=prods[m.product]||{bal:0,exp:null};p.bal+=(m.kind==='in'?1:-1)*Number(m.qty_kg);if(m.kind==='in'&&m.expiry_date&&(!p.exp||m.expiry_date<p.exp))p.exp=m.expiry_date});
+  return{r,stock,util:stock/Number(r.capacity_kg)*100,tp,bad,prods}}
+function coldAlerts(){const out=[],lim=addDays(today(),7);S.data.crooms.map(ccalc).forEach(c=>{
+  if(c.bad)out.push(['er',t('cs_alert_t').replace('%1',c.r.code).replace('%2',c.tp.temp_c).replace('%3',c.r.min_c).replace('%4',c.r.max_c)]);
+  const ex=Object.keys(c.prods).filter(k=>c.prods[k].bal>0.5&&c.prods[k].exp&&c.prods[k].exp<=lim);
+  if(ex.length)out.push(['wr',t('cs_alert_e').replace('%1',c.r.code).replace('%2',ex.join(', '))])});return out}
+function vCold(){const d=S.data,cs=d.crooms.map(ccalc),al=coldAlerts();
+  const rr=cs.map(c=>`<tr><td><b>${esc(c.r.code)}</b> ${c.r.notes==='TEST'?'<span class="tag test">TEST</span>':''}</td><td>${t('cs_'+c.r.kind)}</td><td>${nf(c.r.capacity_kg)}</td><td>${c.r.min_c} / ${c.r.max_c}</td><td>${nf(c.stock,0)}</td><td>${nf(c.util,1)}</td><td>${c.tp?c.tp.temp_c+' <span class="tag '+(c.bad?'er':'ok')+'">'+t(c.bad?'cs_bad':'cs_ok')+'</span>':'<span class="tag wr">'+t('cs_nolog')+'</span>'}</td><td>${canW()?dx('poultry_cold_rooms',c.r.id):''}</td></tr>`);
+  const pr=[];cs.forEach(c=>Object.keys(c.prods).forEach(k=>pr.push(`<tr><td>${esc(c.r.code)}</td><td>${esc(k)}</td><td>${nf(c.prods[k].bal,0)}</td><td>${c.prods[k].exp||''}</td></tr>`)));
+  const mv=d.cmoves.slice().sort((a,b)=>a.move_date<b.move_date?1:-1).slice(0,30).map(m=>`<tr><td>${m.move_date}</td><td>${esc(crName(m.room_id))}</td><td>${t('cs_'+m.kind)}</td><td>${esc(m.product)}</td><td>${nf(m.qty_kg,0)}</td><td>${m.expiry_date||''}</td><td>${canW()?dx('poultry_cold_moves',m.id):''}</td></tr>`);
+  const tl=d.ctemps.slice().sort((a,b)=>a.logged_at<b.logged_at?1:-1).slice(0,20).map(x=>`<tr><td>${new Date(x.logged_at).toLocaleString(LANG==='ar'?'ar-EG':'en-GB')}</td><td>${esc(crName(x.room_id))}</td><td>${x.temp_c}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_cold')}</h2>${canW()?`<button class="btn" data-a="m_croom">${t('cs_addroom')}</button><button class="btn gold" data-a="m_cmove">${t('cs_move')}</button><button class="btn ghost" style="color:#0b5cab" data-a="m_ctemp">${t('cs_temp')}</button>`:''}</div>
+  ${al.map(a=>`<div class="alert ${a[0]}">${esc(a[1])}</div>`).join('')}<div class="alert in">${t('cs_note')}</div>
+  <div class="card"><h3>${t('cs_rooms')}</h3>${cs.length?tb([t('cs_code'),t('cs_kind'),t('cs_cap'),t('cs_min')+' / '+t('cs_max'),t('cs_stock'),t('cs_util'),t('cs_last'),''],rr):t('cs_none')}</div>
+  <div class="grid two" style="margin-top:12px"><div class="card"><h3>${t('cs_prod')}</h3>${pr.length?tb([t('cs_code'),t('cs_product'),t('cs_bal'),t('cs_exp')],pr):t('norec')}</div><div class="card"><h3>${t('cs_temps')}</h3>${tl.length?tb([t('r_date'),t('cs_code'),'°C'],tl):t('norec')}</div></div>
+  <div class="card" style="margin-top:12px"><h3>${t('cs_moves')}</h3>${mv.length?tb([t('r_date'),t('cs_code'),t('cs_kind'),t('cs_product'),t('cs_qty'),t('cs_ed'),''],mv):t('norec')}</div>`}
+Object.assign(ACT,{
+ m_croom:()=>form(t('cs_addroom'),[{k:'code',l:t('cs_code'),req:1},{k:'kind',l:t('cs_kind'),type:'select',o:[['frozen',t('cs_frozen')],['chilled',t('cs_chilled')]]},{k:'capacity_kg',l:t('cs_cap'),type:'number',req:1},{k:'min_c',l:t('cs_min'),type:'number',step:'any',req:1},{k:'max_c',l:t('cs_max'),type:'number',step:'any',req:1}],o=>ins('poultry_cold_rooms',o)),
+ m_cmove:()=>{if(!S.data.crooms.length)return alert(t('cs_none'));form(t('cs_move'),[{k:'room_id',l:t('cs_code'),type:'select',o:S.data.crooms.map(r=>[r.id,r.code])},{k:'move_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'kind',l:t('cs_kind'),type:'select',o:[['in',t('cs_in')],['out',t('cs_out')],['waste',t('cs_waste')]]},{k:'product',l:t('cs_product'),req:1},{k:'qty_kg',l:t('cs_qty'),type:'number',step:'any',req:1},{k:'production_date',l:t('cs_pd'),type:'date'},{k:'expiry_date',l:t('cs_ed'),type:'date'}],o=>{if(!o.production_date)delete o.production_date;if(!o.expiry_date)delete o.expiry_date;return ins('poultry_cold_moves',o)})},
+ m_ctemp:()=>{if(!S.data.crooms.length)return alert(t('cs_none'));form(t('cs_temp'),[{k:'room_id',l:t('cs_code'),type:'select',o:S.data.crooms.map(r=>[r.id,r.code])},{k:'temp_c',l:'°C',type:'number',step:'any',req:1}],o=>ins('poultry_cold_temps',o))}});
+/* ---------- stage 4: ledger ---------- */
+const LG_ACTS=['procurement','feed_mill','parent_stock','hatchery','broilers','layers','slaughter','cold_storage','distribution','admin','other'];
+function vLedger(){const d=S.data,m=S.lmonth||today().slice(0,7);S.lmonth=m;
+  const es=d.ledger.filter(x=>x.entry_date.slice(0,7)===m);
+  const ss=d.sales.filter(s=>s.sale_date.slice(0,7)===m).reduce((s,x)=>s+saleTot(x),0),xs=d.expenses.filter(x=>x.exp_date.slice(0,7)===m).reduce((s,x)=>s+Number(x.amount),0);
+  const by={};LG_ACTS.forEach(a=>by[a]={i:0,e:0});es.forEach(x=>by[x.activity][x.kind==='income'?'i':'e']+=Number(x.amount));
+  const sum=LG_ACTS.filter(a=>by[a].i||by[a].e).map(a=>`<tr><td>${t('a_'+a)}</td><td>${nf(by[a].i,0)}</td><td>${nf(by[a].e,0)}</td><td><b>${nf(by[a].i-by[a].e,0)}</b></td></tr>`);
+  const TI=es.filter(x=>x.kind==='income').reduce((s,x)=>s+Number(x.amount),0)+ss,TE=es.filter(x=>x.kind==='expense').reduce((s,x)=>s+Number(x.amount),0)+xs;
+  sum.push(`<tr><td>${t('lg_auto_s')}</td><td>${nf(ss,0)}</td><td></td><td>${nf(ss,0)}</td></tr><tr><td>${t('lg_auto_e')}</td><td></td><td>${nf(xs,0)}</td><td>${nf(-xs,0)}</td></tr><tr style="font-weight:700"><td>${t('lg_total')}</td><td>${nf(TI,0)}</td><td>${nf(TE,0)}</td><td style="color:${TI-TE>=0?'#1b8a4b':'#c0392b'}">${nf(TI-TE,0)}</td></tr>`);
+  const rows=es.sort((a,b)=>a.entry_date<b.entry_date?1:-1).map(x=>`<tr><td>${x.entry_date}</td><td>${t('a_'+x.activity)}</td><td><span class="tag ${x.kind==='income'?'ok':'wr'}">${t('lg_'+x.kind)}</span></td><td>${esc(x.category||'')}</td><td>${nf(x.amount,0)}</td><td>${x.notes==='TEST'?'<span class="tag test">TEST</span>':''}${canW()?' '+dx('poultry_ledger',x.id):''}</td></tr>`);
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_ledger')}</h2><label style="margin:0">${t('lg_month')}</label><input type="month" id="lmonth" value="${m}" style="width:auto" data-a="lmonth">${canW()?`<button class="btn" data-a="m_lg">${t('lg_add')}</button>`:''}</div><div class="alert in">${t('lg_note')}</div>
+  <div class="card"><h3>${t('lg_sum')} · ${m}</h3>${tb([t('lg_act'),t('lg_income'),t('lg_expense'),t('lg_net')],sum)}</div>
+  <div class="card" style="margin-top:12px"><h3>${t('lg_entries')}</h3>${rows.length?tb([t('r_date'),t('lg_act'),t('lg_kind'),t('lg_cat'),t('lg_amt'),''],rows):t('lg_none')}</div>`}
+Object.assign(ACT,{
+ lmonth:e=>{if(e.value){S.lmonth=e.value;draw()}},
+ m_lg:()=>form(t('lg_add'),[{k:'entry_date',l:t('r_date'),type:'date',v:today(),req:1},{k:'kind',l:t('lg_kind'),type:'select',o:[['expense',t('lg_expense')],['income',t('lg_income')]]},{k:'activity',l:t('lg_act'),type:'select',o:LG_ACTS.map(a=>[a,t('a_'+a)])},{k:'category',l:t('lg_cat')},{k:'amount',l:t('lg_amt'),type:'number',step:'any',req:1}],o=>ins('poultry_ledger',o))});
+/* ---------- stage 5: reports ---------- */
+const RP_SETS=['flocks','daily','sales','moves','vet','slaughter','expenses','ledger','ldaily','pdaily','hatches','cmoves','ctemps','trips'];
+function dl(name,rows){const q=x=>'"'+String(x??'').replace(/"/g,'""')+'"';const b=new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click()}
+function vReports(){return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_reports')}</h2></div><div class="alert in">${t('rp_note')}</div>
+ <div class="card"><h3>${t('rp_title')}</h3><div class="grid two">`+[`<div class="bar" style="margin:4px 0"><button class="btn" data-a="rp_perf">⬇ ${t('rp_perf')}</button><span class="muted">${S.data.flocks.length} ${t('rp_rows')}</span></div>`].concat(RP_SETS.map(k=>`<div class="bar" style="margin:4px 0"><button class="btn ghost" style="color:#0b5cab" data-a="rp_csv" data-k="${k}">⬇ ${t('d_'+k)}</button><span class="muted">${(S.data[k]||[]).length} ${t('rp_rows')}</span></div>`)).join('')+`</div></div>
+ <div class="card" style="margin-top:12px"><h3>${t('rp_print')}</h3><p class="muted">${t('rp_printnote')}</p><button class="btn gold" data-a="rp_print">🖨 ${t('rp_print')}</button></div>`}
+Object.assign(ACT,{
+ rp_csv:e=>{const k=e.dataset.k,a=S.data[k]||[];if(!a.length){alert(t('norec'));return}const cols=Object.keys(a[0]);dl('poultry_'+k+'_'+today()+'.csv',[cols].concat(a.map(r=>cols.map(c=>r[c]))))},
+ rp_perf:()=>{const cs=S.data.flocks.map(calc);dl('poultry_flock_performance_'+today()+'.csv',[['flock','status','age_days','live_birds','mortality_pct','feed_kg','avg_weight_g','fcr','adg_g_day','epef','revenue','cost','profit']].concat(cs.map(c=>[c.f.code,c.f.status,c.age,c.live,c.mortPct,c.feed,c.w,c.fcr,c.adg,c.epef,c.revenue,c.cost,c.profit])))},
+ rp_print:()=>window.print()});
+/* ---------- stage 5: planning ---------- */
+const PL=()=>({tw:Number(LS.getItem('pl_tw'))||2000,cd:LS.getItem('pl_cd')!==null&&LS.getItem('pl_cd')!==''?Number(LS.getItem('pl_cd')):10});
+function recentAdg(c){const ws=c.recs.filter(r=>r.avg_weight_g!=null);const a=ws[ws.length-1],b=ws[ws.length-2];if(a&&b&&dayDiff(b.rec_date,a.rec_date)>=3)return(Number(a.avg_weight_g)-Number(b.avg_weight_g))/dayDiff(b.rec_date,a.rec_date);return c.adg}
+function vPlan(){const P=PL(),cs=S.data.flocks.map(calc).filter(c=>c.f.status==='open');let tot=0;
+  const rows=cs.map(c=>{const wr=[...c.recs].reverse().find(r=>r.avg_weight_g!=null);const g=c.w!=null?recentAdg(c):null;let left=null,ready=null,feed=null,next=null,msg='';
+    if(c.w==null||!g||g<=0)msg=t('pl_nodata');else if(c.w>=P.tw){msg=t('pl_reached');left=0;ready=wr.rec_date}else{left=Math.ceil((P.tw-c.w)/g);ready=addDays(wr.rec_date,left);if(c.fcr)feed=(P.tw-c.w)/1000*c.live*c.fcr}
+    if(feed)tot+=feed;if(ready)next=addDays(ready,P.cd);
+    return `<tr><td><b>${esc(c.f.code)}</b> ${c.site.is_test?'<span class="tag test">TEST</span>':''}</td><td>${esc((c.house&&c.house.name)||'')}</td><td>${nf(c.w)}</td><td>${nf(g,1)}</td><td>${left!=null?nf(left):'—'}</td><td>${ready||'<span class="tag wr">'+msg+'</span>'}${ready&&msg?' <span class="tag ok">'+msg+'</span>':''}</td><td>${feed!=null?nf(feed,0):'—'}</td><td>${next||'—'}</td></tr>`});
+  return `<div class="bar"><h2 style="flex:1;margin:0">${t('n_plan')}</h2><label style="margin:0">${t('pl_tw')}</label><input type="number" value="${P.tw}" data-a="plset" data-k="pl_tw" style="width:100px"><label style="margin:0">${t('pl_cd')}</label><input type="number" value="${P.cd}" data-a="plset" data-k="pl_cd" style="width:80px"></div><div class="alert in">${t('pl_note')}</div>
+  <div class="card"><h3>${t('pl_title')}</h3>${cs.length?tb([t('f_code'),t('h_name'),t('pl_w'),t('pl_adg'),t('pl_left'),t('pl_ready'),t('pl_feed'),t('pl_next')],rows):t('norec')}${tot?`<p><b>${t('pl_tot')}: ${nf(tot,0)}</b></p>`:''}</div>`}
+Object.assign(ACT,{plset:e=>{LS.setItem(e.dataset.k,e.value);draw()}});
+// daily record: feed from stock
+ACT.m_rec=e=>{const fid=e.dataset.id||S.flock;const d=e.dataset.d||today();const ex=S.data.daily.find(r=>r.flock_id===fid&&r.rec_date===d)||{};
+  if(!S.data.flocks.length)return alert(t('nof'));
+  const fo=[['',t('r_nofeed')]].concat(matOpts('feed'));
+  form(t('add_rec'),[{k:'flock_id',l:t('r_flock'),type:'select',o:S.data.flocks.map(f=>[f.id,f.code]),v:fid||(flockOpts()[0]||[])[0]},{k:'rec_date',l:t('r_date'),type:'date',v:d,req:1},{k:'mortality',l:t('r_mort'),type:'number',v:ex.mortality??0},{k:'culls',l:t('r_cull'),type:'number',v:ex.culls??0},{k:'feed_kg',l:t('r_feed'),type:'number',step:'any',v:ex.feed_kg??0},{k:'feed_material_id',l:t('r_feedmat'),type:'select',o:fo,v:ex.feed_material_id||''},{k:'water_l',l:t('r_water'),type:'number',step:'any',v:ex.water_l},{k:'avg_weight_g',l:t('r_wt'),type:'number',step:'any',v:ex.avg_weight_g},{k:'temp_c',l:t('r_temp'),type:'number',step:'any',v:ex.temp_c},{k:'notes',l:t('r_notes'),v:ex.notes}],async o=>{
+   o.mortality=o.mortality||0;o.culls=o.culls||0;o.feed_kg=o.feed_kg||0;
+   const rows=await insR('poultry_daily',o,'flock_id,rec_date');const id=rows[0].id;
+   const exm=S.data.moves.find(m=>m.daily_id===id);
+   if(o.feed_material_id&&o.feed_kg>0){await api('poultry_stock_moves?on_conflict=daily_id',{method:'POST',body:{material_id:o.feed_material_id,move_date:o.rec_date,qty:-o.feed_kg,unit_cost:avgCost(o.feed_material_id),kind:'issue_flock',flock_id:o.flock_id,daily_id:id},prefer:'resolution=merge-duplicates,return=minimal'})}
+   else if(exm){await api('poultry_stock_moves?id=eq.'+exm.id,{method:'DELETE'})}
+   await load()},t('r_over'))};
+document.addEventListener('click',async e=>{const el=e.target.closest('[data-a]');if(!el||el.tagName==='SELECT'||el.tagName==='INPUT')return;const f=ACT[el.dataset.a];if(f){try{await f(el)}catch(x){alert(t('err')+x.message)}}});
+document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.a==='lmonth')ACT.lmonth(e.target);if(e.target.dataset&&e.target.dataset.a==='plset')ACT.plset(e.target);if(e.target.tagName==='SELECT'&&ACT[e.target.dataset.a]&&['pick','tpick'].includes(e.target.dataset.a))ACT[e.target.dataset.a](e.target)});
+/* ---------- redesign shell ---------- */
+const NAVG=[['g_ov',[['dash','📊','n_dash'],['ai','🤖','n_ai'],['plan','🗓️','n_plan'],['reports','📑','n_reports']]],['g_op',[['flocks','🐔','n_flocks'],['layers','🥚','n_layers'],['hatch','🐣','n_hatch'],['stock','🌾','n_stock'],['vet','💉','n_vet'],['sales','🛒','n_sales'],['cold','❄️','n_cold'],['fleet','🚚','n_fleet'],['trace','🔎','n_trace']]],['g_fi',[['fin','💰','n_fin'],['ledger','📒','n_ledger']]],['g_ad',[['sites','🏭','n_sites'],['users','👥','n_users'],['audit','🧾','n_audit'],['set','⚙️','n_set'],['mods','🧩','n_mods']]]];
+function allAlerts(){const cs=S.data.flocks.map(calc);return alerts(cs).concat(alerts2(cs))}
+function gsItems(q){q=q.trim().toLowerCase();if(!q)return[];const d=S.data,o=[];const add=(arr,f)=>arr.forEach(x=>{const r=f(x);if(r&&r.l.toLowerCase().includes(q))o.push(r)});
+  add(d.flocks,x=>({l:x.code,s:t('n_flocks'),a:'flock',id:x.id}));add(d.lflocks,x=>({l:x.code,s:t('n_layers'),r:'layers'}));add(d.pflocks,x=>({l:x.code,s:t('n_hatch'),r:'hatch'}));
+  add(d.partners,x=>({l:x.name,s:t('n_sales'),r:'sales'}));add(d.materials,x=>({l:x.name,s:t('n_stock'),r:'stock'}));add(d.vehicles,x=>({l:x.plate,s:t('n_fleet'),r:'fleet'}));add(d.crooms,x=>({l:x.code,s:t('n_cold'),r:'cold'}));add(d.sites,x=>({l:x.name,s:t('n_sites'),r:'sites'}));
+  return o.slice(0,12)}
+function crumbs(){const cur=S.route==='flock'?[t('n_flocks'),(S.data.flocks.find(f=>f.id===S.flock)||{}).code||'']:[t((NAVG.flatMap(g=>g[1]).find(x=>x[0]===S.route)||['','','n_dash'])[2])];return `<span class="crumb">${t('crumb_home')} › ${t('brand_mod')} › <b>${cur.map(esc).join(' › ')}</b></span>`}
+function shellHtml(inner){const ar=LANG==='ar',nA=S.data?allAlerts().length:0;
+  const side=NAVG.map(([g,items])=>{const its=items.filter(([r])=>!(r==='users'||r==='audit')||S.role==='admin');return `<div class="grp">${t(g)}</div>`+its.map(([r,ic,k])=>`<a class="${S.route===r||(r==='flocks'&&S.route==='flock')?'on':''}" data-a="go" data-r="${r}"><i>${ic}</i>${t(k)}</a>`).join('')}).join('');
+  const now=new Date().toLocaleString(ar?'ar-EG':'en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  const al=S.data?allAlerts():[];
+  return `<div class="shell" id="shell"><aside class="side"><div class="brand"><div class="lg">A</div><div><b>Agritrade Pro</b><small>${t('brand_mod')}</small></div></div>${side}</aside><div class="mainc"><div class="top"><button class="btn ghost burger" data-a="burger">☰</button>${crumbs()}<div class="gs"><span class="ic">🔍</span><input id="gsq" placeholder="${esc(t('gs_ph'))}" autocomplete="off"><div id="gsres"></div></div><span class="tm">${now}</span>${canW()?`<button class="btn gold" data-a="m_rec">＋ ${t('add_rec')}</button>`:''}<div class="bell"><button class="btn ghost" data-a="notif">🔔${nA?`<span class="n">${nA}</span>`:''}</button><div id="notif"><b>${t('notif')}</b>${al.length?al.map(a=>`<div class="alert ${a[0]}">${esc(a[1])}</div>`).join(''):`<div class="muted" style="padding:8px">${t('nonotif')}</div>`}</div></div><button class="btn ghost" data-a="lang">${t('lang')}</button><div class="user"><div class="av">${esc((S.user.email||'?')[0].toUpperCase())}</div><span>${esc(S.user.email)}<br><small class="muted">${S.role?t('role_'+S.role):''}</small></span></div><button class="btn ghost" data-a="signout">${t('signout')}</button></div><main>${inner}</main></div></div>`}
+Object.assign(ACT,{per:e=>{S.per=Number(e.dataset.n);draw()},burger:()=>document.getElementById('shell').classList.toggle('open'),notif:()=>{const n=document.getElementById('notif');n.style.display=n.style.display==='block'?'none':'block'},
+ gsgo:e=>{if(e.dataset.a2==='flock'){S.flock=e.dataset.id;S.route='flock'}else S.route=e.dataset.r;draw();scrollTo(0,0)}});
+document.addEventListener('input',e=>{if(e.target.id!=='gsq')return;const r=document.getElementById('gsres'),it=gsItems(e.target.value);r.style.display=e.target.value.trim()?'block':'none';r.innerHTML=it.length?it.map(x=>`<div data-a="gsgo" data-a2="${x.a||''}" data-id="${x.id||''}" data-r="${x.r||''}"><span>${esc(x.l)}</span><small>${esc(x.s)}</small></div>`).join(''):`<div class="muted">${t('gs_none')}</div>`});
+document.addEventListener('click',e=>{if(!e.target.closest('.bell')){const n=document.getElementById('notif');if(n)n.style.display='none'}if(!e.target.closest('.gs')){const r=document.getElementById('gsres');if(r)r.style.display='none'}});
+/* table enhancer: search, sort, pagination (presentation only) */
+function enhance(){document.querySelectorAll('#app .tw').forEach(tw=>{const tbl=tw.querySelector('table');if(!tbl||tw.dataset.enh)return;tw.dataset.enh=1;const head=tbl.rows[0];if(!head)return;const body=tbl.tBodies[0]||tbl;let rows=[...tbl.rows].slice(1);if(rows.length<2)return;
+  const st={q:'',p:0,ps:15,col:-1,dir:1};const tt=document.createElement('div');tt.className='tt';const cnt=document.createElement('small');
+  if(rows.length>5){const i=document.createElement('input');i.placeholder=t('t_search');i.oninput=()=>{st.q=i.value.toLowerCase();st.p=0;ap()};tt.appendChild(i)}tt.appendChild(cnt);tw.before(tt);
+  const pg=document.createElement('div');pg.className='pg';tw.after(pg);
+  const num=s=>{const x=parseFloat(String(s).replace(/[,%\s]/g,''));return isNaN(x)?null:x};
+  [...head.cells].forEach((th,ci)=>{if(!th.textContent.trim())return;th.classList.add('srt');th.onclick=()=>{st.dir=st.col===ci?-st.dir:1;st.col=ci;rows.sort((a,b)=>{const x=a.cells[ci]?a.cells[ci].textContent.trim():'',y=b.cells[ci]?b.cells[ci].textContent.trim():'',nx=num(x),ny=num(y);return(nx!==null&&ny!==null?nx-ny:x.localeCompare(y))*st.dir});rows.forEach(r=>body.appendChild(r));[...head.cells].forEach(c=>c.removeAttribute('data-s'));th.setAttribute('data-s',st.dir);st.p=0;ap()}});
+  function ap(){const f=rows.filter(r=>!st.q||r.textContent.toLowerCase().includes(st.q));const pages=Math.max(1,Math.ceil(f.length/st.ps));st.p=Math.min(st.p,pages-1);rows.forEach(r=>r.style.display='none');f.slice(st.p*st.ps,(st.p+1)*st.ps).forEach(r=>r.style.display='');cnt.textContent=f.length+' '+t('t_rows')+(f.length===0?' · '+t('t_nomatch'):'');
+   pg.innerHTML=pages>1?`<button class="btn sm ghost" ${st.p?'':'disabled'}>${t('t_prev')}</button><span>${t('t_page')} ${st.p+1} / ${pages}</span><button class="btn sm ghost" ${st.p<pages-1?'':'disabled'}>${t('t_next')}</button>`:'';if(pages>1){const b=pg.querySelectorAll('button');b[0].onclick=()=>{st.p--;ap()};b[1].onclick=()=>{st.p++;ap()}}}
+  ap()})}
+
+function draw(){
+  const ar=LANG==='ar';document.documentElement.lang=LANG;document.documentElement.dir=ar?'rtl':'ltr';document.title=t('app');
+  const open=S.modal&&document.activeElement&&S.modal.drawn;
+  let h='';
+  if(!S.user){h=`<main><div class="center card"><div class="brand" style="justify-content:center"><div class="lg">A</div><div style="text-align:start"><b>Agritrade Pro</b><small>${t('brand_mod')}</small></div></div><h2>${t('welcome')}</h2><p class="muted">${t('welcome2')}</p>${S.busy?`<div class="sk"></div>`:`<button class="btn gold" data-a="signin">${t('signin')}</button> <button class="btn ghost" data-a="lang">${t('lang')}</button>`}</div></main>`}
+  else if(!S.role){h=`<main><div class="center card"><h2>${t('noaccess')}</h2><p>${t('noaccess2')}</p><b>${esc(S.user.email)}</b><div class="bar" style="justify-content:center"><button class="btn ghost" data-a="signout">${t('signout')}</button></div></div></main>`}
+  else if(S.busy&&!S.data){h=`<main><div class="center"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div></main>`}
+  else if(S.err){h=`<main><div class="center card">${t('loaderr')}<br><small>${esc(S.err)}</small></div></main>`}
+  else{h=shellHtml(({dash:vDash,flocks:vFlocks,flock:vFlock,sites:vSites,stock:vStock,vet:vVet,sales:vSales,fin:vFin,hatch:vHatch,fleet:vFleet,trace:vTrace,layers:vLayers,cold:vCold,ledger:vLedger,reports:vReports,plan:vPlan,ai:vAi,mods:vMods,users:vUsers,audit:vAudit,set:vSet}[S.route]||vDash)())}
+  if(S.modal){h+=`<div class="modal"><div class="box"><h2>${esc(S.modal.title)}</h2><div class="fgrid ${S.modal.fields.length>5?'two':''}">${S.modal.fields.map(fld).join('')}</div>${S.modal.note?`<p class="muted" style="font-size:12px">${esc(S.modal.note)}</p>`:''}<div class="bar" style="margin-top:14px"><button class="btn" data-a="msave">${t('save')}</button><button class="btn ghost" style="color:#0b5cab" data-a="mcancel">${t('cancel')}</button></div></div></div>`}
+  document.getElementById('app').innerHTML=h;if(S.user&&S.role&&S.data)enhance()}
+init();draw();
+</script></body></html>
