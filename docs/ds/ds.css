@@ -46,3 +46,9 @@ th.ds-dc::after{content:none!important}
 .ds-ph b{font-size:16px;color:var(--ds-ink)}.ds-x{border:1px solid var(--ds-line);background:#fff;border-radius:10px;width:34px;height:34px;font-size:20px;cursor:pointer;color:var(--ds-ink)}
 .ds-panel dl{margin:0}.ds-panel dt{font-size:12px;color:#5b6b85;margin-top:10px}.ds-panel dd{margin:2px 0 0;font-weight:600;word-break:break-word;padding-bottom:8px;border-bottom:1px solid #eef2f8}
 @media (max-width:760px){.ds-tb{flex:0 0 auto}.ds-bar{gap:6px}}
+
+/* Poultry dashboard banner (.hero2): same light veil over its Wikimedia photo, dark text; buttons keep their own colours */
+.hero2.ds-hero{background:var(--ds-img) center/cover no-repeat!important;color:var(--ds-ink)!important;border:1px solid var(--ds-line);box-shadow:var(--ds-sh)}
+.hero2.ds-hero h2,.hero2.ds-hero p,.hero2.ds-hero small{color:var(--ds-ink)!important;text-shadow:none!important}
+.hero2.ds-hero .cr{color:#5b6b85!important}
+.hero2.ds-hero .btn.ghost{background:#fff!important;color:var(--ds-royal)!important;border:1px solid var(--ds-line)!important}
