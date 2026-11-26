@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrated Operations Management</title>
+<style>
+:root{--bg:#f2f6f3;--g:#12874a;--gold:#a97a0a;--tx:#14261c;--mut:#5b7065;--glass:#ffffff;--bd:rgba(20,60,40,.16);--red:#c62f2f;--blue:#1b6fc0}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif;color:var(--tx);background:radial-gradient(900px 600px at 10% -10%,rgba(18,135,74,.10),transparent),radial-gradient(800px 600px at 100% 10%,rgba(169,122,10,.07),transparent),var(--bg);background-attachment:fixed}
+#app{display:flex;min-height:100vh}
+nav{width:250px;flex:none;padding:16px 12px;border-right:1px solid var(--bd);background:rgba(255,255,255,.85);backdrop-filter:blur(18px);position:sticky;top:0;height:100vh;overflow:auto}
+.brand{font-weight:800;letter-spacing:.5px;color:var(--gold);font-size:13px;padding:6px 10px 14px}.brand b{color:var(--g)}
+nav a{display:flex;gap:8px;align-items:center;padding:9px 12px;border-radius:12px;color:var(--mut);cursor:pointer;margin:2px 0}
+nav a:hover{background:var(--glass);color:var(--tx)}nav a.on{background:linear-gradient(135deg,rgba(18,135,74,.16),rgba(18,135,74,.05));color:var(--tx);border:1px solid rgba(18,135,74,.4)}
+nav a.soon{opacity:.45;cursor:default}nav small{margin-left:auto;font-size:10px;color:var(--gold)}
+main{flex:1;min-width:0;padding:20px 24px 60px}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:22px;margin:0;flex:1}
+input,select,textarea,button{font:inherit;color:var(--tx)}
+input,select,textarea{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;width:100%;outline:none}
+select option{background:#fff;color:#14261c}
+input:focus,select:focus{border-color:var(--g)}
+button{border:1px solid var(--bd);background:var(--glass);padding:8px 14px;border-radius:10px;cursor:pointer}
+button:hover{border-color:var(--g)}button.p{background:linear-gradient(135deg,#1aa35c,#12874a);color:#fff;font-weight:700;border:0}
+button.d{border-color:rgba(255,107,107,.5);color:var(--red)}button.s{padding:4px 9px;font-size:12px}button:disabled{opacity:.4;cursor:not-allowed}
+.card{background:var(--glass);border:1px solid var(--bd);border-radius:18px;padding:16px;backdrop-filter:blur(16px);box-shadow:0 6px 22px rgba(20,60,40,.10)}
+.grid{display:grid;gap:14px}.k4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}.k2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.kpi .v{font-size:26px;font-weight:800}.kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.6px}.kpi .n{color:var(--gold);font-size:12px}
+h3{margin:0 0 10px;font-size:15px}
+table{width:100%;border-collapse:collapse}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(20,60,40,.09);white-space:nowrap}
+th{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.5px;position:sticky;top:0}
+.tw{overflow:auto;max-height:68vh}tr:hover td{background:rgba(18,135,74,.05)}.num{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;border:1px solid var(--bd)}
+.t-ok{color:var(--g);border-color:rgba(18,135,74,.5)}.t-w{color:var(--gold);border-color:rgba(229,185,74,.5)}.t-b{color:var(--red);border-color:rgba(255,107,107,.5)}.t-i{color:var(--blue);border-color:rgba(90,176,255,.5)}
+.bar{height:8px;border-radius:9px;background:rgba(20,60,40,.12);overflow:hidden;min-width:90px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--g),var(--gold))}
+.modal{position:fixed;inset:0;background:rgba(20,38,28,.35);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;z-index:20}
+.modal .card{width:min(680px,100%);background:rgba(255,255,255,.98)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f label{display:block;font-size:12px;color:var(--mut)}.f .w{grid-column:1/-1}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.mut{color:var(--mut)}
+.toast{position:fixed;bottom:20px;right:20px;background:#e3f6ea;color:#14261c;border:1px solid var(--g);padding:10px 16px;border-radius:12px;z-index:50;max-width:80vw}
+.toast.e{background:#fde8e8;border-color:var(--red)}
+.tree{border-left:2px solid rgba(47,211,122,.4);margin-left:10px;padding-left:16px}.nd{margin:10px 0}
+.demo{background:rgba(229,185,74,.15);border:1px solid rgba(229,185,74,.4);color:var(--gold);padding:8px 14px;border-radius:12px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+a.l{color:var(--g);cursor:pointer}
+#burger{display:none}
+@media(max-width:820px){nav{position:fixed;left:-270px;z-index:15;transition:.2s;width:260px}nav.o{left:0}#burger{display:inline-block}main{padding:14px 12px 60px}.f{grid-template-columns:1fr}}
+
+.ar{font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic","Noto Sans Arabic",Arial,sans-serif;direction:rtl;unicode-bidi:isolate}
+.ar.b{display:block;font-size:.88em;color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0;line-height:1.35}
+.ar.i{display:inline-block;margin-inline-start:8px}
+[dir=rtl] .kpi .v,[dir=rtl] .num{direction:ltr}
+[dir=rtl] .kpi .v{text-align:right}
+nav a .ar.b{color:inherit;opacity:.75;font-size:.85em}
+th .ar.b{font-size:.95em}
+.kpi .l .ar.b{font-size:1em}
+button.p .ar.b{color:inherit;opacity:.9}
+#lang{max-width:150px}
+[dir=rtl] nav{border-right:0;border-left:1px solid var(--bd)}
+[dir=rtl] th,[dir=rtl] td{text-align:right}
+[dir=rtl] .num{text-align:left}
+[dir=rtl] nav small{margin-left:0;margin-right:auto}
+[dir=rtl] .tree{border-left:0;border-right:2px solid rgba(18,135,74,.4);margin-left:0;margin-right:10px;padding-left:0;padding-right:16px}
+[dir=rtl] .toast{right:auto;left:20px}
+[dir=rtl] body{font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic","Noto Sans Arabic",Arial,sans-serif}
+@media(max-width:820px){[dir=rtl] nav{left:auto;right:-270px}[dir=rtl] nav.o{right:0}}
+
+.fbar{margin-bottom:14px;padding:12px 14px}.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:end}.fgrid label{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}.fbtn button{width:100%}
+/* ===== AgriTrade Pro skin: cream, grouped sidebar, hero, gold actions ===== */
+:root{--bg:#f8f2e7;--g:#14673f;--gold:#b9770e;--tx:#1f2a24;--mut:#6d6a5c;--glass:#fff;--bd:#e6dbc6;--red:#c0392b;--blue:#1f6fb5;--navy:#16283f;--navy2:#21485f;--gl:#e9a82a;--cream2:#fffaf0}
+html[data-th=dark]{--bg:#10151c;--tx:#e9e6dc;--mut:#a39f90;--glass:#1a222c;--bd:#2c3745;--cream2:#161d26;--g:#3fbf80;--gold:#e6b04a}
+body{background:var(--bg)!important;font-family:"DM Sans",system-ui,"Segoe UI",Tahoma,Roboto,sans-serif}
+html[data-th=dark] input,html[data-th=dark] select,html[data-th=dark] textarea{background:#202a36;color:var(--tx)}
+html[data-th=dark] select option{background:#202a36;color:var(--tx)}
+html[data-th=dark] .modal .card{background:#1a222c}
+html[data-th=dark] nav{background:#161d26}
+html[data-th=dark] .top{background:#161d26}
+nav{width:262px;background:var(--cream2)!important;border-right:1px solid var(--bd);padding:14px 10px;backdrop-filter:none}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 14px;color:var(--tx);letter-spacing:0}
+.brand .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#f0b93a,#c9831c);color:#1c1405;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+.brand .bn{font-weight:800;font-size:14px;line-height:1.15;color:var(--tx)}
+.brand .bs{font-size:9.5px;letter-spacing:1.6px;color:var(--mut);font-weight:600;margin-top:2px}
+.sec{font-size:10.5px;letter-spacing:1.4px;font-weight:700;color:var(--gold);padding:14px 12px 4px;text-transform:uppercase}
+nav a{color:var(--tx);padding:8px 10px;border-radius:10px;border:1px solid transparent;font-size:13px}
+nav a:hover{background:#f6ecd8;color:var(--tx)}
+nav a.on{background:#f6e6c8!important;border:1px solid #e3c58a!important;font-weight:600}
+nav a .ic{width:22px;text-align:center;flex:none;font-size:15px}
+nav a .tx{flex:1;min-width:0}
+nav a .ar.b{font-size:.84em}
+main{padding:0 22px 60px}
+.top{position:sticky;top:0;z-index:10;background:var(--cream2);margin:0 -22px 16px;padding:10px 22px;border-bottom:1px solid var(--bd);gap:8px}
+.top h1{font-size:14px;font-weight:700;flex:1;color:var(--tx)}
+.top h1 .ar.b{display:inline;margin-inline-start:8px;font-size:.95em}
+.top input,.top select{border-radius:10px;background:#fff;padding:7px 10px;font-size:13px}
+.tb{width:36px;height:36px;border:1px solid var(--bd);border-radius:10px;background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:0;font-size:16px}
+html[data-th=dark] .tb{background:#202a36}
+.tb i{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;border-radius:99px;font-size:10px;font-style:normal;padding:1px 5px;font-weight:700}
+.hero{border-radius:16px;padding:22px 24px;margin-bottom:16px;color:#fff;display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:linear-gradient(110deg,rgba(16,30,48,.96),rgba(33,72,95,.9)),repeating-linear-gradient(135deg,#2a4a63 0 14px,#223d52 14px 28px);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-30px;bottom:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(233,168,42,.35),transparent 70%)}
+.hero .hi{width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;flex:none;z-index:1}
+.hero .ht{flex:1;min-width:220px;z-index:1}
+.hero h2{margin:0;font-size:28px;color:#f2c14e;font-weight:800;line-height:1.15}
+.hero p{margin:4px 0 0;color:#dfe8ee;font-size:13.5px}
+.hero .ar.b{color:#c9d6df;font-size:.92em;text-align:left}.hero h2 .ar.b{display:block}.hero button .ar.i{margin-inline-start:8px}
+.ar.i{margin-inline-start:8px}.hero h2 .ar.b{color:#f2c14e;font-size:.7em;opacity:.95}
+.hero .ha{display:flex;gap:8px;flex-wrap:wrap;z-index:1}
+.hero button{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25)}
+button.p,.hero button.g{background:linear-gradient(135deg,#f3bf42,#dc9a26)!important;color:#1c1405!important;border:0!important;font-weight:700}
+.hero button.g .ar.b,button.p .ar.b{color:#1c1405}
+button.gr{background:#14673f;color:#fff;border:0;font-weight:600}
+button.gr .ar.b{color:#fff}
+button.gr.o{background:#efe3c9;color:#4b3f20}button.gr.o .ar.b{color:#4b3f20}
+.start{background:#fffaf0;border:1px solid var(--bd);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+.start .k{font-size:10.5px;letter-spacing:1.6px;font-weight:700;color:var(--mut)}
+.start h3{font-size:19px;margin:6px 0 4px}
+.start p{margin:0 0 12px;color:var(--mut)}
+.card{border:1px solid var(--bd);border-radius:16px;box-shadow:0 2px 10px rgba(80,60,20,.05)}
+.kpi{position:relative}
+.kpi .ic{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:#e8f3ec}
+[dir=rtl] .kpi .ic{right:auto;left:14px}
+.kpi:nth-child(4n+2) .ic{background:#fdf0d4}.kpi:nth-child(4n+3) .ic{background:#fbe6e2}.kpi:nth-child(4n+4) .ic{background:#e6eefa}
+.kpi .l{padding-inline-end:46px;text-transform:none;letter-spacing:0;font-size:12.5px}
+.kpi .n{color:var(--gold)}
+th{background:#faf3e3;color:var(--mut)}
+html[data-th=dark] th{background:#1f2833}
+tr:hover td{background:#fbf5e6}
+nav a.on small{color:var(--gold)}
+.modal .card{background:#fffdf8}
+.demo{background:#fdf0d4;border-color:#ecc97a}
+.tag.t-ok{background:#e8f3ec}
+@media(min-width:821px){.top h1{display:none}.top #gs{margin-inline-start:auto}}
+@media(max-width:820px){.hero h2{font-size:22px}.top{margin:0 -12px 12px;padding:8px 12px}main{padding:0 12px 60px}nav{width:270px}}
+[dir=rtl] nav{border-left:1px solid var(--bd);border-right:0}
+[dir=rtl] .tb i{right:auto;left:-5px}
+
+/* ---- photo heroes, commodity strip, table polish ---- */
+.hero{position:relative;overflow:hidden;background-size:cover!important;background-position:center!important}
+.cstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.ctile{position:relative;height:120px;border-radius:14px;overflow:hidden;background:#223d52 center/cover;box-shadow:0 2px 8px rgba(20,40,60,.15)}
+.ctile:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(10,22,34,.82))}
+.ctile b{position:absolute;left:12px;right:12px;bottom:9px;z-index:1;color:#fff;font-size:14px;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.ctile b .ar{display:block;color:#f2c14e;font-size:12px;font-weight:600}
+.credit{font-size:11px;color:var(--mut);margin:14px 2px 0}
+.tw{border:1px solid rgba(60,45,10,.12);border-radius:12px;background:#fffdf7}
+tbody tr:nth-child(even) td{background:rgba(233,168,42,.045)}
+th{border-bottom:2px solid rgba(233,168,42,.45)}
+td,th{padding:10px 12px}
+html[data-th=dark] .tw{background:#1a222b}
+@media(max-width:820px){.cstrip{grid-template-columns:repeat(2,1fr)}.cstrip .ctile:nth-child(5){grid-column:1/-1}.ctile{height:100px}td,th{padding:8px 9px;font-size:12.5px}}
+@media(max-width:820px){.hero{padding:16px}.hero .hi{display:none}.hero h2{font-size:20px}.hero p{font-size:12.5px}}
+.chw{position:relative;height:250px}.chempty{display:flex;align-items:center;justify-content:center;height:100%;font-size:13px}.dmb{display:inline-block;margin-inline-start:8px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9px;background:#fdf0d4;color:#b07a10;border:1px solid #ecc97a;vertical-align:middle}.chc h3{margin-top:0}@media(max-width:820px){.chw{height:230px}}
+.presets .hint{margin-inline-start:auto;font-size:12px}.chc canvas{cursor:default}
+</style></head><body>
+<div id="app"><nav id="nav"></nav><main><div class="top"><button id="burger" onclick="document.getElementById('nav').classList.toggle('o')">☰</button><h1 id="ttl"></h1>
+<input id="gs" placeholder="Global search + Enter (batch, ref, vessel...)" style="max-width:300px"><select id="role" style="max-width:190px"></select><button class="tb" id="thm" title="Theme" onclick="toggleTheme()">◐</button><button class="tb" id="bell" title="Alerts" onclick="go('alerts')">🔔<i id="bn" style="display:none"></i></button></div><div id="view"></div></main></div>
+<script src="vendor/chart.min.js"></script>
+<script>
+'use strict';
+const KEY='iom.v1';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const f2=(n,d=2)=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:d});
+const today=()=>new Date().toISOString().slice(0,10);
+const BU={Soybeans:36.7437,Wheat:36.7437,Corn:39.368,Barley:45.9296};
+let S=load(),ROLE=localStorage.getItem('iom.role')||'General Manager',PAGE='overview',ARG=null;
+
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===1)return s}catch(e){}return fresh(true)}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function fresh(demo){
+ const s={v:1,seq:{RCV:0,PRD:0,WGH:0,B:0,L:0,ADJ:0,TRF:0,OPN:0,F:0,W:0},commodities:[],warehouses:[],batches:[],ledger:[],receipts:[],tickets:[],formulas:[],orders:[],audit:[],demo:!!demo};
+ [['Soybeans','raw'],['Wheat','raw'],['Corn','raw'],['Barley','raw'],['Sunflower Seeds','raw'],['Soybean Meal','finished'],['Soybean Oil','finished'],['Soybean Hulls','byproduct'],['Wheat Flour','finished'],['Wheat Bran','byproduct']].forEach(([n,k],i)=>s.commodities.push({id:'C'+(i+1),name:n,kind:k}));
+ if(demo)seed(s);return s}
+function seed(s){
+ const C=n=>s.commodities.find(c=>c.name===n).id,d=x=>{const t=new Date();t.setDate(t.getDate()-x);return t.toISOString().slice(0,10)};
+ const W=(code,name,type,cap,al)=>{s.warehouses.push({id:'W'+(++s.seq.W),code,name,type,factory:'Factory 1',cap,cells:type==='Silo'?4:1,allowed:al.map(C),demo:1})};
+ W('SILO-A','Silo A (raw)','Silo',20000,['Soybeans','Corn','Wheat']);
+ W('WH-1','Warehouse 1','Warehouse',8000,['Wheat','Barley','Corn','Soybean Meal','Soybean Hulls']);
+ W('MEAL-1','Meal store','Production Storage',6000,['Soybean Meal']);
+ W('TANK-1','Soy oil tank','Tank',1500,['Soybean Oil']);
+ W('HULL-1','Hulls yard','Open Yard',1000,['Soybean Hulls']);
+ s.formulas=[{id:'F1',name:'Soybean Crushing',raw:C('Soybeans'),line:'Line 1',loss:0,outs:[{c:C('Soybean Meal'),p:73},{c:C('Soybean Oil'),p:20},{c:C('Soybean Hulls'),p:7}],stages:['Raw Material Preparation','Cleaning','Dehulling','Crushing','Extraction','Refining','Packaging','Final Product Storage'],demo:1},
+ {id:'F2',name:'Wheat Milling',raw:C('Wheat'),line:'Mill 1',loss:1,outs:[{c:C('Wheat Flour'),p:74},{c:C('Wheat Bran'),p:25}],stages:['Raw Material Preparation','Cleaning','Milling','Packaging','Final Product Storage'],demo:1}];s.seq.F=2;
+ const rc=(imp,ves,sup,com,org,bl,dis,rec,wh,days)=>{const ref='RCV-'+String(++s.seq.RCV).padStart(4,'0');const n=++s.seq.B;
+  const b={id:'B'+n,no:'BATCH-'+String(n).padStart(3,'0'),c:C(com),origin:org,src:'receipt',srcRef:ref,parents:[],date:d(days),demo:1};s.batches.push(b);
+  s.receipts.push({ref,imp,vessel:ves,supplier:sup,c:C(com),origin:org,bl,dis,rec,wh,date:d(days),status:'approved',batch:b.id,demo:1});
+  s.ledger.push({id:'L'+(++s.seq.L),ts:d(days)+'T09:00:00',type:'RECEIPT',doc:ref,wh,batch:b.id,qty:rec,by:'demo'})};
+ rc('IMP-DEMO-01','MV Demo Star','Demo Grain Co.','Soybeans','Brazil',5000,4985,4980,'W1',20);
+ rc('IMP-DEMO-02','MV Demo Pearl','Demo Trading Ltd','Soybeans','USA',3000,2995,2990,'W1',12);
+ rc('IMP-DEMO-03','MV Demo Wave','Black Sea Demo','Wheat','Ukraine',2000,1998,1995,'W2',9);
+ s.tickets=[{no:'WGH-0001',truck:'T-4421',driver:'Ahmed S.',gross:41200,tare:14100,net:27100,time:d(1)+'T10:20:00',dir:'In',ref:'RCV-0002',wh:'W1',c:C('Soybeans')}];s.seq.WGH=1;
+ s.audit.push({ts:new Date().toISOString(),user:'system',act:'Demo data loaded',ref:''})}
+function nref(p){S.seq[p]=(S.seq[p]||0)+1;return p+'-'+String(S.seq[p]).padStart(4,'0')}
+function log(act,ref){S.audit.unshift({ts:new Date().toISOString(),user:ROLE,act,ref:ref||''})}
+const com=id=>S.commodities.find(c=>c.id===id)||{name:'?',kind:'raw'};
+const wh=id=>S.warehouses.find(w=>w.id===id)||{name:'?',code:'?',allowed:[]};
+const batch=id=>S.batches.find(b=>b.id===id)||{no:'?',parents:[]};
+function stockMap(extra){const m={};S.ledger.concat(extra||[]).forEach(l=>{const k=l.wh+'|'+l.batch;m[k]=(m[k]||0)+l.qty});return m}
+const whStock=(w,m)=>Object.entries(m||stockMap()).filter(([k])=>k.startsWith(w+'|')).reduce((a,[,v])=>a+v,0);
+function post(entries,doc){
+ const m=stockMap(entries);
+ for(const k in m){if(m[k]<-1e-9){const p=k.split('|');throw new Error('Insufficient stock: '+wh(p[0]).code+' / '+batch(p[1]).no+' would go to '+f2(m[k],3)+' MT')}}
+ const rs=typeof reservedMap==='function'?reservedMap():{};if(!entries.every(e=>e.type==='DISPATCH'||e.qty>=0))for(const k in rs){if(entries.some(e=>e.qty<0&&e.wh+'|'+e.batch===k&&e.type!=='DISPATCH')&&m[k]<rs[k]-1e-9)throw new Error('Stock is reserved for sales orders: '+f2(rs[k],3)+' MT reserved at '+wh(k.split('|')[0]).code+' / '+batch(k.split('|')[1]).no)}
+ const cm={};for(const k in m){const w=k.split('|')[0];cm[w]=(cm[w]||0)+m[k]}
+ for(const w of S.warehouses){const cur=cm[w.id]||0;if(w.cap&&cur>w.cap+1e-9)throw new Error('Capacity exceeded at '+w.code+': '+f2(cur)+' / '+f2(w.cap)+' MT')}
+ entries.forEach(e=>S.ledger.push(Object.assign({id:'L'+(++S.seq.L),ts:new Date().toISOString(),doc,by:ROLE},e)))}
+function reverseDoc(doc){
+ const es=S.ledger.filter(l=>l.doc===doc&&!l.reversed&&l.type!=='REVERSAL');
+ if(!es.length)throw new Error('Nothing to reverse');
+ post(es.map(l=>({type:'REVERSAL',wh:l.wh,batch:l.batch,qty:-l.qty,rev:l.id})),doc+'/REV');
+ es.forEach(l=>l.reversed=true);
+ const r=S.receipts.find(x=>x.ref===doc);if(r)r.status='reversed';
+ const o=S.orders.find(x=>x.ref===doc);if(o)o.status='reversed';
+ log('Reversed '+doc,doc)}
+
+const ROLES={'General Manager':'*','Import Manager':['receive','weigh'],'Warehouse Manager':['receive','approveRcv','weigh','stock','wh','dispatch','fleet','expense'],'Production Manager':['produce','approveProd','formula','expense'],'Sales Manager':['sales'],'Logistics Manager':['weigh','fleet','dispatch','expense'],'Accountant':['finance','expense'],'Finance Manager':['finance','expense'],'Operator':['weigh','receive'],'Auditor':[]};
+const can=p=>ROLES[ROLE]==='*'||ROLES[ROLE].includes(p);
+
+function toast(m,e){const t=document.createElement('div');t.className='toast'+(e?' e':'');t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),4200)}
+function tryDo(fn){try{fn();save();render()}catch(e){toast(e.message,1)}}
+function tag(s){const c={approved:'t-ok',completed:'t-ok',In:'t-i',Out:'t-w',draft:'t-w',planned:'t-w',in_progress:'t-i',reversed:'t-b'}[s]||'t-i';return '<span class="tag '+c+'">'+esc(s)+'</span>'}
+function table(cols,rows,opts){opts=opts||{};const id='t'+Math.random().toString(36).slice(2,7);
+ return '<div class="card"><div class="row" style="margin-bottom:8px"><input placeholder="Filter table..." style="max-width:240px" oninput="filt(this,\''+id+'\')">'+(opts.csv?'<button class="s" onclick="csv(\''+opts.csv+'\',\''+id+'\')">Export CSV</button>':'')+'<span class="mut">'+rows.length+' rows</span></div><div class="tw"><table id="'+id+'"><thead><tr>'+cols.map(c=>'<th class="'+(c.n?'num':'')+'">'+esc(c.h)+'</th>').join('')+'</tr></thead><tbody>'+(rows.map(r=>'<tr>'+cols.map(c=>'<td class="'+(c.n?'num':'')+'">'+(c.f?c.f(r):esc(r[c.k]))+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+cols.length+'" class="mut">No records</td></tr>')+'</tbody></table></div></div>'}
+function filt(inp,id){const q=inp.value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none')}
+function csv(name,id){const rows=[...document.querySelectorAll('#'+id+' tr')].filter(r=>r.style.display!=='none').map(r=>[...r.children].map(c=>'"'+c.textContent.replace(/"/g,'""').trim()+'"').join(','));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\n')],{type:'text/csv'}));a.download=name+'.csv';a.click()}
+function modal(title,fields,onOk,okLabel){
+ const m=document.createElement('div');m.className='modal';
+ m.innerHTML='<div class="card"><h3>'+esc(title)+'</h3><form class="f" onsubmit="return false">'+fields.map(f=>'<div class="'+(f.w?'w':'')+'"><label>'+esc(f.l)+(f.req?' *':'')+'</label>'+(f.t==='select'?'<select name="'+f.k+'">'+(f.o||[]).map(o=>{const v=Array.isArray(o)?o[0]:o,l=Array.isArray(o)?o[1]:o;return '<option value="'+esc(v)+'"'+(String(f.v)===String(v)?' selected':'')+'>'+esc(l)+'</option>'}).join('')+'</select>':'<input name="'+f.k+'" type="'+(f.t||'text')+'" step="any" value="'+esc(f.v==null?'':f.v)+'"'+(f.ro?' readonly':'')+(f.on?' oninput="'+f.on+'"':'')+'>')+'</div>').join('')+'</form><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="x">Cancel</button><button class="p ok">'+(okLabel||'Save')+'</button></div></div>';
+ document.body.appendChild(m);const fm=m.querySelector('form');
+ m.querySelector('.x').onclick=()=>m.remove();
+ m.querySelector('.ok').onclick=()=>{const v={};fields.forEach(f=>{v[f.k]=fm.elements[f.k].value});
+  for(const f of fields)if(f.req&&!String(v[f.k]).trim())return toast(f.l+' is required',1);
+  try{onOk(v);save();m.remove();render()}catch(e){toast(e.message,1)}};
+ return m}
+const cOpts=k=>S.commodities.filter(c=>!k||k.includes(c.kind)).map(c=>[c.id,c.name]);
+const wOpts=()=>S.warehouses.map(w=>[w.id,w.code+' - '+w.name]);
+const bOpts=()=>S.batches.map(b=>[b.id,b.no+' ('+com(b.c).name+')']);
+const allowedCheck=(w,c)=>{const W=wh(w);if(W.allowed&&W.allowed.length&&!W.allowed.includes(c))throw new Error(com(c).name+' is not allowed in '+W.code)};
+
+const MENU=[['overview','Operations Overview'],['warehouses','Warehouses & Silos'],['inventory','Inventory Management'],['receiving','Raw Material Receiving'],['weighbridge','Weighbridge'],['production','Manufacturing & Production'],['formulas','Production Formulas & Yield'],['finished','Finished Goods'],['fleet','Internal Fleet & Tractors'],['movements','Internal Movements'],['sales','Sales Management'],['dispatch','Dispatch & Delivery'],['invoices','Customer Invoices'],['collections','Collections & Receivables'],['costs','Manufacturing Costs'],['expenses','Expenses & Settlements'],['reports','Operational Reports'],['trace','Complete Traceability'],['audit','Audit Trail & Data']];
+const GRP=[['Overview',['overview']],['Inventory & Production',['warehouses','inventory','receiving','weighbridge','production','formulas','finished']],['Logistics & Sales',['fleet','movements','sales','dispatch','invoices','collections']],['Finance & Reports',['costs','expenses','reports','trace']],['System',['alerts','files','audit','users']]];
+const ICON={overview:'📊',warehouses:'🏭',inventory:'📦',receiving:'🚢',weighbridge:'⚖️',production:'⚙️',formulas:'🧪',finished:'✅',fleet:'🚜',movements:'🔁',sales:'🧾',dispatch:'🚚',invoices:'💵',collections:'💰',costs:'🧮',expenses:'📉',reports:'📑',trace:'🔎',alerts:'🔔',files:'📎',audit:'🛡️',users:'👥'};
+const SUB={overview:'Live view of stock, production, sales and cash across your factory',warehouses:'Silos, warehouses and tanks with capacity and contents',inventory:'Stock by warehouse and batch, built only from ledger movements',receiving:'Receive imported cargo, check it against the bill of lading and approve',weighbridge:'Weighing tickets for trucks coming in and going out',production:'Production orders, stages, actual output and mass balance',formulas:'Yield formulas, outputs and expected process loss',finished:'Finished goods and byproducts available to sell',fleet:'Tractors, loaders and forklifts with status and maintenance',movements:'Move stock between warehouses and production lines',sales:'Customers, sales orders and reservations of available stock',dispatch:'Load, weigh and deliver approved sales orders',invoices:'Issue and follow customer invoices',collections:'Record payments and see who owes you',costs:'Raw material and conversion cost per production order',expenses:'Factory expenses and supplier accounts',reports:'Operational, financial and traceability reports',trace:'Follow any batch from import to delivery',audit:'Every action recorded, plus backup and restore',alerts:'Items that need your attention',files:'Documents attached to imports, orders and invoices',users:'Accounts, roles and activation'};
+function nav(){const mm=Object.fromEntries(MENU.map(m=>[m[0],m]));
+ $('#nav').innerHTML='<div class="brand"><div class="logo">IO</div><div><div class="bn">INTEGRATED OPERATIONS</div><div class="bs">STANDALONE · STAGE 4</div></div></div>'+GRP.map(g=>{const it=g[1].filter(k=>mm[k]);return it.length?'<div class="sec">'+g[0]+'</div>'+it.map(k=>'<a class="'+(PAGE===k?'on':'')+'" onclick="go(\''+k+'\')"><span class="ic">'+(ICON[k]||'•')+'</span><span class="tx">'+mm[k][1]+'</span></a>').join(''):''}).join('')}
+function go(p,a){PAGE=p;ARG=a||null;$('#nav').classList.remove('o');render()}
+function render(){nav();$('#ttl').textContent=(MENU.find(m=>m[0]===PAGE)||[0,''])[1];
+ const demo=S.demo?'<div class="demo">Demo data is loaded (for testing). Clear it before entering real company data. <button class="s" onclick="clearDemo()">Clear demo data</button></div>':'';
+ const acts={overview:['+ Receive cargo','newRcv'],warehouses:['+ New warehouse / silo','newWh'],receiving:['+ Receive cargo','newRcv']};
+ const ac=acts[PAGE];const T=(MENU.find(m=>m[0]===PAGE)||[0,''])[1];
+ const HI={overview:'silo',warehouses:'silo',inventory:'wheat',receiving:'port',weighbridge:'port',production:'wheat',formulas:'corn',finished:'soy',fleet:'corn',movements:'silo',sales:'soy',dispatch:'port',invoices:'wheat',collections:'soy',costs:'corn',expenses:'silo',reports:'wheat',trace:'soy',alerts:'port',files:'silo',audit:'silo',users:'wheat'};const hbg=HI[PAGE]?' style="background:linear-gradient(110deg,rgba(14,28,44,.93),rgba(24,60,84,.7)),url(img/'+HI[PAGE]+'.jpg) center/cover"':'';const hero='<div class="hero"'+hbg+'><div class="hi">'+(ICON[PAGE]||'📊')+'</div><div class="ht"><h2>'+T+'</h2><p>'+(SUB[PAGE]||'')+'</p></div><div class="ha"><button onclick="refreshAll()">↻ Refresh</button>'+(ac&&typeof window[ac[1]]==='function'?'<button class="g" onclick="'+ac[1]+'()">'+ac[0]+'</button>':'')+'</div></div>';
+ const start=(PAGE==='overview'&&!S.warehouses.length&&!S.receipts.length)?'<div class="start"><div class="k">START HERE</div><h3>Set up your first operation record</h3><p>Add a warehouse or silo, add a customer, then receive your first cargo.</p><div class="row"><button class="gr" onclick="newWh()">+ 1 · New warehouse / silo</button><button class="gr o" onclick="newCust()">+ 2 · New customer</button><button class="gr" onclick="newRcv()">+ 3 · Receive cargo</button></div></div>':'';
+const STRIP=()=>'<div class="cstrip">'+[['wheat','Wheat','قمح'],['corn','Corn','ذرة'],['soy','Soybeans','فول الصويا'],['silo','Silos and storage','الصوامع والتخزين'],['port','Ports and vessels','الموانئ والسفن']].map(x=>'<div class="ctile" role="img" aria-label="'+x[1]+'" style="background-image:url(img/'+x[0]+'.jpg)"><b>'+x[1]+'</b></div>').join('')+'</div>';
+ $('#view').innerHTML=demo+hero+start+(PAGE==='overview'?STRIP():'')+(P[PAGE]||P.overview)()+(PAGE==='overview'?'<div class="credit">Photos: Unsplash and Pexels, free to use under their licenses.</div>':'');
+ document.querySelectorAll('#view .kpi').forEach(k=>{if(k.querySelector('.ic'))return;const t=(k.querySelector('.l')||{}).textContent||'';const e=/raw/i.test(t)?'🌾':/finished/i.test(t)?'📦':/capacity|utili/i.test(t)?'📈':/pending|open|await/i.test(t)?'⏳':/yield/i.test(t)?'🎯':/loss/i.test(t)?'📉':/invoice|collect|receiv|overdue|sales|value/i.test(t)?'💵':/vehicle|movement|dispatch/i.test(t)?'🚚':'📊';const i=document.createElement('div');i.className='ic';i.textContent=e;k.insertBefore(i,k.firstChild)});}
+function refreshAll(){if(typeof pull==='function'&&typeof sb!=='undefined'&&sb&&ME){pull().then(()=>toast('Refreshed')).catch(e=>toast(e.message||String(e),1))}else render()}
+function toggleTheme(){const d=document.documentElement.dataset.th==='dark'?'':'dark';if(d)document.documentElement.dataset.th='dark';else delete document.documentElement.dataset.th;localStorage.setItem('iom.th',d)}
+if(localStorage.getItem('iom.th')==='dark')document.documentElement.dataset.th='dark';
+
+function clearDemo(){if(!confirm('Remove all demo data and start with an empty system?'))return;const c=S.commodities;S=fresh(false);S.commodities=c;ensure();log('Demo data cleared');save();render()}
+
+const P={};
+const OF={com:'',wh:'',from:'',to:'',cur:'',cust:''};
+const ovIn=d=>(!OF.from||String(d||'').slice(0,10)>=OF.from)&&(!OF.to||String(d||'').slice(0,10)<=OF.to);
+function ovStock(){const m=stockMap(),o={};for(const k in m){const[w,b]=k.split('|');if(OF.wh&&w!==OF.wh)continue;if(OF.com&&batch(b).c!==OF.com)continue;o[k]=m[k]}return o}
+function ovBar(){const sel=(id,l,opts,v)=>'<div><label>'+l+'</label><select onchange="OF.'+id+'=this.value;render()">'+opts.map(o=>'<option value="'+esc(o[0])+'"'+(o[0]===v?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select></div>';
+ const curs=[...new Set(S.invoices.map(i=>i.cur).concat(S.collections.map(c=>c.cur)).filter(Boolean))];
+ return '<div class="card fbar"><div class="fgrid">'+sel('com','Commodity',[['','All commodities']].concat(S.commodities.map(c=>[c.id,c.name])),OF.com)+sel('wh','Warehouse',[['','All warehouses']].concat(S.warehouses.map(w=>[w.id,w.code])),OF.wh)+
+ '<div><label>Date from</label><input type="date" value="'+OF.from+'" onchange="OF.from=this.value;render()"></div><div><label>Date to</label><input type="date" value="'+OF.to+'" onchange="OF.to=this.value;render()"></div>'+
+ sel('cur','Currency',[['','All currencies']].concat(curs.map(c=>[c,c])),OF.cur)+sel('cust','Customer',[['','All customers']].concat((S.customers||[]).map(c=>[c.id,c.name])),OF.cust)+'<div class="fbtn"><button onclick="OF.com=OF.wh=OF.from=OF.to=OF.cur=OF.cust=\'\';render()">↻ Reset</button></div></div></div>'}
+P.overview=()=>{const m=ovStock();let raw=0,fin=0;const byC={};
+ for(const k in m){const c=com(batch(k.split('|')[1]).c);byC[c.name]=(byC[c.name]||0)+m[k];c.kind==='raw'?raw+=m[k]:fin+=m[k]}
+ const WL=S.warehouses.filter(w=>!OF.wh||w.id===OF.wh),cap=WL.reduce((a,w)=>a+w.cap,0),used=Object.values(m).reduce((a,v)=>a+v,0);
+ const done=S.orders.filter(o=>o.status==='approved'&&ovIn(o.date)),inp=done.reduce((a,o)=>a+o.actIn,0);
+ const loss=done.reduce((a,o)=>a+o.loss,0),outs=done.reduce((a,o)=>a+o.outs.reduce((x,y)=>x+y.act,0),0);
+ const mon=today().slice(0,7),month=(OF.from||OF.to?done:done.filter(o=>o.date.startsWith(mon))).reduce((a,o)=>a+o.outs.reduce((x,y)=>x+y.act,0),0);
+ const kp=(l,v,n)=>'<div class="card kpi"><div class="l">'+l+'</div><div class="v">'+v+'</div><div class="n">'+(n||'')+'</div></div>';
+ const mx=Math.max(1,...Object.values(byC));
+ return ovBar()+'<div class="grid k4">'+kp('Raw material stock',f2(raw)+' MT','physical, approved receipts')+kp('Finished goods stock',f2(fin)+' MT','incl. byproducts')+kp('Capacity utilization',cap?f2(used/cap*100,1)+'%':'-',f2(used)+' / '+f2(cap)+' MT')+kp('Pending receipts',S.receipts.filter(r=>r.status==='draft').length,'awaiting approval')+
+ kp('Production (this month)',f2(month)+' MT',done.length+' approved orders')+kp('Avg. yield',inp?f2(outs/inp*100,1)+'%':'-','outputs / input')+kp('Process losses',f2(loss)+' MT','approved orders')+kp('Open production orders',S.orders.filter(o=>['planned','in_progress','completed'].includes(o.status)).length,'')+'</div>'+
+ '<div class="grid k2" style="margin-top:14px"><div class="card"><h3>Stock by commodity (MT)</h3>'+(Object.entries(byC).filter(e=>e[1]>0).map(([n,v])=>'<div style="margin:8px 0"><div class="row"><span style="flex:1">'+esc(n)+'</span><b>'+f2(v)+'</b></div><div class="bar"><i style="width:'+(v/mx*100)+'%"></i></div></div>').join('')||'<span class="mut">No stock yet</span>')+'</div>'+
+ '<div class="card"><h3>Warehouse utilization</h3>'+(WL.map(w=>{const v=whStock(w.id,m),p=w.cap?v/w.cap*100:0;return '<div style="margin:8px 0"><div class="row"><span style="flex:1">'+esc(w.code)+' <span class="mut">'+esc(w.type)+'</span></span><b>'+f2(v)+' / '+f2(w.cap)+'</b></div><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div></div>'}).join('')||'<span class="mut">No warehouses</span>')+'</div></div>'+
+ '<div class="card" style="margin-top:14px"><h3>Recent activity</h3>'+(S.audit.filter(a=>ovIn(a.ts)).slice(0,8).map(a=>'<div class="mut">'+a.ts.slice(0,16).replace('T',' ')+' · <span style="color:var(--tx)">'+esc(a.act)+'</span> · '+esc(a.user)+'</div>').join('')||'<span class="mut">Nothing yet</span>')+'</div>'+
+ (()=>{const IV=S.invoices.filter(i=>ovIn(i.date)&&(!OF.cur||i.cur===OF.cur)&&(!OF.cust||i.cust===OF.cust)),inv=IV.reduce((a,i)=>a+i.total,0),col=S.collections.filter(c=>c.status!=='reversed'&&ovIn(c.date)&&(!OF.cur||c.cur===OF.cur)&&(!OF.cust||c.cust===OF.cust)).reduce((a,c)=>a+c.amount,0),rec=IV.reduce((a,i)=>a+invOut(i),0),ov=IV.filter(overdue).reduce((a,i)=>a+invOut(i),0);return '<div class="grid k4" style="margin-top:14px">'+kp('Total invoiced',f2(inv),'all currencies as entered')+kp('Collected',f2(col),'')+kp('Receivables',f2(rec),'')+kp('Overdue',f2(ov),IV.filter(overdue).length+' invoices')+kp('Total stock value',f2(stockValue()),'at purchase / allocated cost')+kp('Open sales orders',S.sales.filter(x=>x.status==='approved').length,f2([...Object.values(reservedMap())].reduce((a,b)=>a+b,0))+' MT reserved')+kp('Dispatched MT',f2(S.deliveries.filter(d=>d.status==='approved'&&ovIn(d.date)).reduce((a,d)=>a+d.loaded,0),1),S.deliveries.filter(d=>ovIn(d.date)).length+' deliveries')+kp('Pending movements',S.moves.filter(m=>['planned','in_transit'].includes(m.status)).length,'')+kp('Vehicles',S.vehicles.length,'')+'</div>'})()+
+ '<div class="row" style="margin-top:14px"><button class="p" onclick="go(\'receiving\')">+ Receive cargo</button><button onclick="go(\'production\')">+ Production order</button><button onclick="go(\'weighbridge\')">+ Weigh truck</button></div>'};
+
+P.warehouses=()=>{const m=stockMap();
+ return '<div class="row" style="margin-bottom:12px"><button class="p" '+(can('wh')?'':'disabled')+' onclick="newWh()">+ New warehouse / silo</button></div>'+
+ table([{h:'Code',k:'code'},{h:'Name',k:'name'},{h:'Type',k:'type'},{h:'Factory',k:'factory'},{h:'Cells',k:'cells',n:1},{h:'Capacity MT',n:1,f:w=>f2(w.cap)},{h:'Stock MT',n:1,f:w=>f2(whStock(w.id,m))},{h:'Free MT',n:1,f:w=>f2(w.cap-whStock(w.id,m))},{h:'Used',f:w=>'<div class="bar"><i style="width:'+Math.min(100,w.cap?whStock(w.id,m)/w.cap*100:0)+'%"></i></div>'},{h:'Allowed materials',f:w=>esc(w.allowed.map(i=>com(i).name).join(', ')||'Any')},{h:'',f:w=>'<button class="s" onclick="go(\'inventory\',\''+w.id+'\')">Contents</button>'}],S.warehouses,{csv:'warehouses'})};
+function newWh(){modal('New warehouse / silo',[{k:'code',l:'Code',req:1},{k:'name',l:'Name',req:1},{k:'type',l:'Type',t:'select',o:['Silo','Warehouse','Open Yard','Tank','Production Storage']},{k:'factory',l:'Factory / site',v:'Factory 1'},{k:'cap',l:'Capacity (MT)',t:'number',req:1},{k:'cells',l:'Storage cells',t:'number',v:1},{k:'allowed',l:'Allowed materials (names separated by commas; empty = any)',w:1}],v=>{
+  if(!can('wh'))throw new Error('Not permitted for role '+ROLE);
+  if(S.warehouses.some(w=>w.code===v.code))throw new Error('Code already exists');
+  const al=v.allowed.split(',').map(x=>x.trim()).filter(Boolean).map(n=>{const c=S.commodities.find(c=>c.name.toLowerCase()===n.toLowerCase());if(!c)throw new Error('Unknown material: '+n);return c.id});
+  S.warehouses.push({id:'W'+(++S.seq.W),code:v.code,name:v.name,type:v.type,factory:v.factory,cap:+v.cap,cells:+v.cells||1,allowed:al});log('Warehouse created',v.code)})}
+
+P.inventory=()=>{const m=stockMap(),f=ARG;
+ const rows=Object.keys(m).filter(k=>Math.abs(m[k])>1e-9&&(!f||k.startsWith(f+'|'))).map(k=>{const p=k.split('|');return{w:p[0],b:p[1],v:m[k]}});
+ const act=can('stock')?'<button class="p" onclick="stockOp(\'OPENING\')">Opening balance</button><button onclick="stockOp(\'ADJ\')">Adjustment / damage / loss</button><button onclick="transfer()">Internal transfer</button>':'<span class="mut">Your role can view stock only.</span>';
+ return '<div class="row" style="margin-bottom:12px">'+act+(f?'<button onclick="go(\'inventory\')">Show all warehouses</button>':'')+'</div><h3>Stock by warehouse and batch</h3>'+
+ table([{h:'Warehouse',f:r=>esc(wh(r.w).code)},{h:'Batch',f:r=>'<a class="l" onclick="go(\'trace\',\''+r.b+'\')">'+esc(batch(r.b).no)+'</a>'},{h:'Commodity',f:r=>esc(com(batch(r.b).c).name)},{h:'Origin',f:r=>esc(batch(r.b).origin||'')},{h:'Received',f:r=>esc(batch(r.b).date)},{h:'Physical MT',n:1,f:r=>f2(r.v,3)},{h:'Reserved',n:1,f:r=>f2(reservedMap()[r.w+'|'+r.b]||0,3)},{h:'Available MT',n:1,f:r=>f2(r.v-(reservedMap()[r.w+'|'+r.b]||0),3)}],rows,{csv:'stock'})+
+ '<h3 style="margin-top:20px">Movement ledger (every stock change)</h3>'+table([{h:'Time',f:l=>esc(l.ts.slice(0,16).replace('T',' '))},{h:'Doc',k:'doc'},{h:'Type',f:l=>tag(l.type)},{h:'Warehouse',f:l=>esc(wh(l.wh).code)},{h:'Batch',f:l=>esc(batch(l.batch).no)},{h:'Qty MT',n:1,f:l=>(l.qty>0?'+':'')+f2(l.qty,3)},{h:'By',k:'by'},{h:'',f:l=>l.reversed?tag('reversed'):''}],S.ledger.slice().reverse().filter(l=>!f||l.wh===f),{csv:'ledger'})};
+function toMT(q,u,c){if(u==='kg')return q/1000;if(u==='bu')return q/(BU[com(c).name]||36.7437);return q}
+function newBatch(c,origin,src,srcRef,parents){const n=++S.seq.B;const b={id:'B'+n,no:'BATCH-'+String(n).padStart(3,'0'),c,origin:origin||'',src,srcRef,parents,date:today()};S.batches.push(b);return b}
+function stockOp(t){
+ const fl=[];if(t==='ADJ')fl.push({k:'kind',l:'Kind',t:'select',o:[['ADJ','Adjustment (+/-)'],['DAMAGE','Damaged stock'],['LOSS','Storage loss']]});
+ fl.push({k:'wh',l:'Warehouse',t:'select',o:wOpts()});
+ if(t==='OPENING'){fl.push({k:'c',l:'Commodity',t:'select',o:cOpts()},{k:'origin',l:'Origin'})}else fl.push({k:'b',l:'Batch',t:'select',o:bOpts()});
+ fl.push({k:'qty',l:t==='OPENING'?'Quantity':'Quantity (+ adds, - removes; damage and loss always remove)',t:'number',req:1},{k:'unit',l:'Unit',t:'select',o:['MT','kg','bu']},{k:'why',l:'Reason',req:1,w:1});
+ modal(t==='OPENING'?'Opening balance':'Stock adjustment',fl,v=>{
+  if(!can('stock'))throw new Error('Not permitted for role '+ROLE);
+  let q=toMT(+v.qty,v.unit,t==='OPENING'?v.c:batch(v.b).c);
+  if(t==='OPENING'){allowedCheck(v.wh,v.c);const doc=nref('OPN');const b=newBatch(v.c,v.origin,'opening',doc,[]);try{post([{type:'OPENING',wh:v.wh,batch:b.id,qty:q}],doc)}catch(e){S.batches.pop();S.seq.B--;throw e}log('Opening balance '+f2(q)+' MT: '+v.why,doc)}
+  else{if(v.kind!=='ADJ')q=-Math.abs(q);const doc=nref('ADJ');post([{type:v.kind,wh:v.wh,batch:v.b,qty:q,why:v.why}],doc);log(v.kind+' '+f2(q)+' MT: '+v.why,doc)}})}
+function transfer(){modal('Internal transfer between warehouses',[{k:'b',l:'Batch',t:'select',o:bOpts()},{k:'from',l:'From',t:'select',o:wOpts()},{k:'to',l:'To',t:'select',o:wOpts()},{k:'qty',l:'Quantity (MT)',t:'number',req:1}],v=>{
+  if(!can('stock'))throw new Error('Not permitted for role '+ROLE);
+  if(v.from===v.to)throw new Error('Source and destination must differ');const q=+v.qty;if(!(q>0))throw new Error('Quantity must be positive');
+  allowedCheck(v.to,batch(v.b).c);const doc=nref('TRF');post([{type:'TRANSFER_OUT',wh:v.from,batch:v.b,qty:-q},{type:'TRANSFER_IN',wh:v.to,batch:v.b,qty:q}],doc);log('Transfer '+f2(q)+' MT',doc)})}
+
+P.receiving=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('receive')?'':'disabled')+' onclick="newRcv()">+ New receiving record</button></div><p class="mut">Import quantities are not physical stock until a receipt is approved. The Import Transaction reference is typed in for now; the link to AgriTrade Pro Import Operations is a prepared integration point for a later stage.</p>'+
+ table([{h:'Ref',k:'ref'},{h:'Import ref',k:'imp'},{h:'Vessel',k:'vessel'},{h:'Supplier',k:'supplier'},{h:'Commodity',f:r=>esc(com(r.c).name)},{h:'Origin',k:'origin'},{h:'B/L MT',n:1,f:r=>f2(r.bl)},{h:'Discharged',n:1,f:r=>f2(r.dis)},{h:'Received',n:1,f:r=>f2(r.rec)},{h:'B/L minus received',n:1,f:r=>f2(r.bl-r.rec)},{h:'Weighbridge net MT',n:1,f:r=>f2(S.tickets.filter(t=>t.ref===r.ref).reduce((a,t)=>a+t.net/1000,0),3)},{h:'To',f:r=>esc(wh(r.wh).code)},{h:'Date',k:'date'},{h:'Status',f:r=>tag(r.status)},
+ {h:'',f:r=>(r.status==='draft'&&can('approveRcv')?'<button class="s p" onclick="apprRcv(\''+r.ref+'\')">Approve & post</button>':'')+(r.status==='approved'&&can('approveRcv')?'<button class="s d" onclick="revDoc(\''+r.ref+'\')">Reverse</button>':'')+(r.batch&&r.status!=='draft'?' <button class="s" onclick="go(\'trace\',\''+r.batch+'\')">Trace</button>':'')}],S.receipts.slice().reverse(),{csv:'receipts'});
+function newRcv(){modal('New receiving record',[{k:'imp',l:'Import Transaction reference',req:1},{k:'vessel',l:'Vessel name'},{k:'supplier',l:'Supplier',req:1},{k:'c',l:'Commodity',t:'select',o:cOpts(['raw'])},{k:'origin',l:'Origin'},{k:'wh',l:'Destination warehouse',t:'select',o:wOpts()},{k:'bl',l:'B/L quantity (MT)',t:'number',req:1},{k:'dis',l:'Discharged quantity (MT)',t:'number',req:1},{k:'rec',l:'Received quantity (MT)',t:'number',req:1},{k:'cost',l:'Purchase cost per MT (optional, for costing)',t:'number'},{k:'date',l:'Receiving date',t:'date',v:today()}],v=>{
+  if(!can('receive'))throw new Error('Not permitted for role '+ROLE);
+  allowedCheck(v.wh,v.c);if(!(+v.rec>0))throw new Error('Received quantity must be positive');
+  const ref=nref('RCV');S.receipts.push({ref,imp:v.imp,vessel:v.vessel,supplier:v.supplier,c:v.c,origin:v.origin,wh:v.wh,bl:+v.bl,dis:+v.dis,rec:+v.rec,cost:v.cost===''?null:+v.cost,date:v.date,status:'draft'});log('Receipt drafted',ref)})}
+function apprRcv(ref){tryDo(()=>{if(!can('approveRcv'))throw new Error('Approval needs Warehouse Manager or General Manager');const r=S.receipts.find(x=>x.ref===ref);
+ const b=newBatch(r.c,r.origin,'receipt',ref,[]);b.date=r.date;if(r.cost)b.cost=r.cost;
+ try{post([{type:'RECEIPT',wh:r.wh,batch:b.id,qty:r.rec}],ref)}catch(e){S.batches.pop();S.seq.B--;throw e}
+ r.batch=b.id;r.status='approved';log('Receipt approved: '+f2(r.rec)+' MT '+com(r.c).name+' to '+wh(r.wh).code,ref);toast('Posted. '+b.no)})}
+function revDoc(doc){if(!confirm('Reverse '+doc+'? A counter-entry is posted and the original stays in history.'))return;tryDo(()=>{if(!can('approveRcv')&&!can('approveProd'))throw new Error('Not permitted for role '+ROLE);reverseDoc(doc)})}
+
+P.weighbridge=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('weigh')?'':'disabled')+' onclick="newWgh()">+ New weighing ticket</button></div>'+
+ table([{h:'Ticket',k:'no'},{h:'Time',f:t=>esc(t.time.slice(0,16).replace('T',' '))},{h:'Direction',f:t=>tag(t.dir)},{h:'Truck',k:'truck'},{h:'Driver',k:'driver'},{h:'Product',f:t=>esc(com(t.c).name)},{h:'Gross kg',n:1,f:t=>f2(t.gross)},{h:'Tare kg',n:1,f:t=>f2(t.tare)},{h:'Net kg',n:1,f:t=>f2(t.net)},{h:'Net MT',n:1,f:t=>f2(t.net/1000,3)},{h:'Reference',k:'ref'},{h:'Warehouse',f:t=>esc(wh(t.wh).code)}],S.tickets.slice().reverse(),{csv:'weighbridge'})+'<p class="mut">Tickets are typed manually now. The electronic scale API is a prepared integration point, not connected.</p>';
+function newWgh(){modal('New weighing ticket',[{k:'dir',l:'Direction',t:'select',o:['In','Out']},{k:'truck',l:'Truck number',req:1},{k:'driver',l:'Driver name',req:1},{k:'c',l:'Product',t:'select',o:cOpts()},{k:'wh',l:'Warehouse',t:'select',o:wOpts()},{k:'ref',l:'Loading / unloading reference (e.g. RCV-0002)'},{k:'gross',l:'Gross weight (kg)',t:'number',req:1,on:'nw()'},{k:'tare',l:'Tare weight (kg)',t:'number',req:1,on:'nw()'},{k:'net',l:'Net weight (kg), automatic',ro:1}],v=>{
+  if(!can('weigh'))throw new Error('Not permitted for role '+ROLE);
+  const g=+v.gross,t=+v.tare;if(g<=t)throw new Error('Gross must be greater than tare');
+  S.tickets.push({no:nref('WGH'),truck:v.truck,driver:v.driver,gross:g,tare:t,net:g-t,time:new Date().toISOString(),dir:v.dir,ref:v.ref,wh:v.wh,c:v.c});log('Weighing ticket '+f2(g-t)+' kg',v.truck)})}
+function nw(){const e=document.querySelector('.modal form').elements;e.net.value=Math.max(0,(+e.gross.value||0)-(+e.tare.value||0))}
+
+P.formulas=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('formula')?'':'disabled')+' onclick="editFormula()">+ New formula</button></div>'+
+ table([{h:'Formula',k:'name'},{h:'Raw material',f:f=>esc(com(f.raw).name)},{h:'Line',k:'line'},{h:'Outputs (% of input)',f:f=>f.outs.map(o=>esc(com(o.c).name)+' '+o.p+'%').join(' · ')},{h:'Process loss %',n:1,f:f=>f.loss},{h:'Stages',f:f=>esc(f.stages.join(' > '))},{h:'',f:f=>can('formula')?'<button class="s" onclick="editFormula(\''+f.id+'\')">Edit</button>':''}],S.formulas);
+function editFormula(id){const F=S.formulas.find(x=>x.id===id)||{name:'',raw:S.commodities[0].id,line:'',loss:0,outs:[],stages:['Raw Material Preparation','Cleaning','Crushing','Final Product Storage']};
+ modal(id?'Edit formula':'New formula',[{k:'name',l:'Formula name',v:F.name,req:1},{k:'raw',l:'Raw material',t:'select',o:cOpts(['raw']),v:F.raw},{k:'line',l:'Production line',v:F.line},{k:'loss',l:'Expected process loss %',t:'number',v:F.loss},{k:'std',l:'Standard conversion cost per MT input (optional)',t:'number',v:F.stdConv||''},
+ {k:'outs',l:'Outputs: Product = % ; Product = %   (e.g. Soybean Meal = 73 ; Soybean Oil = 20)',w:1,v:F.outs.map(o=>com(o.c).name+' = '+o.p).join(' ; ')},{k:'stages',l:'Stages (separated by ;)',w:1,v:F.stages.join(' ; ')}],v=>{
+  if(!can('formula'))throw new Error('Not permitted for role '+ROLE);
+  const outs=v.outs.split(/[;\n]/).map(x=>x.trim()).filter(Boolean).map(x=>{const q=x.split('=').map(s=>s.trim()),n=q[0];let c=S.commodities.find(c=>c.name.toLowerCase()===n.toLowerCase());if(!c){c={id:'C'+(S.commodities.length+1),name:n,kind:'finished'};S.commodities.push(c)}return{c:c.id,p:+q[1]}});
+  if(!outs.length||outs.some(o=>!(o.p>=0)))throw new Error('Outputs must look like: Name = 73 ; Name = 20');
+  const tot=outs.reduce((a,o)=>a+o.p,0)+(+v.loss||0);if(Math.abs(tot-100)>1e-6)throw new Error('Outputs + process loss must equal 100% (now '+tot+'%)');
+  const o={id:id||'F'+(++S.seq.F),name:v.name,raw:v.raw,line:v.line,loss:+v.loss||0,stdConv:+v.std||0,outs,stages:v.stages.split(';').map(s=>s.trim()).filter(Boolean)};
+  if(id)Object.assign(F,o);else S.formulas.push(o);log('Formula saved',o.name)})}
+
+P.production=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('produce')?'':'disabled')+' onclick="newOrder()">+ New production order</button></div>'+
+ table([{h:'Order',k:'ref'},{h:'Factory / line',f:o=>esc(o.factory+' / '+o.line)},{h:'Formula',f:o=>esc((S.formulas.find(f=>f.id===o.formula)||{}).name)},{h:'Source',f:o=>esc(wh(o.wh).code+' / '+batch(o.batch).no)},{h:'Planned in MT',n:1,f:o=>f2(o.planIn)},{h:'Actual in',n:1,f:o=>o.actIn?f2(o.actIn):'-'},{h:'Yield %',n:1,f:o=>o.actIn&&o.status!=='planned'&&o.status!=='in_progress'?f2(o.outs.reduce((a,x)=>a+x.act,0)/o.actIn*100,1):'-'},{h:'Stage',f:o=>esc(o.stages[o.stage]||'')},{h:'Date',k:'date'},{h:'Manager',k:'mgr'},{h:'Status',f:o=>tag(o.status)},
+ {h:'',f:o=>{let b='<button class="s" onclick="orderView(\''+o.ref+'\')">Open</button> ';if(o.status==='planned'&&can('produce'))b+='<button class="s p" onclick="startOrder(\''+o.ref+'\')">Start</button>';if(o.status==='in_progress'&&can('produce'))b+='<button class="s" onclick="nextStage(\''+o.ref+'\')">Next stage</button> <button class="s p" onclick="finishOrder(\''+o.ref+'\')">Record actuals</button>';if(o.status==='completed'&&can('approveProd'))b+='<button class="s p" onclick="approveOrder(\''+o.ref+'\')">Approve & post</button>';if(o.status==='approved'&&can('approveProd'))b+='<button class="s d" onclick="revDoc(\''+o.ref+'\')">Reverse</button>';return b}}],S.orders.slice().reverse(),{csv:'production-orders'});
+function newOrder(){if(!S.formulas.length)return toast('Create a formula first',1);const m=stockMap();
+ const rsv=reservedMap();const src=Object.keys(m).filter(k=>m[k]-(rsv[k]||0)>0).map(k=>{const p=k.split('|');return[k,wh(p[0]).code+' / '+batch(p[1]).no+' / '+com(batch(p[1]).c).name+' ('+f2(m[k]-(rsv[k]||0))+' MT available)']});
+ if(!src.length)return toast('No stock available to produce from',1);
+ modal('New production order',[{k:'factory',l:'Factory',v:'Factory 1'},{k:'formula',l:'Formula (sets raw material and line)',t:'select',o:S.formulas.map(f=>[f.id,f.name])},{k:'src',l:'Raw material source (warehouse / batch)',t:'select',o:src,w:1},{k:'qty',l:'Planned input quantity (MT)',t:'number',req:1},{k:'date',l:'Production date',t:'date',v:today()},{k:'end',l:'Expected completion',t:'date',v:today()},{k:'mgr',l:'Production manager',req:1,w:1}],v=>{
+  if(!can('produce'))throw new Error('Not permitted for role '+ROLE);
+  const F=S.formulas.find(f=>f.id===v.formula),p=v.src.split('|'),w=p[0],b=p[1];if(batch(b).c!==F.raw)throw new Error('Selected batch is '+com(batch(b).c).name+' but the formula needs '+com(F.raw).name);
+  if(!(+v.qty>0)||+v.qty>(m[v.src]||0))throw new Error('Planned input must be positive and within available stock ('+f2(m[v.src])+' MT)');
+  S.orders.push({ref:nref('PRD'),factory:v.factory,line:F.line,formula:F.id,wh:w,batch:b,planIn:+v.qty,date:v.date,end:v.end,mgr:v.mgr,status:'planned',stages:F.stages.slice(),stage:0,outs:F.outs.map(o=>({c:o.c,p:o.p,exp:+v.qty*o.p/100,act:0,wh:''})),actIn:0,loss:0,wip:0,lossWhy:''});log('Production order created',S.orders[S.orders.length-1].ref)})}
+function startOrder(r){tryDo(()=>{if(!can('produce'))throw new Error('Not permitted');S.orders.find(x=>x.ref===r).status='in_progress';log('Production started',r)})}
+function nextStage(r){tryDo(()=>{const o=S.orders.find(x=>x.ref===r);if(o.stage<o.stages.length-1)o.stage++;log('Stage: '+o.stages[o.stage],r)})}
+function finishOrder(r){const o=S.orders.find(x=>x.ref===r);
+ const defW=c=>{const w=S.warehouses.find(w=>w.allowed.includes(c))||S.warehouses.find(w=>!w.allowed.length)||S.warehouses[0];return w&&w.id};
+ const fl=[{k:'in',l:'Actual raw material consumed (MT)',t:'number',v:o.planIn,w:1}];
+ o.outs.forEach((x,i)=>{fl.push({k:'a'+i,l:com(x.c).name+' actual MT (expected '+f2(x.exp,3)+')',t:'number',v:+x.exp.toFixed(3)},{k:'w'+i,l:'Store in',t:'select',o:wOpts(),v:defW(x.c)})});
+ fl.push({k:'wip',l:'Remaining work in process (MT)',t:'number',v:0},{k:'loss',l:'Process loss (MT), recorded not assumed',t:'number',v:0},{k:'why',l:'Reason for any difference or loss',w:1});
+ modal('Actual production '+r,fl,v=>{
+  const ain=+v.in,outs=o.outs.map((x,i)=>Object.assign({},x,{act:+v['a'+i],wh:v['w'+i]}));
+  outs.forEach(x=>{if(x.act>0)allowedCheck(x.wh,x.c)});
+  const tot=outs.reduce((a,x)=>a+x.act,0)+(+v.wip)+(+v.loss),diff=ain-tot;
+  if(Math.abs(diff)>0.0005&&!v.why.trim())throw new Error('Mass balance differs by '+f2(diff,3)+' MT (input = outputs + losses + WIP). Adjust the figures or write the reason.');
+  Object.assign(o,{actIn:ain,outs,wip:+v.wip,loss:+v.loss+(Math.abs(diff)>0.0005?diff:0),lossWhy:v.why,status:'completed'});log('Actuals recorded, awaiting approval',r)})}
+function approveOrder(r){tryDo(()=>{if(!can('approveProd'))throw new Error('Approval needs Production Manager or General Manager');const o=S.orders.find(x=>x.ref===r);
+ const nb=[],es=[{type:'ISSUE',wh:o.wh,batch:o.batch,qty:-o.actIn}],seqB=S.seq.B;
+ o.outs.forEach(x=>{if(x.act<=0)return;const b=newBatch(x.c,batch(o.batch).origin,'production',r,[o.batch]);nb.push(b);x.batch=b.id;es.push({type:'PROD_IN',wh:x.wh,batch:b.id,qty:x.act})});
+ try{post(es,r)}catch(e){S.batches.splice(S.batches.length-nb.length,nb.length);S.seq.B=seqB;nb.forEach(()=>{});o.outs.forEach(x=>delete x.batch);throw e}
+ o.status='approved';log('Production approved: '+f2(o.actIn)+' MT in, '+nb.length+' output batches',r);toast('Posted: '+nb.map(b=>b.no).join(', '))})}
+function orderView(r){const o=S.orders.find(x=>x.ref===r),out=o.outs.reduce((a,x)=>a+x.act,0);
+ const m=document.createElement('div');m.className='modal';m.onclick=e=>{if(e.target===m)m.remove()};
+ m.innerHTML='<div class="card"><h3>'+r+' '+tag(o.status)+'</h3><p>Input: planned '+f2(o.planIn)+' MT, actual '+(o.actIn?f2(o.actIn):'-')+' MT. Source '+esc(wh(o.wh).code)+' / '+esc(batch(o.batch).no)+'</p><div class="tw"><table><tr><th>Output</th><th class=num>Yield %</th><th class=num>Expected</th><th class=num>Actual</th><th class=num>Variance</th><th>Batch</th></tr>'+o.outs.map(x=>'<tr><td>'+esc(com(x.c).name)+'</td><td class=num>'+x.p+'</td><td class=num>'+f2(x.exp,3)+'</td><td class=num>'+(x.act?f2(x.act,3):'-')+'</td><td class=num>'+(x.act?f2(x.act-x.exp,3):'-')+'</td><td>'+(x.batch?'<a class="l" onclick="this.closest(\'.modal\').remove();go(\'trace\',\''+x.batch+'\')">'+esc(batch(x.batch).no)+'</a>':'-')+'</td></tr>').join('')+'</table></div>'+
+ (o.actIn?'<h3 style="margin-top:14px">Mass balance</h3><p>Input '+f2(o.actIn,3)+' = outputs '+f2(out,3)+' + losses '+f2(o.loss,3)+' + WIP '+f2(o.wip,3)+' (difference '+f2(o.actIn-out-o.loss-o.wip,3)+' MT)<br>Efficiency '+f2(out/o.actIn*100,2)+'% · production loss '+f2(o.loss,3)+' MT'+(o.lossWhy?'<br>Reason: '+esc(o.lossWhy):'')+'</p>':'')+
+ '<p class="mut">Stages: '+o.stages.map((s,i)=>i<=o.stage&&o.status!=='planned'?'<b style="color:var(--g)">'+esc(s)+'</b>':esc(s)).join(' › ')+'</p><div class="row" style="justify-content:flex-end"><button onclick="this.closest(\'.modal\').remove()">Close</button></div></div>';document.body.appendChild(m)}
+
+P.finished=()=>{const m=stockMap();const rows=Object.keys(m).filter(k=>m[k]>1e-9&&com(batch(k.split('|')[1]).c).kind!=='raw').map(k=>{const p=k.split('|');return{w:p[0],b:p[1],v:m[k]}});
+ return table([{h:'Batch',f:r=>esc(batch(r.b).no)},{h:'Product',f:r=>esc(com(batch(r.b).c).name)},{h:'Type',f:r=>tag(com(batch(r.b).c).kind)},{h:'Warehouse',f:r=>esc(wh(r.w).code)},{h:'Production order',f:r=>esc(batch(r.b).srcRef)},{h:'Date',f:r=>esc(batch(r.b).date)},{h:'Stock MT',n:1,f:r=>f2(r.v,3)},{h:'',f:r=>'<button class="s" onclick="go(\'trace\',\''+r.b+'\')">Trace to origin</button>'}],rows,{csv:'finished-goods'})+'<p class="mut">Sales, reservations and dispatch of finished goods come in Stage 2.</p>'};
+
+function rootBatches(b,seen){seen=seen||new Set();const x=S.batches.find(z=>z.id===b);if(!x||seen.has(b))return[];seen.add(b);return x.parents.length?x.parents.flatMap(p=>rootBatches(p,seen)):[b]}
+P.trace=()=>{const sel='<div class="card"><label>Select a batch (every received shipment is a batch)<select onchange="go(\'trace\',this.value)"><option value="">-</option>'+S.batches.map(b=>'<option value="'+b.id+'"'+(ARG===b.id?' selected':'')+'>'+esc(b.no)+' · '+esc(com(b.c).name)+' · '+esc(b.srcRef)+'</option>').join('')+'</select></label></div>';
+ if(!ARG)return sel+'<p class="mut">Pick a batch to see: Import, Receiving, Warehouse, Production, Finished goods.</p>';
+ const roots=[...new Set(rootBatches(ARG))];
+ return sel+'<div style="margin-top:14px">'+(roots.indexOf(ARG)<0?'<p class="mut">Origin of this batch: '+roots.map(r=>'<a class="l" onclick="go(\'trace\',\''+r+'\')">'+esc(batch(r).no)+'</a>').join(', ')+'</p>':'')+roots.map(r=>treeOf(r)).join('')+'<p class="mut" style="margin-top:14px">Costs and profitability per shipment come with Stage 3 (costing).</p></div>'};
+function treeOf(id){const b=batch(id),m=stockMap();const loc=Object.keys(m).filter(k=>k.endsWith('|'+id)&&Math.abs(m[k])>1e-9);
+ const rc=S.receipts.find(r=>r.batch===id&&r.status!=='draft');const cons=S.ledger.filter(l=>l.batch===id&&l.type==='ISSUE'&&!l.reversed);const kids=S.batches.filter(x=>x.parents.indexOf(id)>=0);
+ const recQty=S.ledger.filter(l=>l.batch===id&&['RECEIPT','OPENING','PROD_IN'].indexOf(l.type)>=0&&!l.reversed).reduce((a,l)=>a+l.qty,0);
+ let h='<div class="card nd"><b>'+esc(b.no)+'</b> '+esc(com(b.c).name)+' <span class="mut">'+esc(b.origin||'')+'</span> '+tag(b.src)+'<div class="mut">';
+ if(rc)h+='Import '+esc(rc.imp)+' · vessel '+esc(rc.vessel||'-')+' · supplier '+esc(rc.supplier)+' · B/L '+f2(rc.bl)+' MT · discharged '+f2(rc.dis)+' · received '+f2(rc.rec)+' MT on '+esc(rc.date)+' ('+esc(rc.ref)+')<br>';
+ else if(b.src==='production')h+='Produced by '+esc(b.srcRef)+' · '+f2(recQty,3)+' MT<br>';
+ else h+='Source '+esc(b.srcRef)+' · '+f2(recQty,3)+' MT<br>';
+ h+='In stock: '+(loc.map(k=>esc(wh(k.split('|')[0]).code)+' '+f2(m[k],3)+' MT').join(', ')||'0');
+ if(cons.length)h+='<br>Consumed in production: '+f2(-cons.reduce((a,l)=>a+l.qty,0),3)+' MT ('+[...new Set(cons.map(l=>l.doc))].join(', ')+')';
+
+ const dl=S.deliveries.filter(d=>d.batch===id&&d.status==='approved');
+ if(dl.length){h+='<br>Sold / delivered: '+dl.map(d=>{const s=so(d.so),iv=S.invoices.filter(i=>i.del===d.ref);const val=iv.reduce((a,i)=>a+i.total,0),paid=iv.reduce((a,i)=>a+invPaid(i.no)*1,0);return esc(d.ref)+' ('+esc(cust(s.cust).name)+') '+f2(d.delivered,3)+' MT (loaded '+f2(d.loaded,3)+') · invoices '+(iv.map(i=>esc(i.no)).join(', ')||'none')+' = '+f2(val)+' '+esc(s.cur)+' · collected '+f2(paid)+' · outstanding '+f2(val-paid)}).join('<br>')}
+ const mv=S.moves.filter(m=>m.batch===id&&m.status==='received');if(mv.length)h+='<br>Internal moves: '+mv.map(m=>esc(m.ref)+' '+esc(wh(m.from).code)+' to '+esc(wh(m.to).code)+' '+f2(m.recv,3)+' MT').join(', ');
+ h+='</div>';if(kids.length)h+='<div class="tree">'+kids.map(k=>treeOf(k.id)).join('')+'</div>';return h+'</div>'}
+
+P.audit=()=>'<div class="row" style="margin-bottom:12px"><button onclick="exportAll()">Export full backup (JSON)</button><button onclick="document.getElementById(\'imp\').click()">Import backup</button><input id="imp" type="file" accept=".json" hidden onchange="importAll(this)"></div><div class="card" style="margin-bottom:14px"><b>Data storage:</b> <span class="mut">Data is stored in the shared cloud database and every signed-in user sees the same data. A copy is also kept in this browser. Export a backup regularly. Access follows the role of each user.</span></div>'+
+ table([{h:'Time',f:a=>esc(a.ts.slice(0,19).replace('T',' '))},{h:'User / role',k:'user'},{h:'Action',k:'act'},{h:'Ref',k:'ref'}],S.audit,{csv:'audit'});
+function exportAll(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='iom-backup-'+today()+'.json';a.click()}
+function importAll(i){const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(s.v!==1)throw 0;S=s;ensure();save();render();toast('Backup restored')}catch(e){toast('Not a valid backup',1)}};r.readAsText(i.files[0])}
+
+/* ===== Stage 2: sales, reservations, dispatch, invoices, collections, fleet, movements ===== */
+function ensure(){['customers','sales','deliveries','invoices','collections','vehicles','moves'].forEach(k=>{if(!S[k])S[k]=[]});['SO','DLV','INV','COL','MOV','CUS','VEH'].forEach(k=>{if(S.seq[k]==null)S.seq[k]=0})}
+ensure();
+const cust=id=>S.customers.find(c=>c.id===id)||{name:'?'};
+const so=r=>S.sales.find(s=>s.ref===r)||{};
+const days=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+function dispatched(r){return S.deliveries.filter(d=>d.so===r&&d.status!=='reversed').reduce((a,d)=>a+d.loaded,0)}
+function reservedMap(){const m={};S.sales.filter(s=>s.status==='approved'&&s.src).forEach(s=>{const rem=s.qty-dispatched(s.ref);if(rem>0)m[s.src]=(m[s.src]||0)+rem});return m}
+function invPaid(no){return S.collections.filter(c=>c.status!=='reversed').reduce((a,c)=>a+c.alloc.filter(x=>x.inv===no).reduce((x,y)=>x+y.amt,0),0)}
+function invOut(i){return Math.max(0,i.total-invPaid(i.no))}
+function invStatus(i){const o=invOut(i);return o<0.005?'paid':(invPaid(i.no)>0?'partial':'unpaid')}
+const overdue=i=>invOut(i)>0.005&&i.due<today();
+function custAcct(cid,cur){const inv=S.invoices.filter(i=>i.cust===cid&&i.cur===cur);const sales=S.sales.filter(s=>s.cust===cid&&s.cur===cur&&s.status!=='cancelled'&&s.status!=='draft').reduce((a,s)=>a+s.qty*s.price,0);
+ const invd=inv.reduce((a,i)=>a+i.total,0),col=S.collections.filter(c=>c.cust===cid&&c.cur===cur&&c.status!=='reversed').reduce((a,c)=>a+c.amount,0);
+ return{sales,invd,col,out:inv.reduce((a,i)=>a+invOut(i),0),over:inv.filter(overdue).reduce((a,i)=>a+invOut(i),0),unapplied:col-inv.reduce((a,i)=>a+invPaid(i.no),0)}}
+const availOpts=()=>{const m=stockMap(),r=reservedMap();return Object.keys(m).filter(k=>m[k]-(r[k]||0)>1e-9).map(k=>{const p=k.split('|');return[k,wh(p[0]).code+' / '+batch(p[1]).no+' / '+com(batch(p[1]).c).name+' (avail '+f2(m[k]-(r[k]||0),3)+' MT)']})};
+
+/* customers */
+function newCust(){modal('New customer',[{k:'name',l:'Customer name',req:1},{k:'limit',l:'Credit limit',t:'number',v:0},{k:'cur',l:'Currency',t:'select',o:['USD','EGP','EUR']}],v=>{if(!can('sales')&&!can('finance'))throw new Error('Not permitted for role '+ROLE);S.customers.push({id:'CU'+(++S.seq.CUS),name:v.name,limit:+v.limit,cur:v.cur});log('Customer created',v.name)})}
+const custOpts=()=>S.customers.map(c=>[c.id,c.name]);
+
+/* sales */
+P.sales=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('sales')?'':'disabled')+' onclick="newSO()">+ New sales order</button><button '+(can('sales')||can('finance')?'':'disabled')+' onclick="newCust()">+ New customer</button></div>'+
+ '<div class="card" style="margin-bottom:14px"><h3>Available to sell</h3>'+(()=>{const m=stockMap(),r=reservedMap();const by={};Object.keys(m).forEach(k=>{const c=com(batch(k.split('|')[1]).c).name;by[c]=by[c]||{p:0,r:0};by[c].p+=m[k];by[c].r+=r[k]||0});
+ const prod=S.orders.filter(o=>['in_progress','completed'].includes(o.status));const inc=S.receipts.filter(x=>x.status==='draft');
+ return '<div class="tw"><table><tr><th>Commodity</th><th class=num>Physical</th><th class=num>Reserved</th><th class=num>Available</th></tr>'+Object.keys(by).filter(c=>by[c].p>1e-9).map(c=>'<tr><td>'+esc(c)+'</td><td class=num>'+f2(by[c].p,3)+'</td><td class=num>'+f2(by[c].r,3)+'</td><td class=num><b>'+f2(by[c].p-by[c].r,3)+'</b></td></tr>').join('')+'</table></div><p class="mut">In production: '+f2(prod.reduce((a,o)=>a+o.planIn,0))+' MT · incoming (receipts awaiting approval): '+f2(inc.reduce((a,x)=>a+x.rec,0))+' MT</p>'})()+'</div>'+
+ table([{h:'Order',k:'ref'},{h:'Customer',f:s=>esc(cust(s.cust).name)},{h:'Product',f:s=>esc(com(s.c).name)},{h:'Qty MT',n:1,f:s=>f2(s.qty)},{h:'Price',n:1,f:s=>f2(s.price)+' '+s.cur},{h:'Value',n:1,f:s=>f2(s.qty*s.price)},{h:'Terms',f:s=>esc(s.terms+' / pay '+s.pay+'d')},{h:'Salesperson',k:'rep'},{h:'Date',k:'date'},{h:'Dispatched',n:1,f:s=>f2(dispatched(s.ref),3)},{h:'Source',f:s=>s.src?esc(wh(s.src.split('|')[0]).code+' / '+batch(s.src.split('|')[1]).no):'<span class="mut">future production</span>'},{h:'Status',f:s=>tag(s.status)},
+ {h:'',f:s=>(s.status==='draft'&&can('sales')?'<button class="s p" onclick="apprSO(\''+s.ref+'\')">Approve & reserve</button>':'')+(['draft','approved'].includes(s.status)&&can('sales')?'<button class="s d" onclick="cancelSO(\''+s.ref+'\')">Cancel</button>':'')}],S.sales.slice().reverse(),{csv:'sales-orders'})+
+ '<h3 style="margin-top:20px">Customer accounts</h3>'+table([{h:'Customer',f:r=>esc(cust(r.c).name)},{h:'Cur',k:'cur'},{h:'Total sales',n:1,f:r=>f2(r.a.sales)},{h:'Invoiced',n:1,f:r=>f2(r.a.invd)},{h:'Collected',n:1,f:r=>f2(r.a.col)},{h:'Outstanding',n:1,f:r=>f2(r.a.out)},{h:'Overdue',n:1,f:r=>r.a.over>0?'<span style="color:var(--red)">'+f2(r.a.over)+'</span>':'0'},{h:'Credit limit',n:1,f:r=>f2(cust(r.c).limit)},{h:'Credit used',f:r=>{const l=cust(r.c).limit;return l?'<div class="bar"><i style="width:'+Math.min(100,r.a.out/l*100)+'%"></i></div>':'-'}}],S.customers.flatMap(c=>[...new Set([c.cur,...S.sales.filter(s=>s.cust===c.id).map(s=>s.cur)])].map(cur=>({c:c.id,cur,a:custAcct(c.id,cur)}))),{csv:'customer-accounts'});
+function newSO(){if(!S.customers.length)return toast('Add a customer first',1);
+ modal('New sales order',[{k:'cust',l:'Customer',t:'select',o:custOpts()},{k:'src',l:'Sell from (warehouse / batch, available stock)',t:'select',o:availOpts().concat([['','Future production (needs General Manager)']]),w:1},{k:'qty',l:'Quantity (MT)',t:'number',req:1},{k:'price',l:'Unit price per MT',t:'number',req:1},{k:'cur',l:'Currency',t:'select',o:['USD','EGP','EUR']},{k:'terms',l:'Delivery terms',t:'select',o:['EXW','FCA','DAP','CIF','Ex-silo']},{k:'loc',l:'Delivery location'},{k:'pay',l:'Payment terms (days)',t:'number',v:30},{k:'rep',l:'Salesperson',req:1},{k:'date',l:'Order date',t:'date',v:today()},{k:'sched',l:'Delivery schedule (free text)',w:1}],v=>{
+  if(!can('sales'))throw new Error('Not permitted for role '+ROLE);
+  const q=+v.qty;if(!(q>0&&+v.price>0))throw new Error('Quantity and price must be positive');
+  const c=v.src?batch(v.src.split('|')[1]).c:null;
+  S.sales.push({ref:nref('SO'),cust:v.cust,c:c,src:v.src,qty:q,price:+v.price,cur:v.cur,terms:v.terms,loc:v.loc,pay:+v.pay,rep:v.rep,date:v.date,sched:v.sched,status:'draft'});log('Sales order drafted',S.sales[S.sales.length-1].ref)});
+}
+function apprSO(r){tryDo(()=>{if(!can('sales'))throw new Error('Not permitted for role '+ROLE);const s=so(r);
+ if(s.src){const m=stockMap(),res=reservedMap();const av=(m[s.src]||0)-(res[s.src]||0);if(s.qty>av+1e-9)throw new Error('Not available: only '+f2(av,3)+' MT available to sell from this batch/warehouse (reserved stock excluded)')}
+ else if(ROLES[ROLE]!=='*')throw new Error('Selling against future production needs General Manager approval');
+ const c=cust(s.cust);if(c.limit){const a=custAcct(s.cust,s.cur);const exp=a.out+s.qty*s.price;if(exp>c.limit)throw new Error('Credit limit exceeded: exposure '+f2(exp)+' > limit '+f2(c.limit)+' '+s.cur)}
+ s.status='approved';log('Sales order approved'+(s.src?' and stock reserved':''),r);toast('Approved'+(s.src?', '+f2(s.qty)+' MT reserved':''))})}
+function cancelSO(r){if(!confirm('Cancel '+r+'? Reservation is released.'))return;tryDo(()=>{const s=so(r);if(dispatched(r)>0)throw new Error('Already partly dispatched; cannot cancel');s.status='cancelled';log('Sales order cancelled',r)})}
+
+/* dispatch */
+P.dispatch=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('dispatch')?'':'disabled')+' onclick="newDlv()">+ New delivery / dispatch</button></div><p class="mut">Stock leaves the warehouse only when a dispatch is approved. Loading weight is deducted; customer-confirmed quantity gives shortage / excess.</p>'+
+ table([{h:'Delivery',k:'ref'},{h:'Sales order',k:'so'},{h:'Customer',f:d=>esc(cust(so(d.so).cust).name)},{h:'From',f:d=>esc(wh(d.wh).code+' / '+batch(d.batch).no)},{h:'Truck',k:'truck'},{h:'Driver',k:'driver'},{h:'Exit ticket',k:'ticket'},{h:'Loaded MT',n:1,f:d=>f2(d.loaded,3)},{h:'Delivered MT',n:1,f:d=>f2(d.delivered,3)},{h:'Short / excess',n:1,f:d=>{const x=d.delivered-d.loaded;return x<0?'<span style="color:var(--red)">'+f2(x,3)+'</span>':f2(x,3)}},{h:'Invoiced MT',n:1,f:d=>f2(S.invoices.filter(i=>i.del===d.ref).reduce((a,i)=>a+i.qty,0),3)},{h:'Date',k:'date'},{h:'Status',f:d=>tag(d.status)},{h:'',f:d=>(d.status==='approved'&&can('dispatch')?'<button class="s d" onclick="revDlv(\''+d.ref+'\')">Reverse</button>':'')+' <button class="s" onclick="go(\'trace\',\''+d.batch+'\')">Trace</button>'}],S.deliveries.slice().reverse(),{csv:'deliveries'});
+function newDlv(){const open=S.sales.filter(s=>s.status==='approved'&&s.qty-dispatched(s.ref)>1e-9);if(!open.length)return toast('No approved sales orders awaiting dispatch',1);
+ modal('Dispatch / delivery',[{k:'so',l:'Sales order',t:'select',o:open.map(s=>[s.ref,s.ref+' · '+cust(s.cust).name+' · remaining '+f2(s.qty-dispatched(s.ref),3)+' MT']),w:1},{k:'src',l:'Load from (only needed for future-production orders)',t:'select',o:[['','Use order source']].concat(Object.keys(stockMap()).filter(k=>stockMap()[k]>0).map(k=>[k,wh(k.split('|')[0]).code+' / '+batch(k.split('|')[1]).no])),w:1},{k:'truck',l:'Truck number',req:1},{k:'driver',l:'Driver',req:1},{k:'tare',l:'Tare weight (kg)',t:'number',req:1,on:'dn()'},{k:'gross',l:'Gross loaded weight (kg) at exit weighbridge',t:'number',req:1,on:'dn()'},{k:'net',l:'Loading weight MT (automatic)',ro:1},{k:'del',l:'Customer-confirmed delivered MT (blank = same as loaded)',t:'number'},{k:'date',l:'Date',t:'date',v:today()}],v=>{
+  if(!can('dispatch'))throw new Error('Not permitted for role '+ROLE);
+  const s=so(v.so),key=s.src||v.src;if(!key)throw new Error('Choose the batch to load from');const p=key.split('|');
+  const loaded=(+v.gross-+v.tare)/1000;if(!(loaded>0))throw new Error('Gross must exceed tare');
+  if(loaded>s.qty-dispatched(s.ref)+1e-9)throw new Error('Loading exceeds the order remaining ('+f2(s.qty-dispatched(s.ref),3)+' MT)');
+  if(!s.src){const c0=batch(p[1]).c;s.c=s.c||c0}
+  const ref=nref('DLV');post([{type:'DISPATCH',wh:p[0],batch:p[1],qty:-loaded}],ref);
+  const tk=nref('WGH');S.tickets.push({no:tk,truck:v.truck,driver:v.driver,gross:+v.gross,tare:+v.tare,net:+v.gross-+v.tare,time:new Date().toISOString(),dir:'Out',ref:ref,wh:p[0],c:batch(p[1]).c});
+  S.deliveries.push({ref,so:v.so,wh:p[0],batch:p[1],loaded,delivered:v.del===''?loaded:+v.del,truck:v.truck,driver:v.driver,ticket:tk,date:v.date,status:'approved'});
+  if(dispatched(v.so)>=s.qty-1e-9)s.status='closed';log('Dispatch '+f2(loaded,3)+' MT for '+v.so,ref)})}
+function dn(){const e=document.querySelector('.modal form').elements;e.net.value=Math.max(0,((+e.gross.value||0)-(+e.tare.value||0))/1000)}
+function revDlv(r){if(!confirm('Reverse '+r+'?'))return;tryDo(()=>{if(!can('dispatch'))throw new Error('Not permitted');const d=S.deliveries.find(x=>x.ref===r);if(S.invoices.some(i=>i.del===r))throw new Error('Delivery is invoiced; cancel the invoice first (reverse its collections)');
+ reverseDoc(r);d.status='reversed';const s=so(d.so);if(s.status==='closed')s.status='approved'})}
+
+/* invoices */
+P.invoices=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('finance')?'':'disabled')+' onclick="newInv()">+ New invoice from delivery</button></div>'+
+ table([{h:'Invoice',k:'no'},{h:'Customer',f:i=>esc(cust(i.cust).name)},{h:'Delivery',k:'del'},{h:'Product',f:i=>esc(com(i.c).name)},{h:'Qty MT',n:1,f:i=>f2(i.qty,3)},{h:'Unit price',n:1,f:i=>f2(i.price)},{h:'Discount',n:1,f:i=>f2(i.disc)},{h:'Tax %',n:1,f:i=>i.tax},{h:'Total',n:1,f:i=>f2(i.total)+' '+i.cur},{h:'Paid',n:1,f:i=>f2(invPaid(i.no))},{h:'Outstanding',n:1,f:i=>f2(invOut(i))},{h:'Due',f:i=>overdue(i)?'<span style="color:var(--red)">'+i.due+'</span>':i.due},{h:'Status',f:i=>overdue(i)?tag('overdue').replace('t-i','t-b'):tag(invStatus(i))}],S.invoices.slice().reverse(),{csv:'invoices'});
+function newInv(){const open=S.deliveries.filter(d=>d.status==='approved'&&d.delivered-S.invoices.filter(i=>i.del===d.ref).reduce((a,i)=>a+i.qty,0)>1e-9);if(!open.length)return toast('No delivered quantity left to invoice',1);
+ const left=d=>d.delivered-S.invoices.filter(i=>i.del===d.ref).reduce((a,i)=>a+i.qty,0);
+ modal('New sales invoice',[{k:'del',l:'Delivery',t:'select',o:open.map(d=>[d.ref,d.ref+' · '+so(d.so).ref+' · '+cust(so(d.so).cust).name+' · to invoice '+f2(left(d),3)+' MT']),w:1},{k:'qty',l:'Quantity to invoice (MT) - blank = all remaining',t:'number'},{k:'disc',l:'Discount (amount)',t:'number',v:0},{k:'tax',l:'Tax %',t:'number',v:0},{k:'date',l:'Invoice date',t:'date',v:today()}],v=>{
+  if(!can('finance'))throw new Error('Not permitted for role '+ROLE);
+  const d=S.deliveries.find(x=>x.ref===v.del),s=so(d.so),q=v.qty===''?left(d):+v.qty;if(!(q>0)||q>left(d)+1e-9)throw new Error('Quantity must be within what is still uninvoiced ('+f2(left(d),3)+' MT)');
+  const net=q*s.price-(+v.disc||0);if(net<0)throw new Error('Discount exceeds value');const total=net*(1+(+v.tax||0)/100);
+  const due=new Date(v.date);due.setDate(due.getDate()+s.pay);
+  S.invoices.push({no:nref('INV'),so:s.ref,del:d.ref,cust:s.cust,c:batch(d.batch).c,qty:q,price:s.price,disc:+v.disc||0,tax:+v.tax||0,total:Math.round(total*100)/100,cur:s.cur,due:due.toISOString().slice(0,10),date:v.date});log('Invoice issued '+f2(total)+' '+s.cur,S.invoices[S.invoices.length-1].no)})}
+
+/* collections + aging */
+P.collections=()=>{const od=S.invoices.filter(overdue);const bucket=(i,lo,hi)=>{const d=Math.floor((new Date(today())-new Date(i.due))/864e5);return invOut(i)>0.005&&d>=lo&&d<=hi};
+ const rows=S.customers.flatMap(c=>[...new Set(S.invoices.filter(i=>i.cust===c.id).map(i=>i.cur))].map(cur=>{const iv=S.invoices.filter(i=>i.cust===c.id&&i.cur===cur);const b=(lo,hi)=>iv.filter(i=>bucket(i,lo,hi)).reduce((a,i)=>a+invOut(i),0);return{c:c.name,cur,cur0:b(-9999,0),b1:b(1,30),b2:b(31,60),b3:b(61,90),b4:b(91,99999)}}));
+ return (od.length?'<div class="demo" style="border-color:rgba(255,107,107,.5);color:var(--red);background:rgba(255,107,107,.1)">'+od.length+' overdue invoice(s): '+[...new Set(od.map(i=>cust(i.cust).name))].map(esc).join(', ')+'</div>':'')+
+ '<div class="row" style="margin-bottom:12px"><button class="p" '+(can('finance')?'':'disabled')+' onclick="newCol()">+ Record collection</button></div>'+
+ '<h3>Aging report</h3>'+table([{h:'Customer',k:'c'},{h:'Cur',k:'cur'},{h:'Current (not due)',n:1,f:r=>f2(r.cur0)},{h:'1-30 days',n:1,f:r=>f2(r.b1)},{h:'31-60',n:1,f:r=>f2(r.b2)},{h:'61-90',n:1,f:r=>f2(r.b3)},{h:'Over 90',n:1,f:r=>f2(r.b4)}],rows,{csv:'aging'})+
+ '<h3 style="margin-top:20px">Collections</h3>'+table([{h:'Ref',k:'ref'},{h:'Customer',f:c=>esc(cust(c.cust).name)},{h:'Method',k:'method'},{h:'Amount',n:1,f:c=>f2(c.amount)+' '+c.cur},{h:'Date',k:'date'},{h:'Bank account',k:'bank'},{h:'Receipt no.',k:'receipt'},{h:'Applied to',f:c=>esc(c.alloc.map(a=>a.inv+' ('+f2(a.amt)+')').join(', ')||'-')},{h:'Unapplied',n:1,f:c=>f2(c.amount-c.alloc.reduce((a,x)=>a+x.amt,0))},{h:'Status',f:c=>tag(c.status||'posted')},{h:'',f:c=>c.status!=='reversed'&&can('finance')?'<button class="s d" onclick="revCol(\''+c.ref+'\')">Reverse</button>':''}],S.collections.slice().reverse(),{csv:'collections'})};
+function newCol(){if(!S.customers.length)return toast('No customers',1);
+ modal('Record collection',[{k:'cust',l:'Customer',t:'select',o:custOpts()},{k:'method',l:'Method',t:'select',o:['Cash','Bank Transfer','Cheque','Other']},{k:'amount',l:'Amount',t:'number',req:1},{k:'cur',l:'Currency',t:'select',o:['USD','EGP','EUR']},{k:'inv',l:'Specific invoice no. (blank = settle oldest invoices first, splits across invoices)'},{k:'date',l:'Payment date',t:'date',v:today()},{k:'bank',l:'Bank account'},{k:'receipt',l:'Receipt number',req:1},{k:'att',l:'Attachment note / file name'}],v=>{
+  if(!can('finance'))throw new Error('Not permitted for role '+ROLE);
+  let amt=+v.amount;if(!(amt>0))throw new Error('Amount must be positive');
+  let invs=S.invoices.filter(i=>i.cust===v.cust&&i.cur===v.cur&&invOut(i)>0.005).sort((a,b)=>a.due<b.due?-1:1);
+  if(v.inv){invs=invs.filter(i=>i.no===v.inv);if(!invs.length)throw new Error('Invoice not found for this customer/currency or already settled')}
+  const alloc=[];let left=amt;for(const i of invs){if(left<=0)break;const a=Math.min(left,invOut(i));alloc.push({inv:i.no,amt:Math.round(a*100)/100});left-=a}
+  S.collections.push({ref:nref('COL'),cust:v.cust,method:v.method,amount:amt,cur:v.cur,date:v.date,bank:v.bank,receipt:v.receipt,att:v.att,alloc,status:'posted'});log('Collection '+f2(amt)+' '+v.cur,S.collections[S.collections.length-1].ref)})}
+function revCol(r){if(!confirm('Reverse '+r+'? Invoices become outstanding again.'))return;tryDo(()=>{if(!can('finance'))throw new Error('Not permitted');S.collections.find(c=>c.ref===r).status='reversed';log('Collection reversed',r)})}
+
+/* fleet + movements */
+P.fleet=()=>'<div class="row" style="margin-bottom:12px"><button class="p" '+(can('fleet')?'':'disabled')+' onclick="newVeh()">+ New vehicle / equipment</button></div>'+table([{h:'ID',k:'id'},{h:'Plate',k:'plate'},{h:'Type',k:'type'},{h:'Driver',k:'driver'},{h:'Capacity MT',n:1,f:v=>f2(v.cap)},{h:'Location',k:'loc'},{h:'Status',f:v=>tag(v.status)},{h:'Fuel L/100km',n:1,f:v=>v.fuel},{h:'Maintenance',k:'maint'}],S.vehicles,{csv:'fleet'});
+function newVeh(){modal('New vehicle / equipment',[{k:'id',l:'Vehicle / Tractor ID (e.g. T-001)',req:1},{k:'plate',l:'Plate number'},{k:'type',l:'Type',t:'select',o:['Tractor','Loader','Truck','Forklift','Other']},{k:'driver',l:'Driver'},{k:'cap',l:'Capacity (MT)',t:'number',v:0},{k:'loc',l:'Current location'},{k:'status',l:'Operating status',t:'select',o:['Available','In use','Out of service']},{k:'fuel',l:'Fuel consumption',t:'number',v:0},{k:'maint',l:'Maintenance status',t:'select',o:['OK','Due soon','In maintenance']}],v=>{if(!can('fleet'))throw new Error('Not permitted for role '+ROLE);if(S.vehicles.some(x=>x.id===v.id))throw new Error('ID exists');S.vehicles.push({id:v.id,plate:v.plate,type:v.type,driver:v.driver,cap:+v.cap,loc:v.loc,status:v.status,fuel:+v.fuel,maint:v.maint});log('Vehicle added',v.id)})}
+P.movements=()=>{const done=S.moves.filter(m=>m.status==='received'),now=new Date().toISOString();
+ const kp=(l,v)=>'<div class="card kpi"><div class="l">'+l+'</div><div class="v">'+v+'</div></div>';
+ const late=S.moves.filter(m=>m.status!=='received'&&m.status!=='cancelled'&&m.eta&&m.eta<now).length,inc=S.moves.filter(m=>['planned','in_transit'].includes(m.status)).length;
+ const ton=done.reduce((a,m)=>a+m.recv,0),cost=done.reduce((a,m)=>a+(m.cost||0),0);
+ return '<div class="grid k4" style="margin-bottom:14px">'+kp('Trips today',S.moves.filter(m=>(m.dep||'').startsWith(today())).length)+kp('Qty moved MT',f2(ton,2))+kp('Late movements',late)+kp('Incomplete',inc)+kp('Cost per MT',ton?f2(cost/ton,2):'-')+kp('Avg trip min',done.length?f2(done.reduce((a,m)=>a+(new Date(m.arr)-new Date(m.dep))/6e4,0)/done.length,0):'-')+'</div>'+
+ '<div class="row" style="margin-bottom:12px"><button class="p" '+(can('fleet')||can('stock')?'':'disabled')+' onclick="newMov()">+ New movement order</button></div>'+
+ table([{h:'Ref',k:'ref'},{h:'Vehicle',k:'veh'},{h:'Driver',k:'driver'},{h:'From',f:m=>esc(wh(m.from).code)},{h:'To',f:m=>esc(wh(m.to).code)},{h:'Batch',f:m=>esc(batch(m.batch).no)},{h:'Sent MT',n:1,f:m=>f2(m.qty,3)},{h:'Received MT',n:1,f:m=>m.recv==null?'-':f2(m.recv,3)},{h:'Fuel L',n:1,f:m=>m.fuel||0},{h:'Cost',n:1,f:m=>m.cost||0},{h:'Departure',f:m=>esc((m.dep||'').slice(0,16).replace('T',' '))},{h:'Arrival',f:m=>esc((m.arr||'').slice(0,16).replace('T',' '))},{h:'Status',f:m=>tag(m.status)},{h:'',f:m=>(m.status==='planned'?'<button class="s" onclick="movStart(\''+m.ref+'\')">Depart</button>':'')+(m.status==='in_transit'?'<button class="s p" onclick="movRecv(\''+m.ref+'\')">Confirm receipt</button>':'')}],S.moves.slice().reverse(),{csv:'movements'})+'<p class="mut">Stock leaves the source and enters the destination only when receipt is confirmed. GPS tracking is a prepared integration point, not connected.</p>'};
+function newMov(){if(!S.vehicles.length)return toast('Add a vehicle first',1);
+ modal('Internal movement order',[{k:'veh',l:'Vehicle / tractor',t:'select',o:S.vehicles.map(v=>[v.id,v.id+' '+v.type])},{k:'driver',l:'Driver',req:1},{k:'b',l:'Batch',t:'select',o:bOpts()},{k:'from',l:'Source warehouse',t:'select',o:wOpts()},{k:'to',l:'Destination warehouse / line',t:'select',o:wOpts()},{k:'qty',l:'Quantity (MT)',t:'number',req:1},{k:'eta',l:'Expected arrival',t:'datetime-local'}],v=>{
+  if(v.from===v.to)throw new Error('Source and destination must differ');if(!(+v.qty>0))throw new Error('Quantity must be positive');allowedCheck(v.to,batch(v.b).c);
+  const have=stockMap()[v.from+'|'+v.b]||0;if(+v.qty>have+1e-9)throw new Error('Source holds only '+f2(have,3)+' MT of this batch');
+  S.moves.push({ref:nref('MOV'),veh:v.veh,driver:v.driver,batch:v.b,from:v.from,to:v.to,qty:+v.qty,status:'planned',eta:v.eta?new Date(v.eta).toISOString():''});log('Movement order created',S.moves[S.moves.length-1].ref)})}
+function movStart(r){tryDo(()=>{const m=S.moves.find(x=>x.ref===r);m.status='in_transit';m.dep=new Date().toISOString();const v=S.vehicles.find(x=>x.id===m.veh);if(v)v.status='In use';log('Movement departed',r)})}
+function movRecv(r){const m=S.moves.find(x=>x.ref===r);modal('Confirm receipt '+r,[{k:'recv',l:'Quantity received (MT)',t:'number',v:m.qty},{k:'fuel',l:'Fuel used (litres)',t:'number',v:0},{k:'cost',l:'Transport cost',t:'number',v:0}],v=>{
+  const q=+v.recv;if(!(q>0)||q>m.qty+1e-9)throw new Error('Received must be between 0 and the sent quantity');
+  const doc=m.ref;post([{type:'TRANSFER_OUT',wh:m.from,batch:m.batch,qty:-m.qty},{type:'TRANSFER_IN',wh:m.to,batch:m.batch,qty:q}],doc);
+  Object.assign(m,{recv:q,fuel:+v.fuel,cost:+v.cost,arr:new Date().toISOString(),status:'received'});const ve=S.vehicles.find(x=>x.id===m.veh);if(ve){ve.status='Available';ve.loc=wh(m.to).code}
+  log('Movement received '+f2(q,3)+' of '+f2(m.qty,3)+' MT',r)})}
+
+/* ===== Stage 3: costs, expenses, supplier accounts, reports ===== */
+function ensure3(){['expenses','supLedger'].forEach(k=>{if(!S[k])S[k]=[]});['EXP','SUP'].forEach(k=>{if(S.seq[k]==null)S.seq[k]=0});
+ S.batches.forEach(b=>{if(b.cost==null&&b.demo&&b.src==='receipt')b.cost=({'Soybeans':450,'Wheat':280,'Corn':250}[com(b.c).name]||null)})}
+ensure3();
+const _ens=ensure;ensure=function(){_ens();ensure3()};
+const EXPCAT=['Warehouse Expenses','Manufacturing Expenses','Internal Transportation','Fuel','Maintenance','Labor','Electricity','Loading & Unloading','Packaging','Storage Fees','Chemicals','Other'];
+const COSTCAT=['Electricity','Fuel','Labor','Maintenance','Chemicals','Packaging','Internal Transportation','Manufacturing Expenses','Other'];
+const inR=(d,a,b)=>(!a||d>=a)&&(!b||d<=b);
+const live=x=>x.status!=='reversed';
+
+/* ---- expenses ---- */
+const LINKS=['None','Import Transaction','Production Order','Warehouse','Sales Order','Vehicle','Customer','Supplier'];
+function linkOk(t,r){if(t==='None')return true;if(!r)throw new Error('Enter the reference to link');
+ const ok={'Import Transaction':()=>S.receipts.some(x=>x.imp===r||x.ref===r),'Production Order':()=>S.orders.some(x=>x.ref===r),'Warehouse':()=>S.warehouses.some(x=>x.code===r),'Sales Order':()=>S.sales.some(x=>x.ref===r),'Vehicle':()=>S.vehicles.some(x=>x.id===r),'Customer':()=>S.customers.some(x=>x.name===r),'Supplier':()=>true}[t]();
+ if(!ok)throw new Error(t+' "'+r+'" not found. Use the exact reference/code/name.');return true}
+P.expenses=()=>{const ex=S.expenses.filter(live),byc={};ex.forEach(e=>{const k=e.cat+' ('+e.cur+')';byc[k]=(byc[k]||0)+e.amount});
+ const sup=[...new Set([...S.receipts.map(r=>r.supplier),...S.supLedger.map(l=>l.sup)])].filter(Boolean);
+ const supRows=sup.map(n=>{const pur=S.receipts.filter(r=>r.supplier===n&&r.status==='approved').reduce((a,r)=>{const b=batch(r.batch);return a+(b.cost?r.rec*b.cost:0)},0);const L=S.supLedger.filter(l=>l.sup===n&&live(l));const inv=L.filter(l=>l.type==='invoice').reduce((a,l)=>a+l.amount,0),pay=L.filter(l=>l.type==='payment').reduce((a,l)=>a+l.amount,0),adv=L.filter(l=>l.type==='advance').reduce((a,l)=>a+l.amount,0);return{n,pur,inv,pay,adv,out:inv-pay-adv}});
+ return '<div class="row" style="margin-bottom:12px"><button class="p" '+(can('expense')?'':'disabled')+' onclick="newExp()">+ New expense</button><button '+(can('finance')?'':'disabled')+' onclick="newSupTx()">+ Supplier invoice / payment / advance</button></div>'+
+ '<div class="card" style="margin-bottom:14px"><h3>By category</h3>'+(Object.keys(byc).map(k=>'<div class="row"><span style="flex:1">'+esc(k)+'</span><b>'+f2(byc[k])+'</b></div>').join('')||'<span class="mut">No expenses yet</span>')+'</div>'+
+ table([{h:'Ref',k:'ref'},{h:'Date',k:'date'},{h:'Category',k:'cat'},{h:'Description',k:'desc'},{h:'Amount',n:1,f:e=>f2(e.amount)+' '+e.cur},{h:'Linked to',f:e=>esc(e.lt==='None'?'-':e.lt+': '+e.lr)},{h:'Status',f:e=>tag(e.status||'posted')},{h:'',f:e=>live(e)&&can('finance')?'<button class="s d" onclick="revExp(\''+e.ref+'\')">Reverse</button>':''}],S.expenses.slice().reverse(),{csv:'expenses'})+
+ '<h3 style="margin-top:20px">Supplier accounts</h3>'+table([{h:'Supplier',k:'n'},{h:'Purchases (received x cost)',n:1,f:r=>f2(r.pur)},{h:'Invoices',n:1,f:r=>f2(r.inv)},{h:'Payments',n:1,f:r=>f2(r.pay)},{h:'Advances',n:1,f:r=>f2(r.adv)},{h:'Outstanding payable',n:1,f:r=>f2(r.out)}],supRows,{csv:'supplier-accounts'})+
+ table([{h:'Ref',k:'ref'},{h:'Date',k:'date'},{h:'Supplier',k:'sup'},{h:'Type',f:l=>tag(l.type)},{h:'Amount',n:1,f:l=>f2(l.amount)+' '+l.cur},{h:'Receipt / note',k:'note'},{h:'',f:l=>live(l)&&can('finance')?'<button class="s d" onclick="revSup(\''+l.ref+'\')">Reverse</button>':''}],S.supLedger.slice().reverse())};
+function newExp(){modal('New expense',[{k:'cat',l:'Category',t:'select',o:EXPCAT},{k:'amount',l:'Amount',t:'number',req:1},{k:'cur',l:'Currency',t:'select',o:['USD','EGP','EUR']},{k:'date',l:'Date',t:'date',v:today()},{k:'desc',l:'Description',w:1},{k:'lt',l:'Link to',t:'select',o:LINKS},{k:'lr',l:'Reference (import ref, PRD-0001, warehouse code, SO-0001, vehicle ID, customer or supplier name)'}],v=>{
+  if(!can('expense'))throw new Error('Not permitted for role '+ROLE);if(!(+v.amount>0))throw new Error('Amount must be positive');linkOk(v.lt,v.lr.trim());
+  S.expenses.push({ref:nref('EXP'),cat:v.cat,amount:+v.amount,cur:v.cur,date:v.date,desc:v.desc,lt:v.lt,lr:v.lr.trim(),status:'posted'});log('Expense '+f2(+v.amount)+' '+v.cur+' '+v.cat,S.expenses[S.expenses.length-1].ref)})}
+function revExp(r){if(!confirm('Reverse '+r+'?'))return;tryDo(()=>{if(!can('finance'))throw new Error('Not permitted');S.expenses.find(e=>e.ref===r).status='reversed';log('Expense reversed',r)})}
+function newSupTx(){modal('Supplier invoice / payment / advance',[{k:'sup',l:'Supplier name',req:1},{k:'type',l:'Type',t:'select',o:[['invoice','Supplier invoice'],['payment','Payment'],['advance','Advance payment']]},{k:'amount',l:'Amount',t:'number',req:1},{k:'cur',l:'Currency',t:'select',o:['USD','EGP','EUR']},{k:'date',l:'Date',t:'date',v:today()},{k:'note',l:'Receipt / invoice no. / note'}],v=>{
+  if(!can('finance'))throw new Error('Not permitted for role '+ROLE);if(!(+v.amount>0))throw new Error('Amount must be positive');
+  S.supLedger.push({ref:nref('SUP'),sup:v.sup.trim(),type:v.type,amount:+v.amount,cur:v.cur,date:v.date,note:v.note,status:'posted'});log('Supplier '+v.type+' '+f2(+v.amount),v.sup)})}
+function revSup(r){if(!confirm('Reverse '+r+'?'))return;tryDo(()=>{if(!can('finance'))throw new Error('Not permitted');S.supLedger.find(e=>e.ref===r).status='reversed';log('Supplier entry reversed',r)})}
+
+/* ---- manufacturing cost ---- */
+function costOf(o){ // returns breakdown for approved order
+ const b=batch(o.batch),rawUnit=b.cost||0,raw=o.actIn*rawUnit;
+ const lines={};S.expenses.filter(e=>live(e)&&e.lt==='Production Order'&&e.lr===o.ref).forEach(e=>{lines[e.cat]=(lines[e.cat]||0)+e.amount});
+ const conv=Object.values(lines).reduce((a,x)=>a+x,0),total=raw+conv;
+ const pol=o.costPol||{method:'weight',prices:[],pct:[]};const outs=o.outs.filter(x=>x.act>0);
+ let w;if(pol.method==='value'){const v=outs.map(x=>x.act*(pol.prices[o.outs.indexOf(x)]||0));const t=v.reduce((a,x)=>a+x,0);w=t>0?v.map(x=>x/t):outs.map(x=>x.act/outs.reduce((a,y)=>a+y.act,0))}
+ else if(pol.method==='custom'){const p=outs.map(x=>(pol.pct[o.outs.indexOf(x)]||0)/100);w=p}
+ else w=outs.map(x=>x.act/outs.reduce((a,y)=>a+y.act,0));
+ const alloc=outs.map((x,i)=>({x,cost:total*w[i],unit:x.act?total*w[i]/x.act:0,price:pol.prices[o.outs.indexOf(x)]||0}));
+ const F=S.formulas.find(f=>f.id===o.formula)||{};const std=(F.stdConv||0);
+ return{raw,rawUnit,lines,conv,total,perMT:o.actIn?total/o.actIn:0,convPerMT:o.actIn?conv/o.actIn:0,std,alloc,pol,margin:alloc.reduce((a,x)=>a+x.x.act*x.price-x.cost,0),hasPrice:alloc.some(x=>x.price>0)}}
+P.costs=()=>'<p class="mut">Cost sheet per approved production order: raw material cost (from the receipt cost per MT) plus conversion costs (expenses linked to the order). Choose the allocation policy per order; nothing is fixed. Add conversion costs in Expenses & Settlements, linking them to the production order.</p>'+
+ table([{h:'Order',k:'ref'},{h:'Raw in MT',n:1,f:o=>f2(o.actIn,2)},{h:'Raw material cost',n:1,f:o=>f2(costOf(o).raw)},{h:'Conversion cost',n:1,f:o=>f2(costOf(o).conv)},{h:'Total production cost',n:1,f:o=>f2(costOf(o).total)},{h:'Cost / MT input',n:1,f:o=>f2(costOf(o).perMT,2)},{h:'Policy',f:o=>esc(({weight:'By weight',value:'By sales value',custom:'Custom %'})[(o.costPol||{method:'weight'}).method])},{h:'Margin',n:1,f:o=>{const c=costOf(o);return c.hasPrice?f2(c.margin):'-'}},{h:'',f:o=>'<button class="s" onclick="costSheet(\''+o.ref+'\')">Cost sheet</button>'}],S.orders.filter(o=>o.status==='approved').reverse(),{csv:'manufacturing-costs'});
+function costSheet(r){const o=S.orders.find(x=>x.ref===r),c=costOf(o);const m=document.createElement('div');m.className='modal';
+ m.innerHTML='<div class="card"><h3>Cost sheet '+r+'</h3><div class="tw"><table><tr><th>Item</th><th class=num>Amount</th><th class=num>Per MT input</th></tr><tr><td>Raw material ('+f2(o.actIn)+' MT x '+f2(c.rawUnit)+')'+(c.rawUnit?'':' <span class=mut>no purchase cost entered on the receipt</span>')+'</td><td class=num>'+f2(c.raw)+'</td><td class=num>'+f2(c.rawUnit,2)+'</td></tr>'+Object.keys(c.lines).map(k=>'<tr><td>'+esc(k)+'</td><td class=num>'+f2(c.lines[k])+'</td><td class=num>'+f2(c.lines[k]/o.actIn,2)+'</td></tr>').join('')+'<tr><th>Total production cost</th><th class=num>'+f2(c.total)+'</th><th class=num>'+f2(c.perMT,2)+'</th></tr></table></div>'+
+ (c.std?'<p>Actual vs standard conversion: '+f2(c.convPerMT,2)+' vs '+f2(c.std,2)+' per MT ('+f2(c.convPerMT-c.std,2)+')</p>':'<p class="mut">No standard conversion cost set for this formula (set it in Formulas, standard cost per MT).</p>')+
+ '<h3 style="margin-top:12px">Allocation ('+({weight:'by weight',value:'by sales value',custom:'custom %'})[c.pol.method]+')</h3><div class="tw"><table><tr><th>Product</th><th class=num>Qty MT</th><th class=num>Allocated cost</th><th class=num>Cost / MT</th><th class=num>Sale price / MT</th><th class=num>Margin</th></tr>'+c.alloc.map(a=>'<tr><td>'+esc(com(a.x.c).name)+'</td><td class=num>'+f2(a.x.act,3)+'</td><td class=num>'+f2(a.cost)+'</td><td class=num>'+f2(a.unit,2)+'</td><td class=num>'+(a.price?f2(a.price):'-')+'</td><td class=num>'+(a.price?f2(a.x.act*a.price-a.cost):'-')+'</td></tr>').join('')+'</table></div>'+
+ '<div class="row" style="margin-top:12px;justify-content:flex-end"><button onclick="this.closest(\'.modal\').remove()">Close</button><button class="p" onclick="this.closest(\'.modal\').remove();costPolicy(\''+r+'\')">Change allocation policy</button></div></div>';document.body.appendChild(m)}
+function costPolicy(r){const o=S.orders.find(x=>x.ref===r),pol=o.costPol||{method:'weight',prices:[],pct:[]};
+ const fl=[{k:'method',l:'Allocation method',t:'select',o:[['weight','By weight (physical quantity)'],['value','By sales value (needs prices)'],['custom','Custom percentages']],v:pol.method,w:1}];
+ o.outs.forEach((x,i)=>fl.push({k:'p'+i,l:com(x.c).name+' sale price / MT',t:'number',v:pol.prices[i]||''},{k:'c'+i,l:com(x.c).name+' custom %',t:'number',v:pol.pct[i]||''}));
+ modal('Allocation policy '+r,fl,v=>{if(!can('finance')&&!can('approveProd'))throw new Error('Not permitted for role '+ROLE);
+  const prices=o.outs.map((x,i)=>+v['p'+i]||0),pct=o.outs.map((x,i)=>+v['c'+i]||0);
+  if(v.method==='custom'&&Math.abs(pct.filter((p,i)=>o.outs[i].act>0).reduce((a,x)=>a+x,0)-100)>0.01)throw new Error('Custom percentages must total 100');
+  if(v.method==='value'&&!prices.some(x=>x>0))throw new Error('Enter at least one sale price');
+  o.costPol={method:v.method,prices,pct};const c=costOf(o);c.alloc.forEach(a=>{if(a.x.batch)batch(a.x.batch).cost=a.unit});log('Cost allocation policy set: '+v.method,r)})}
+/* stock value helper */
+const stockValue=()=>{const m=stockMap();return Object.keys(m).reduce((a,k)=>a+m[k]*(batch(k.split('|')[1]).cost||0),0)};
+
+/* ---- reports ---- */
+let RF={from:'',to:'',wh:'',rep:'stock',cmpA:'',cmpB:''};
+const D=t=>(t||'').slice(0,10);
+function soldQty(b){return S.deliveries.filter(d=>d.batch===b&&d.status==='approved').reduce((a,d)=>a+d.delivered,0)}
+const REPORTS={
+ stock:['Warehouse Stock Report',()=>{const m=stockMap();return{cols:['Warehouse','Batch','Commodity','Origin','Physical MT','Cost/MT','Value'],rows:Object.keys(m).filter(k=>Math.abs(m[k])>1e-9&&(!RF.wh||k.startsWith(RF.wh+'|'))).map(k=>{const p=k.split('|'),b=batch(p[1]);return[wh(p[0]).code,b.no,com(b.c).name,b.origin||'',+m[k].toFixed(3),b.cost||0,Math.round(m[k]*(b.cost||0))]})}}],
+ movement:['Stock Movement Report',()=>({cols:['Time','Doc','Type','Warehouse','Batch','Qty MT'],rows:S.ledger.filter(l=>inR(D(l.ts),RF.from,RF.to)&&(!RF.wh||l.wh===RF.wh)).map(l=>[l.ts.slice(0,16).replace('T',' '),l.doc,l.type,wh(l.wh).code,batch(l.batch).no,+l.qty.toFixed(3)])})],
+ consumption:['Raw Material Consumption',()=>({cols:['Date','Order','Raw material','Batch','Warehouse','Consumed MT'],rows:S.orders.filter(o=>o.status==='approved'&&inR(o.date,RF.from,RF.to)&&(!RF.wh||o.wh===RF.wh)).map(o=>[o.date,o.ref,com(batch(o.batch).c).name,batch(o.batch).no,wh(o.wh).code,+o.actIn.toFixed(3)])})],
+ yield:['Production Yield Report',()=>({cols:['Date','Order','Formula','Input MT','Output MT','Yield %','Loss MT','WIP MT'],rows:S.orders.filter(o=>o.status==='approved'&&inR(o.date,RF.from,RF.to)).map(o=>{const out=o.outs.reduce((a,x)=>a+x.act,0);return[o.date,o.ref,(S.formulas.find(f=>f.id===o.formula)||{}).name,o.actIn,+out.toFixed(3),+(out/o.actIn*100).toFixed(2),+o.loss.toFixed(3),o.wip]})})],
+ variance:['Production Variance Report',()=>({cols:['Date','Order','Product','Expected MT','Actual MT','Variance MT','Variance %','Reason'],rows:S.orders.filter(o=>o.status==='approved'&&inR(o.date,RF.from,RF.to)).flatMap(o=>o.outs.map(x=>[o.date,o.ref,com(x.c).name,+x.exp.toFixed(3),x.act,+(x.act-x.exp).toFixed(3),x.exp?+((x.act-x.exp)/x.exp*100).toFixed(2):0,o.lossWhy||'']))})],
+ finished:['Finished Goods Report',()=>{const m=stockMap();return{cols:['Batch','Product','Type','Warehouse','Production order','Stock MT','Cost/MT'],rows:Object.keys(m).filter(k=>m[k]>1e-9&&com(batch(k.split('|')[1]).c).kind!=='raw'&&(!RF.wh||k.startsWith(RF.wh+'|'))).map(k=>{const p=k.split('|'),b=batch(p[1]);return[b.no,com(b.c).name,com(b.c).kind,wh(p[0]).code,b.srcRef,+m[k].toFixed(3),+(b.cost||0).toFixed(2)]})}}],
+ batch:['Batch Traceability Report',()=>({cols:['Batch','Commodity','Source','Received MT','Consumed MT','In stock MT','Sold MT','Parent batch'],rows:S.batches.map(b=>{const rec=S.ledger.filter(l=>l.batch===b.id&&['RECEIPT','OPENING','PROD_IN'].includes(l.type)&&!l.reversed).reduce((a,l)=>a+l.qty,0),con=-S.ledger.filter(l=>l.batch===b.id&&l.type==='ISSUE'&&!l.reversed).reduce((a,l)=>a+l.qty,0),st=Object.keys(stockMap()).filter(k=>k.endsWith('|'+b.id)).reduce((a,k)=>a+stockMap()[k],0);return[b.no,com(b.c).name,b.src+' '+b.srcRef,+rec.toFixed(3),+con.toFixed(3),+st.toFixed(3),+soldQty(b.id).toFixed(3),b.parents.map(p=>batch(p).no).join(', ')]})})],
+ tractor:['Tractor Movement Report',()=>({cols:['Ref','Vehicle','Driver','From','To','Batch','Sent MT','Received MT','Fuel L','Cost','Departure','Arrival','Status'],rows:S.moves.filter(m=>inR(D(m.dep||m.eta),RF.from,RF.to)).map(m=>[m.ref,m.veh,m.driver,wh(m.from).code,wh(m.to).code,batch(m.batch).no,m.qty,m.recv==null?'':m.recv,m.fuel||0,m.cost||0,(m.dep||'').slice(0,16),(m.arr||'').slice(0,16),m.status])})],
+ weighbridge:['Weighbridge Report',()=>({cols:['Ticket','Time','Dir','Truck','Driver','Product','Gross kg','Tare kg','Net kg','Ref','Warehouse'],rows:S.tickets.filter(t=>inR(D(t.time),RF.from,RF.to)&&(!RF.wh||t.wh===RF.wh)).map(t=>[t.no,t.time.slice(0,16).replace('T',' '),t.dir,t.truck,t.driver,com(t.c).name,t.gross,t.tare,t.net,t.ref||'',wh(t.wh).code])})],
+ sales:['Sales Report',()=>({cols:['Date','Order','Customer','Product','Qty MT','Price','Cur','Value','Dispatched MT','Invoiced','Status'],rows:S.sales.filter(s=>inR(s.date,RF.from,RF.to)).map(s=>[s.date,s.ref,cust(s.cust).name,s.c?com(s.c).name:'',s.qty,s.price,s.cur,s.qty*s.price,+dispatched(s.ref).toFixed(3),+S.invoices.filter(i=>i.so===s.ref).reduce((a,i)=>a+i.total,0).toFixed(2),s.status])})],
+ outstanding:['Customer Outstanding Report',()=>({cols:['Customer','Cur','Invoiced','Collected','Outstanding','Overdue','Credit limit'],rows:S.customers.flatMap(c=>[...new Set(S.invoices.filter(i=>i.cust===c.id).map(i=>i.cur))].map(cur=>{const a=custAcct(c.id,cur);return[c.name,cur,+a.invd.toFixed(2),+a.col.toFixed(2),+a.out.toFixed(2),+a.over.toFixed(2),c.limit]}))})],
+ collections:['Collections Report',()=>({cols:['Ref','Date','Customer','Method','Amount','Cur','Receipt','Bank','Applied to','Status'],rows:S.collections.filter(c=>inR(c.date,RF.from,RF.to)).map(c=>[c.ref,c.date,cust(c.cust).name,c.method,c.amount,c.cur,c.receipt,c.bank||'',c.alloc.map(a=>a.inv).join(' '),c.status])})],
+ cost:['Manufacturing Cost Report',()=>({cols:['Date','Order','Input MT','Raw cost','Conversion cost','Total','Cost/MT input','Std conv/MT','Actual conv/MT'],rows:S.orders.filter(o=>o.status==='approved'&&inR(o.date,RF.from,RF.to)).map(o=>{const c=costOf(o);return[o.date,o.ref,o.actIn,Math.round(c.raw),Math.round(c.conv),Math.round(c.total),+c.perMT.toFixed(2),c.std,+c.convPerMT.toFixed(2)]})})],
+ profit:['Product Profitability Report',()=>{const by={};S.deliveries.filter(d=>d.status==='approved'&&inR(d.date,RF.from,RF.to)).forEach(d=>{const b=batch(d.batch),n=com(b.c).name,iv=S.invoices.filter(i=>i.del===d.ref);const rev=iv.reduce((a,i)=>a+i.qty*i.price-i.disc,0);by[n]=by[n]||{q:0,rev:0,cost:0};by[n].q+=d.delivered;by[n].rev+=rev;by[n].cost+=d.delivered*(b.cost||0)});
+  return{cols:['Product','Delivered MT','Net revenue (invoiced)','Cost of goods','Gross margin','Margin %'],rows:Object.keys(by).map(n=>{const x=by[n];return[n,+x.q.toFixed(3),Math.round(x.rev),Math.round(x.cost),Math.round(x.rev-x.cost),x.rev?+((x.rev-x.cost)/x.rev*100).toFixed(1):0]})}}],
+ daily:['Daily Factory Operations Report (uses "To" date)',()=>{const d=RF.to||today();return{cols:['Item','Value'],rows:[['Date',d],['Receipts approved (MT)',+S.receipts.filter(r=>r.status==='approved'&&r.date===d).reduce((a,r)=>a+r.rec,0).toFixed(2)],['Trucks weighed',S.tickets.filter(t=>D(t.time)===d).length],['Raw material consumed (MT)',+S.orders.filter(o=>o.status==='approved'&&o.date===d).reduce((a,o)=>a+o.actIn,0).toFixed(2)],['Finished output (MT)',+S.orders.filter(o=>o.status==='approved'&&o.date===d).reduce((a,o)=>a+o.outs.reduce((x,y)=>x+y.act,0),0).toFixed(2)],['Dispatched (MT)',+S.deliveries.filter(x=>x.status==='approved'&&x.date===d).reduce((a,x)=>a+x.loaded,0).toFixed(2)],['Internal trips completed',S.moves.filter(m=>m.status==='received'&&D(m.arr)===d).length],['Collections recorded',S.collections.filter(c=>c.date===d&&live(c)).length],['Expenses recorded',S.expenses.filter(e=>e.date===d&&live(e)).length]]}}],
+ flow:['Complete Commodity Flow Report',()=>({cols:['Import batch','Commodity','Received MT','Consumed MT','Outputs MT','Sold MT','Invoiced','Collected','Outstanding'],rows:S.batches.filter(b=>!b.parents.length).map(b=>{const kids=[b.id];let i=0;while(i<kids.length){S.batches.filter(x=>x.parents.includes(kids[i])).forEach(x=>{if(!kids.includes(x.id))kids.push(x.id)});i++}
+  const rec=S.ledger.filter(l=>l.batch===b.id&&['RECEIPT','OPENING'].includes(l.type)&&!l.reversed).reduce((a,l)=>a+l.qty,0);const con=-S.ledger.filter(l=>l.batch===b.id&&l.type==='ISSUE'&&!l.reversed).reduce((a,l)=>a+l.qty,0);
+  const outs=kids.slice(1).reduce((a,k)=>a+S.ledger.filter(l=>l.batch===k&&l.type==='PROD_IN'&&!l.reversed).reduce((x,l)=>x+l.qty,0),0);const dl=S.deliveries.filter(d=>kids.includes(d.batch)&&d.status==='approved');const iv=S.invoices.filter(i=>dl.some(d=>d.ref===i.del));
+  const inv=iv.reduce((a,i)=>a+i.total,0),paid=iv.reduce((a,i)=>a+invPaid(i.no),0);return[b.no,com(b.c).name,+rec.toFixed(3),+con.toFixed(3),+outs.toFixed(3),+dl.reduce((a,d)=>a+d.delivered,0).toFixed(3),Math.round(inv),Math.round(paid),Math.round(inv-paid)]})})],
+ compare:['Period Comparison (A vs B)',()=>{const met=(a,b)=>[['Receipts approved MT',S.receipts.filter(r=>r.status==='approved'&&inR(r.date,a,b)).reduce((x,r)=>x+r.rec,0)],['Raw consumed MT',S.orders.filter(o=>o.status==='approved'&&inR(o.date,a,b)).reduce((x,o)=>x+o.actIn,0)],['Finished output MT',S.orders.filter(o=>o.status==='approved'&&inR(o.date,a,b)).reduce((x,o)=>x+o.outs.reduce((p,q)=>p+q.act,0),0)],['Dispatched MT',S.deliveries.filter(d=>d.status==='approved'&&inR(d.date,a,b)).reduce((x,d)=>x+d.loaded,0)],['Invoiced',S.invoices.filter(i=>inR(i.date,a,b)).reduce((x,i)=>x+i.total,0)],['Collected',S.collections.filter(c=>live(c)&&inR(c.date,a,b)).reduce((x,c)=>x+c.amount,0)],['Expenses',S.expenses.filter(e=>live(e)&&inR(e.date,a,b)).reduce((x,e)=>x+e.amount,0)]];
+  const A=met(RF.from,RF.to),B=met(RF.cmpA,RF.cmpB);return{cols:['Metric','Period A (From-To)','Period B (compare)','Change'],rows:A.map((r,i)=>[r[0],+r[1].toFixed(2),+B[i][1].toFixed(2),+(r[1]-B[i][1]).toFixed(2)])}}]};
+P.reports=()=>{const R=REPORTS[RF.rep],d=R[1]();
+ const inp=(k,l,t)=>'<label style="min-width:130px">'+l+'<input type="date" value="'+esc(RF[k])+'" onchange="RF.'+k+'=this.value;render()"></label>';
+ return '<div class="card" style="margin-bottom:14px"><div class="row"><label style="min-width:260px;flex:1">Report<select onchange="RF.rep=this.value;render()">'+Object.keys(REPORTS).map((k,i)=>'<option value="'+k+'"'+(k===RF.rep?' selected':'')+'>'+(i+1)+'. '+esc(REPORTS[k][0])+'</option>').join('')+'</select></label>'+inp('from','From')+inp('to','To')+(RF.rep==='compare'?inp('cmpA','Compare from')+inp('cmpB','Compare to'):'')+'<label style="min-width:170px">Warehouse<select onchange="RF.wh=this.value;render()"><option value="">All</option>'+S.warehouses.map(w=>'<option value="'+w.id+'"'+(RF.wh===w.id?' selected':'')+'>'+esc(w.code)+'</option>').join('')+'</select></label></div><div class="row" style="margin-top:10px"><button onclick="repCsv()">Export CSV</button><button onclick="repXls()">Export Excel</button><button class="p" onclick="repPdf()">Print / Save as PDF</button></div></div>'+
+ '<div class="card"><h3>'+esc(R[0])+'</h3><div class="tw"><table><thead><tr>'+d.cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+(d.rows.map(r=>'<tr>'+r.map(c=>'<td class="'+(typeof c==='number'?'num':'')+'">'+(typeof c==='number'?f2(c,3):esc(c))+'</td>').join('')+'</tr>').join('')||'<tr><td colspan="'+d.cols.length+'" class="mut">No data for this filter</td></tr>')+'</tbody></table></div><p class="mut">'+d.rows.length+' rows. Filters: '+(RF.from||'any')+' to '+(RF.to||'any')+(RF.wh?' · '+esc(wh(RF.wh).code):'')+'</p></div>'};
+function repData(){const R=REPORTS[RF.rep],d=R[1]();return{t:R[0],cols:d.cols,rows:d.rows}}
+function dl(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click()}
+function repCsv(){const d=repData();dl(RF.rep+'.csv',new Blob(['\ufeff'+[d.cols].concat(d.rows).map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}))}
+function repHtml(d){return '<html><head><meta charset="utf-8"><title>'+esc(d.t)+'</title><style>body{font:12px Arial}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:4px 6px;text-align:left}th{background:#eee}</style></head><body><h2>'+esc(d.t)+'</h2><p>Generated '+new Date().toLocaleString()+' · '+(RF.from||'any')+' to '+(RF.to||'any')+'</p><table><tr>'+d.cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>'+d.rows.map(r=>'<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>').join('')+'</table></body></html>'}
+function repXls(){dl(RF.rep+'.xls',new Blob([repHtml(repData())],{type:'application/vnd.ms-excel'}))}
+function repPdf(){const w=window.open('','_blank');if(!w)return toast('Allow pop-ups to print',1);w.document.write(repHtml(repData()));w.document.close();w.focus();setTimeout(()=>w.print(),300)}
+
+$('#gs').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const q=e.target.value.toLowerCase().trim();if(!q)return;
+ const b=S.batches.find(b=>b.no.toLowerCase().includes(q)||String(b.srcRef).toLowerCase().includes(q));if(b)return go('trace',b.id);
+ if(S.receipts.find(r=>[r.ref,r.imp,r.vessel,r.supplier].some(x=>String(x||'').toLowerCase().includes(q))))return go('receiving');
+ if(S.orders.find(o=>o.ref.toLowerCase().includes(q)))return go('production');toast('No match',1)});
+$('#role').innerHTML=Object.keys(ROLES).map(r=>'<option'+(r===ROLE?' selected':'')+'>'+r+'</option>').join('');
+$('#role').onchange=e=>{ROLE=e.target.value;localStorage.setItem('iom.role',ROLE);render()};
+/* ===== STAGE 4: shared cloud database, real logins, attachments, alerts ===== */
+const SB_URL='https://umksjkamcwkazkcmqlll.supabase.co',SB_KEY='sb_publishable_qfb4bszqsaD8_Dgr5BoDPQ_-GQXn9Cd';
+let sb=null,ME=null,VER=0,pushing=false,dirty=false,pushT=null,SYNC='offline';
+const localSave=save;
+save=function(){localSave();if(ME&&ME.active&&ROLE!=='Auditor'){clearTimeout(pushT);pushT=setTimeout(push,500);setSync('saving')}};
+log=function(act,ref){S.audit.unshift({ts:new Date().toISOString(),user:ME?ME.name+' ('+ROLE+')':ROLE,act,ref:ref||''})};
+function setSync(s){SYNC=s;const e=$('#sync');if(e){e.textContent={saving:'Saving...',ok:'Saved to cloud',error:'Cloud error',offline:'Offline'}[s]||s;e.className='tag '+(s==='ok'?'t-ok':s==='error'?'t-b':'t-w')}}
+async function push(){
+ if(!sb||!ME)return;if(pushing){dirty=true;return}pushing=true;
+ try{const data=JSON.parse(JSON.stringify(S));
+  if(VER===0){const{error}=await sb.from('iom_state').insert({id:1,data,version:1,updated_by:ME.id});if(error)throw error;VER=1;setSync('ok')}
+  else{const{data:r,error}=await sb.from('iom_state').update({data,version:VER+1,updated_at:new Date().toISOString(),updated_by:ME.id}).eq('id',1).eq('version',VER).select('version');
+   if(error)throw error;
+   if(!r.length){await pull();toast('Someone else saved at the same moment. Your last change was not applied, data was reloaded. Please repeat it.',1)}
+   else{VER=r[0].version;setSync('ok')}}
+ }catch(e){setSync('error');toast('Cloud save failed: '+(e.message||e),1)}
+ pushing=false;if(dirty){dirty=false;push()}}
+async function pull(){
+ const{data,error}=await sb.from('iom_state').select('data,version').eq('id',1).maybeSingle();
+ if(error){setSync('error');throw error}
+ if(data){S=data.data;VER=data.version;ensure();localSave();setSync('ok')}
+ else{VER=0;if(ME.role!=='Auditor'){await push()}}
+ render()}
+function listen(){
+ sb.channel('iom-state').on('postgres_changes',{event:'UPDATE',schema:'public',table:'iom_state'},p=>{
+  if(pushing||!p.new||p.new.version<=VER)return;
+  if(document.querySelector('.modal'))return;
+  S=p.new.data;VER=p.new.version;ensure();localSave();render();toast('Updated by another user')}).subscribe()}
+
+/* ---- login screen ---- */
+function authUI(msg,mode){
+ mode=mode||'in';let el=$('#auth');if(!el){el=document.createElement('div');el.id='auth';document.body.appendChild(el)}
+ el.style.cssText='position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 20% 0%,#fff6e0,#f8f2e7);padding:16px';
+ el.innerHTML='<div class="card" style="width:min(400px,100%)"><div class="brand" style="padding:0 0 12px">INTEGRATED <b>OPERATIONS</b></div>'+
+ (mode==='pending'?'<h3>Account waiting for approval</h3><p class="mut">Your account was created. The General Manager must activate it and set your role. Then press Check again.</p><div class="row"><button class="p" onclick="boot()">Check again</button><button onclick="signOut()">Sign out</button></div>':
+ '<h3>'+(mode==='up'?'Create account':'Sign in')+'</h3><div class="f" style="grid-template-columns:1fr">'+(mode==='up'?'<div><label>Full name</label><input id="a_n"></div>':'')+'<div><label>Email</label><input id="a_e" type="email" autocomplete="username"></div><div><label>Password (min 8 characters)</label><input id="a_p" type="password" autocomplete="current-password"></div></div>'+
+ (msg?'<p style="color:var(--gold);margin:10px 0 0">'+esc(msg)+'</p>':'')+
+ '<div class="row" style="margin-top:14px"><button class="p" onclick="doAuth(\''+mode+'\')">'+(mode==='up'?'Create account':'Sign in')+'</button><a class="l" onclick="authUI(\'\',\''+(mode==='up'?'in':'up')+'\')">'+(mode==='up'?'I have an account':'Create account')+'</a></div><p class="mut" style="font-size:12px;margin-top:12px">The first account created becomes General Manager. Later accounts need the General Manager to approve them.</p>')+'</div>'}
+async function doAuth(mode){
+ const e=$('#a_e').value.trim(),p=$('#a_p').value,n=mode==='up'?$('#a_n').value.trim():'';
+ if(!e||p.length<8)return authUI('Enter an email and a password of at least 8 characters.',mode);
+ if(mode==='up'&&!n)return authUI('Enter your name.',mode);
+ try{
+  if(mode==='up'){const{data,error}=await sb.auth.signUp({email:e,password:p,options:{data:{name:n}}});if(error)throw error;if(!data.session){const r=await sb.auth.signInWithPassword({email:e,password:p});if(r.error)throw r.error}}
+  else{const{error}=await sb.auth.signInWithPassword({email:e,password:p});if(error)throw error}
+  await boot()}catch(err){authUI(err.message||String(err),mode)}}
+async function signOut(){await sb.auth.signOut();ME=null;location.reload()}
+async function boot(){
+ const{data:{session}}=await sb.auth.getSession();
+ if(!session)return authUI('','in');
+ const{data:pr,error}=await sb.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
+ if(error||!pr)return authUI(error?error.message:'Profile not found. Try again.','in');
+ ME=pr;ROLE=pr.role;
+ if(!pr.active)return authUI('','pending');
+ const a=$('#auth');if(a)a.remove();
+ if(ME.role==='General Manager'&&!MENU.find(m=>m[0]==='users'))MENU.push(['users','Users & Roles']);
+ if(!MENU.find(m=>m[0]==='files'))MENU.splice(MENU.length-1,0,['alerts','Alerts'],['files','Attachments']);
+ const r=$('#role');if(r){r.outerHTML='<span class="mut" style="font-size:12px">'+esc(ME.name)+' · '+esc(ROLE)+'</span><span id="sync" class="tag t-w">Connecting</span><button class="s" onclick="signOut()">Sign out</button>'}
+ await pull();listen()}
+
+/* ---- users & roles (General Manager) ---- */
+P.users=()=>{setTimeout(loadUsers,0);return '<div class="card"><h3>Users & Roles</h3><p class="mut">New accounts stay inactive until you activate them here and choose a role. Only active users can read or write company data. Auditor is read-only.</p><div id="ulist" class="mut">Loading...</div></div>'};
+async function loadUsers(){
+ if(ROLE!=='General Manager'){$('#ulist').textContent='Only the General Manager can manage users.';return}
+ const{data,error}=await sb.from('profiles').select('*').order('created_at');if(error)return $('#ulist').textContent=error.message;
+ $('#ulist').innerHTML='<div class="tw"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th></tr></thead><tbody>'+data.map(u=>'<tr><td>'+esc(u.name)+'</td><td>'+esc(u.email)+'</td><td><select onchange="updUser(\''+u.id+'\',{role:this.value})"'+(u.id===ME.id?' disabled':'')+'>'+Object.keys(ROLES).map(r=>'<option'+(r===u.role?' selected':'')+'>'+r+'</option>').join('')+'</select></td><td><input type="checkbox" style="width:auto" '+(u.active?'checked':'')+(u.id===ME.id?' disabled':'')+' onchange="updUser(\''+u.id+'\',{active:this.checked})"></td></tr>').join('')+'</tbody></table></div>'}
+async function updUser(id,patch){const{error}=await sb.from('profiles').update(patch).eq('id',id);if(error)return toast(error.message,1);log('User updated',JSON.stringify(patch));save();toast('Saved')}
+
+/* ---- attachments ---- */
+const ATT_TYPES=['Import / receipt','Production order','Expense','Customer invoice','Sales order','Delivery','Vehicle','Supplier','Other'];
+P.files=()=>{setTimeout(loadFiles,0);return '<div class="card" style="margin-bottom:14px"><h3>Attach a file</h3>'+(can('expense')||ROLE!=='Auditor'?'<div class="f"><div><label>Linked to</label><select id="f_t">'+ATT_TYPES.map(t=>'<option>'+t+'</option>').join('')+'</select></div><div><label>Reference (e.g. RCV-0001, PRD-0001, INV-0002)</label><input id="f_r"></div><div class="w"><label>File (PDF, image, Excel, up to 20 MB)</label><input id="f_f" type="file"></div></div><div class="row" style="margin-top:10px"><button class="p" onclick="uploadFile()">Upload</button></div>':'<span class="mut">Auditor role is read-only.</span>')+'</div><div class="card"><h3>Files</h3><div id="flist" class="mut">Loading...</div></div>'};
+async function uploadFile(){
+ const f=$('#f_f').files[0];if(!f)return toast('Choose a file',1);if(f.size>20*1024*1024)return toast('File is over 20 MB',1);
+ const ext=(f.name.match(/\.[A-Za-z0-9]{1,8}$/)||[''])[0],path=(crypto.randomUUID?crypto.randomUUID():Date.now()+''+Math.random().toString(36).slice(2))+ext;
+ const up=await sb.storage.from('iom-files').upload(path,f,{contentType:f.type||'application/octet-stream'});if(up.error)return toast(up.error.message,1);
+ const ins=await sb.from('iom_attachments').insert({link_type:$('#f_t').value,link_ref:$('#f_r').value.trim(),filename:f.name,path,size:f.size});if(ins.error)return toast(ins.error.message,1);
+ log('File attached',f.name+' -> '+$('#f_r').value.trim());save();toast('Uploaded');loadFiles()}
+async function loadFiles(){
+ const{data,error}=await sb.from('iom_attachments').select('*').order('created_at',{ascending:false});const el=$('#flist');if(!el)return;if(error)return el.textContent=error.message;
+ el.innerHTML='<div class="tw"><table><thead><tr><th>Date</th><th>Linked to</th><th>Reference</th><th>File</th><th class="num">KB</th><th></th></tr></thead><tbody>'+(data.map(a=>'<tr><td>'+esc(a.created_at.slice(0,10))+'</td><td>'+esc(a.link_type)+'</td><td>'+esc(a.link_ref)+'</td><td>'+esc(a.filename)+'</td><td class="num">'+f2(a.size/1024,0)+'</td><td><button class="s" onclick="dlFile(\''+a.path+'\',this)">Open</button></td></tr>').join('')||'<tr><td colspan="6" class="mut">No files yet</td></tr>')+'</tbody></table></div>'}
+async function dlFile(path){const{data,error}=await sb.storage.from('iom-files').createSignedUrl(path,120);if(error)return toast(error.message,1);window.open(data.signedUrl,'_blank')}
+
+/* ---- alerts ---- */
+function alerts(){
+ const a=[];
+ S.receipts.filter(r=>r.status==='draft').forEach(r=>a.push(['warn','Receipt '+r.ref+' is waiting for approval','receiving']));
+ S.orders.filter(o=>o.status==='completed').forEach(o=>a.push(['warn','Production order '+o.ref+' has actuals recorded and is waiting for approval','production']));
+ S.invoices.filter(i=>overdue(i)&&invOut(i)>0.005).forEach(i=>a.push(['bad','Invoice '+i.no+' is overdue (outstanding '+f2(invOut(i))+' '+i.cur+')','invoices']));
+ try{const m=stockMap();Object.keys(m).forEach(k=>{if(m[k]<-0.0005)a.push(['bad','Negative stock detected: '+k,'inventory'])})}catch(e){}
+ return a}
+P.alerts=()=>{const a=alerts();return '<div class="card"><h3>Alerts ('+a.length+')</h3>'+(a.map(x=>'<div class="nd"><span class="tag '+(x[0]==='bad'?'t-b':'t-w')+'">'+(x[0]==='bad'?'Action':'Pending')+'</span> '+esc(x[1])+' <a class="l" onclick="go(\''+x[2]+'\')">Open</a></div>').join('')||'<span class="mut">Nothing needs attention.</span>')+'</div>'};
+const render4=render;
+render=function(){render4();const n=alerts().length;const l=[...document.querySelectorAll('#nav a')].find(x=>x.getAttribute('onclick')=="go('alerts')");if(l&&n){const t=l.querySelector('.tx');if(t)t.insertAdjacentHTML('beforeend',' <small style="background:var(--gl);color:#000;border-radius:9px;padding:1px 7px">'+n+'</small>')}const bn=document.getElementById('bn');if(bn){bn.textContent=n;bn.style.display=n?'':'none'}};
+
+
+
+/* ---- passwordless sign-in and password reset by email ---- */
+const authUI0=authUI;
+authUI=function(msg,mode){
+ if(mode==='reset'){let el=$('#auth');if(!el){el=document.createElement('div');el.id='auth';document.body.appendChild(el)}
+  el.style.cssText='position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 20% 0%,#fff6e0,#f8f2e7);padding:16px';
+  el.innerHTML='<div class="card" style="width:min(400px,100%)"><h3>Set a new password</h3><div class="f" style="grid-template-columns:1fr"><div><label>New password (min 8 characters)</label><input id="a_p" type="password" autocomplete="new-password"></div></div>'+(msg?'<p style="color:var(--gold);margin:10px 0 0">'+esc(msg)+'</p>':'')+'<div class="row" style="margin-top:14px"><button class="p" onclick="setPw()">Save password</button></div></div>';return}
+ authUI0(msg,mode);
+ if((mode||'in')==='in'){const c=document.querySelector('#auth .card');if(c&&!c.querySelector('.gbtn'))c.insertAdjacentHTML('beforeend','<div class="gbtn" style="margin-top:12px"><button type="button" class="g" style="width:100%" onclick="googleIn()">Continue with Google</button></div>');if(c&&!c.querySelector('.alt'))c.insertAdjacentHTML('beforeend','<div class="row alt" style="margin-top:12px"><a class="l" onclick="mailLink(\'otp\')">Email me a sign-in link</a><a class="l" onclick="mailLink(\'reset\')">Forgot password</a></div>')}};
+async function googleIn(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/'}});if(error)authUI(error.message,'in')}
+async function mailLink(kind){const e=($('#a_e')||{}).value;const em=(e||'').trim();if(!em)return authUI('Enter your email first.','in');
+ const o=kind==='otp'?await sb.auth.signInWithOtp({email:em,options:{shouldCreateUser:false,emailRedirectTo:location.origin+'/'}}):await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/'});
+ if(o.error&&/rate|limit|seconds/i.test(o.error.message))return authUI(o.error.message,'in');
+ authUI('If this email has an account, a link was sent. Open it on this device.','in')}
+async function setPw(){const p=$('#a_p').value;if(p.length<8)return authUI('Password must be at least 8 characters.','reset');
+ const{error}=await sb.auth.updateUser({password:p});if(error)return authUI(error.message,'reset');toast('Saved');const a=$('#auth');if(a)a.remove();history.replaceState(null,'',location.pathname)}
+/* ---- dashboard charts (Chart.js, self-hosted) ---- */
+const CH={list:[]};
+const CHCOL=['#12874a','#e0a12c','#21485f','#c9622f','#6a8f3b','#8a5a9c','#2e9aa6','#b0453f','#7c6f4e','#4a6fa5'];
+function CL(s){const a=window.IOM_TR?window.IOM_TR(String(s)):null,L=window.IOM_LANG;return L==='ar'?(a||s):(L==='both'&&a?s+' / '+a:s)}
+
+function drill(page,q,arg){go(page,arg);setTimeout(()=>{const i=document.querySelector('#view input[oninput^="filt("]');if(i&&q){i.value=q;i.dispatchEvent(new Event('input',{bubbles:true}))}window.scrollTo({top:0,behavior:'smooth'})},250)}
+function trq(q){const a=window.IOM_TR?window.IOM_TR(String(q)):null;return window.IOM_LANG==='ar'&&a?a:q}
+function datePreset(k){const d=new Date(today()+'T00:00:00'),iso=x=>x.toISOString().slice(0,10);OF.to='';
+ if(k==='30'){d.setDate(d.getDate()-30);OF.from=iso(d)}else if(k==='m'){OF.from=today().slice(0,8)+'01'}else if(k==='y'){OF.from=today().slice(0,4)+'-01-01'}else OF.from='';render()}
+function presetBar(){const b=(k,l)=>'<button class="s" onclick="datePreset(\''+k+'\')">'+l+'</button>';return '<div class="row presets" style="margin:12px 0 0;gap:8px;flex-wrap:wrap"><span class="mut">Quick range</span>'+b('30','Last 30 days')+b('m','This month')+b('y','This year')+b('a','All time')+'<span class="mut hint">Click a bar, slice or point to open the matching list</span></div>'}
+function chartCards(){const dm=S.demo?'<span class="dmb">Demo</span>':'';
+ const C=[['c_stock','Stock by commodity (MT)'],['c_wh','Warehouse utilization (%)'],['c_whs','Stock by warehouse (MT)'],['c_rcv','Receipts by month (MT)'],['c_prod','Production input vs output by month (MT)'],['c_inv','Invoiced vs collected by month'],['c_rec','Receivables status'],['c_so','Sales orders by status'],['c_dlv','Deliveries by month (MT)'],['c_exp','Expenses by category']];
+ return presetBar()+'<div class="grid k2 chgrid" style="margin-top:14px">'+C.map(c=>'<div class="card chc"><h3>'+c[1]+dm+'</h3><div class="chw"><canvas id="'+c[0]+'"></canvas></div></div>').join('')+'</div>'}
+function drawCharts(){
+ CH.list.forEach(c=>c.destroy());CH.list=[];if(typeof Chart==='undefined')return;
+ const cs=getComputedStyle(document.documentElement),mut=cs.getPropertyValue('--mut').trim()||'#777',grid='rgba(120,110,80,.18)';
+ const rtl=window.IOM_LANG==='ar';Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;Chart.defaults.color=mut;
+ const m=ovStock(),byC={},byW={};
+ for(const k in m){const[w,b]=k.split('|');const n=com(batch(b).c).name;byC[n]=(byC[n]||0)+m[k];byW[w]=(byW[w]||0)+m[k]}
+ const WL=S.warehouses.filter(w=>!OF.wh||w.id===OF.wh);
+ const mo=d=>String(d||'').slice(0,7),monthly=(rows,dt,val)=>{const o={};rows.forEach(r=>{const k=mo(dt(r));if(k)o[k]=(o[k]||0)+val(r)});return o};
+ const months=(...objs)=>[...new Set(objs.flatMap(o=>Object.keys(o)))].sort().slice(-6);
+ const R=S.receipts.filter(r=>r.status==='approved'&&ovIn(r.date)&&(!OF.wh||r.wh===OF.wh)&&(!OF.com||r.c===OF.com));
+ const O=S.orders.filter(o=>o.status==='approved'&&ovIn(o.date));
+ const IV=S.invoices.filter(i=>ovIn(i.date)&&(!OF.cur||i.cur===OF.cur)&&(!OF.cust||i.cust===OF.cust));
+ const CO=S.collections.filter(c=>c.status!=='reversed'&&ovIn(c.date)&&(!OF.cur||c.cur===OF.cur)&&(!OF.cust||c.cust===OF.cust));
+ const DL=S.deliveries.filter(d=>ovIn(d.date)&&(!OF.wh||d.wh===OF.wh)&&(!OF.com||batch(d.batch).c===OF.com));
+ const EX=S.expenses.filter(e=>e.status!=='reversed'&&ovIn(e.date)&&(!OF.cur||e.cur===OF.cur));
+ const sum=a=>a.reduce((x,y)=>x+y,0);
+ const mk=(id,type,labels,sets,opt,drl)=>{const el=document.getElementById(id);if(!el)return;const has=sets.some(s=>s.data.some(v=>v>0));
+  if(!has||!labels.length){el.parentNode.innerHTML='<div class="mut chempty">No data yet</div>';return}
+  const pie=type==='doughnut'||type==='pie';
+  sets.forEach((s,i)=>{if(pie)s.backgroundColor=CHCOL;else{s.backgroundColor=s.backgroundColor||CHCOL[i];s.borderColor=s.borderColor||CHCOL[i]}});
+  const o=Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:pie||sets.length>1,rtl:rtl,position:pie?'bottom':'top',labels:{boxWidth:12}},tooltip:{rtl:rtl,textDirection:rtl?'rtl':'ltr',callbacks:{label:c=>{const v=c.parsed&&typeof c.parsed==='object'?(c.parsed.y!=null?c.parsed.y:c.parsed.x):c.parsed;const f=f2(v);if(pie){const t=c.dataset.data.reduce((a,b)=>a+b,0);return ' '+c.label+': '+f+' ('+(t?Math.round(v/t*1000)/10:0)+'%)'}const L=c.dataset.label?c.dataset.label+': ':'';return ' '+L+f}}}},animation:{duration:800,easing:'easeOutQuart'},interaction:{mode:pie?'nearest':'index',intersect:pie},onHover:(e,a)=>{if(e.native&&e.native.target)e.native.target.style.cursor=drl&&a.length?'pointer':'default'},onClick:(e,a)=>{if(drl&&a.length)drl(a[0].index,labels[a[0].index])}},pie?{cutout:'58%'}:{scales:{x:{reverse:rtl,grid:{display:false}},y:{position:rtl?'right':'left',beginAtZero:true,grid:{color:grid}}}},opt||{});
+  CH.list.push(new Chart(el,{type,data:{labels,datasets:sets},options:o}))};
+ const cn=Object.keys(byC).filter(k=>byC[k]>0);
+ mk('c_stock','doughnut',cn.map(CL),[{data:cn.map(k=>byC[k])}],null,i=>drill('inventory',trq(cn[i])));
+ mk('c_wh','bar',WL.map(w=>w.code),[{label:CL('Used %'),data:WL.map(w=>w.cap?Math.round(whStock(w.id,m)/w.cap*1000)/10:0),backgroundColor:WL.map(w=>{const p=w.cap?whStock(w.id,m)/w.cap:0;return p>.9?'#b0453f':p>.7?'#e0a12c':'#12874a'})}],{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100,reverse:rtl,grid:{color:grid}},y:{position:rtl?'right':'left',grid:{display:false}}}},i=>drill('inventory','',WL[i].id));
+ mk('c_whs','bar',WL.map(w=>w.code),[{label:'MT',data:WL.map(w=>Math.round(whStock(w.id,m)*100)/100)}],null,i=>drill('inventory','',WL[i].id));
+ const rm=monthly(R,r=>r.date,r=>+r.rec||0);let mm=months(rm);
+ mk('c_rcv','bar',mm,[{label:'MT',data:mm.map(k=>rm[k]||0)}],null,(i,l)=>drill('receiving',l));
+ const pi=monthly(O,o=>o.date,o=>o.actIn||0),po=monthly(O,o=>o.date,o=>sum(o.outs.map(x=>x.act||0)));mm=months(pi,po);
+ mk('c_prod','line',mm,[{label:CL('Input'),data:mm.map(k=>pi[k]||0),tension:.3},{label:CL('Output'),data:mm.map(k=>po[k]||0),tension:.3}],null,(i,l)=>drill('production',l));
+ const iv=monthly(IV,i=>i.date,i=>i.total),cl=monthly(CO,c=>c.date,c=>c.amount);mm=months(iv,cl);
+ mk('c_inv','bar',mm,[{label:CL('Invoiced'),data:mm.map(k=>iv[k]||0)},{label:CL('Collected'),data:mm.map(k=>cl[k]||0)}],null,(i,l)=>drill('invoices',l));
+ const od=sum(IV.filter(overdue).map(invOut)),op=sum(IV.filter(i=>!overdue(i)).map(invOut)),pd=sum(IV.map(i=>i.total))-od-op;
+ mk('c_rec','doughnut',[CL('Paid'),CL('Outstanding'),CL('Overdue')],[{data:[Math.max(0,pd),op,od]}],null,()=>drill('invoices',''));
+ const st={};S.sales.filter(s=>ovIn(s.date)&&(!OF.cust||s.cust===OF.cust)).forEach(s=>st[s.status]=(st[s.status]||0)+1);const sk=Object.keys(st);
+ mk('c_so','pie',sk.map(CL),[{data:sk.map(k=>st[k])}],null,i=>drill('sales',trq(sk[i])));
+ const dm=monthly(DL,d=>d.date,d=>+d.delivered||0);mm=months(dm);
+ mk('c_dlv','line',mm,[{label:'MT',data:mm.map(k=>dm[k]||0),fill:true,tension:.3,backgroundColor:'rgba(18,135,74,.15)'}],null,(i,l)=>drill('dispatch',l));
+ const ec={};EX.forEach(e=>ec[e.cat]=(ec[e.cat]||0)+e.amount);const ek=Object.keys(ec);
+ mk('c_exp','bar',ek.map(CL),[{label:CL('Amount'),data:ek.map(k=>ec[k])}],null,i=>drill('expenses',trq(ek[i])));
+}
+
+const ov0=P.overview;P.overview=()=>{const h=ov0(),mark='<div class="card" style="margin-top:14px"><h3>Recent activity</h3>';const i=h.indexOf(mark);return i<0?h+chartCards():h.slice(0,i)+chartCards()+h.slice(i)};
+const render0=render;render=function(){render0();if(PAGE==='overview')setTimeout(drawCharts,30)};
+/* ---- cloud backups (daily, kept 30 days; General Manager) ---- */
+const audit0=P.audit;
+P.audit=()=>audit0()+(ROLE==='General Manager'&&typeof sb!=='undefined'&&sb?'<div class="card" style="margin-top:14px"><div class="row" style="margin-bottom:8px"><h3 style="margin:0;flex:1">Cloud backups (daily, kept 30 days)</h3><button class="s" onclick="bkNow()">Back up now</button></div><div id="bklist" class="mut">Loading...</div></div>':'');
+const render5=render;
+render=function(){render5();if(PAGE==='audit'&&document.getElementById('bklist'))loadBk()};
+let BK=[];
+async function loadBk(){const el=document.getElementById('bklist');if(!el)return;
+ const{data,error}=await sb.from('iom_backups').select('id,taken_at,version').order('taken_at',{ascending:false}).limit(30);
+ if(error){el.textContent=error.message;return}BK=data;
+ el.innerHTML=data.length?'<div class="tw"><table><thead><tr><th>Time</th><th>Version</th><th></th></tr></thead><tbody>'+data.map(b=>'<tr><td>'+esc(String(b.taken_at).slice(0,16).replace('T',' '))+' UTC</td><td>'+b.version+'</td><td><button class="s" onclick="bkGet('+b.id+')">Download JSON</button></td></tr>').join('')+'</tbody></table></div><p class="mut" style="margin-bottom:0">To restore: download a copy, then press Import backup above.</p>':'<span class="mut">No backups yet.</span>'}
+async function bkNow(){const{error}=await sb.from('iom_backups').insert({version:VER,data:S});if(error)return toast(error.message,1);toast('Saved');loadBk()}
+async function bkGet(id){const{data,error}=await sb.from('iom_backups').select('data,taken_at').eq('id',id).single();if(error)return toast(error.message,1);
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data.data)],{type:'application/json'}));a.download='iom-cloud-backup-'+String(data.taken_at).slice(0,10)+'.json';a.click()}
+/* ---- start ---- */
+(function(){
+ const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+ s.onload=()=>{sb=supabase.createClient(SB_URL,SB_KEY);sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY')setTimeout(()=>authUI('','reset'),300)});boot().catch(e=>authUI(e.message||String(e),'in'))};
+ s.onerror=()=>authUI('Cannot reach the server. Check the internet connection and reload.','in');
+ document.head.appendChild(s);authUI('Connecting...','in')})();
+
+render();
+</script><script>
+/* ===== Bilingual layer: English + Arabic (both / en / ar) ===== */
+(function(){
+const DICT={"Integrated Operations Management": "إدارة العمليات المتكاملة", "INTEGRATED OPERATIONS": "العمليات المتكاملة", "Standalone · Stage 4": "نظام مستقل · المرحلة 4", "Operations Overview": "نظرة عامة على العمليات", "Warehouses & Silos": "المخازن والصوامع", "Inventory Management": "إدارة المخزون", "Raw Material Receiving": "استلام المواد الخام", "Weighbridge": "الميزان", "Manufacturing & Production": "التصنيع والإنتاج", "Production Formulas & Yield": "تركيبات الإنتاج والإنتاجية", "Finished Goods": "المنتجات النهائية", "Internal Fleet & Tractors": "الأسطول والجرارات الداخلية", "Internal Movements": "الحركات الداخلية", "Sales Management": "إدارة المبيعات", "Dispatch & Delivery": "الشحن والتسليم", "Customer Invoices": "فواتير العملاء", "Collections & Receivables": "التحصيلات والمستحقات", "Manufacturing Costs": "تكاليف التصنيع", "Expenses & Settlements": "المصروفات والتسويات", "Operational Reports": "تقارير التشغيل", "Complete Traceability": "التتبع الكامل", "Audit Trail & Data": "سجل التدقيق والبيانات", "Users & Roles": "المستخدمون والصلاحيات", "Alerts": "التنبيهات", "Attachments": "المرفقات", "General Manager": "المدير العام", "Import Manager": "مدير الاستيراد", "Warehouse Manager": "مدير المخازن", "Production Manager": "مدير الإنتاج", "Sales Manager": "مدير المبيعات", "Logistics Manager": "مدير اللوجستيات", "Accountant": "محاسب", "Finance Manager": "المدير المالي", "Operator": "مشغّل", "Auditor": "مراجع", "Soybeans": "فول الصويا", "Wheat": "القمح", "Corn": "الذرة", "Barley": "الشعير", "Sunflower Seeds": "بذور عباد الشمس", "Soybean Meal": "كسب فول الصويا", "Soybean Oil": "زيت فول الصويا", "Soybean Hulls": "قشور فول الصويا", "Wheat Flour": "دقيق القمح", "Wheat Bran": "نخالة القمح", "Global search + Enter (batch, ref, vessel...)": "بحث عام + Enter (دفعة، مرجع، سفينة...)", "Filter table...": "تصفية الجدول...", "Export CSV": "تصدير CSV", "Export Excel": "تصدير Excel", "Print / Save as PDF": "طباعة / حفظ PDF", "rows": "صفوف", "No records": "لا توجد سجلات", "Cancel": "إلغاء", "Save": "حفظ", "Close": "إغلاق", "Edit": "تعديل", "Open": "فتح", "Start": "بدء", "Next stage": "المرحلة التالية", "Record actuals": "تسجيل الفعلي", "Approve & post": "اعتماد وترحيل", "Approve & reserve": "اعتماد وحجز", "Reverse": "عكس القيد", "Trace": "تتبع", "Trace to origin": "تتبع إلى المصدر", "Depart": "مغادرة", "Confirm receipt": "تأكيد الاستلام", "Cost sheet": "كشف التكلفة", "Change allocation policy": "تغيير سياسة التوزيع", "Show all warehouses": "عرض كل المخازن", "Upload": "رفع", "Sign out": "تسجيل الخروج", "Sign in": "تسجيل الدخول", "Create account": "إنشاء حساب", "Check again": "تحقق مرة أخرى", "Full name": "الاسم الكامل", "Email": "البريد الإلكتروني", "Password (min 8 characters)": "كلمة المرور (8 أحرف على الأقل)", "I have an account": "لدي حساب", "Account waiting for approval": "الحساب بانتظار الموافقة", "Role": "الدور", "Active": "نشط", "Users": "المستخدمون", "Demo data is loaded (for testing). Clear it before entering real company data.": "بيانات تجريبية محمّلة (للاختبار). امسحها قبل إدخال بيانات الشركة الحقيقية.", "Clear demo data": "مسح البيانات التجريبية", "Raw material stock": "مخزون المواد الخام", "physical, approved receipts": "فعلي، من إيصالات معتمدة", "Finished goods stock": "مخزون المنتجات النهائية", "incl. byproducts": "يشمل المنتجات الثانوية", "Capacity utilization": "استغلال السعة", "Pending receipts": "إيصالات معلقة", "awaiting approval": "بانتظار الاعتماد", "Production (this month)": "الإنتاج (هذا الشهر)", "approved orders": "أوامر معتمدة", "Avg. yield": "متوسط الإنتاجية", "outputs / input": "المخرجات / المدخلات", "Process losses": "فواقد التشغيل", "Open production orders": "أوامر الإنتاج المفتوحة", "Stock by commodity (MT)": "المخزون حسب السلعة (طن)", "No stock yet": "لا يوجد مخزون بعد", "Warehouse utilization": "استغلال المخازن", "No warehouses": "لا توجد مخازن", "Recent activity": "النشاط الأخير", "Nothing yet": "لا شيء بعد", "Total invoiced": "إجمالي الفواتير", "Collected": "المحصّل", "Receivables": "المستحقات", "Overdue": "متأخر", "Total stock value": "إجمالي قيمة المخزون", "Open sales orders": "أوامر البيع المفتوحة", "MT reserved": "طن محجوز", "Dispatched MT": "الطن المشحون", "Pending movements": "حركات معلقة", "Vehicles": "المركبات", "+ Receive cargo": "+ استلام شحنة", "+ Production order": "+ أمر إنتاج", "+ Weigh truck": "+ وزن شاحنة", "Code": "الرمز", "Name": "الاسم", "Type": "النوع", "Factory": "المصنع", "Cells": "الخلايا", "Capacity MT": "السعة (طن)", "Stock MT": "المخزون (طن)", "Free MT": "المتاح (طن)", "Used": "المستخدم", "Allowed materials": "المواد المسموحة", "Any": "أي", "Contents": "المحتويات", "New warehouse / silo": "مخزن / صومعة جديد", "Factory / site": "المصنع / الموقع", "Capacity (MT)": "السعة (طن)", "Storage cells": "خلايا التخزين", "Opening balance": "رصيد افتتاحي", "Adjustment / damage / loss": "تسوية / تلف / فقد", "Internal transfer": "تحويل داخلي", "Stock by warehouse and batch": "المخزون حسب المخزن والدفعة", "Batch": "الدفعة", "Commodity": "السلعة", "Origin": "المنشأ", "Received": "المستلم", "Physical MT": "الفعلي (طن)", "Reserved": "المحجوز", "Available MT": "المتاح (طن)", "Movement ledger (every stock change)": "سجل الحركة (كل تغيير في المخزون)", "Time": "الوقت", "Doc": "المستند", "Qty MT": "الكمية (طن)", "By": "بواسطة", "Kind": "النوع", "Adjustment (+/-)": "تسوية (+/-)", "Damaged stock": "مخزون تالف", "Storage loss": "فقد تخزين", "Quantity": "الكمية", "Unit": "الوحدة", "Reason": "السبب", "Stock adjustment": "تسوية المخزون", "Internal transfer between warehouses": "تحويل داخلي بين المخازن", "From": "من", "To": "إلى", "Quantity (MT)": "الكمية (طن)", "Transfer": "تحويل", "Ref": "المرجع", "Import ref": "مرجع الاستيراد", "Vessel": "السفينة", "Supplier": "المورّد", "B/L MT": "بوليصة الشحن (طن)", "Discharged": "المفرّغ", "B/L minus received": "بوليصة الشحن ناقص المستلم", "Weighbridge net MT": "صافي الميزان (طن)", "Date": "التاريخ", "Status": "الحالة", "New receiving record": "سجل استلام جديد", "Import Transaction reference": "مرجع عملية الاستيراد", "Vessel name": "اسم السفينة", "Destination warehouse": "المخزن المستلم", "B/L quantity (MT)": "كمية بوليصة الشحن (طن)", "Discharged quantity (MT)": "الكمية المفرّغة (طن)", "Received quantity (MT)": "الكمية المستلمة (طن)", "Purchase cost per MT (optional, for costing)": "تكلفة الشراء للطن (اختياري، للتكلفة)", "Receiving date": "تاريخ الاستلام", "Ticket": "التذكرة", "Direction": "الاتجاه", "Truck": "الشاحنة", "Driver": "السائق", "Product": "المنتج", "Gross kg": "الإجمالي كجم", "Tare kg": "الفارغ كجم", "Net kg": "الصافي كجم", "Net MT": "الصافي طن", "Reference": "المرجع", "Tickets are typed manually now. The electronic scale API is a prepared integration point, not connected.": "التذاكر تُدخل يدوياً حالياً. واجهة الميزان الإلكتروني نقطة ربط مجهزة وغير متصلة.", "New weighing ticket": "تذكرة وزن جديدة", "In": "وارد", "Out": "صادر", "Truck number": "رقم الشاحنة", "Driver name": "اسم السائق", "Loading / unloading reference (e.g. RCV-0002)": "مرجع التحميل / التفريغ (مثال RCV-0002)", "Gross weight (kg)": "الوزن الإجمالي (كجم)", "Tare weight (kg)": "وزن الفارغ (كجم)", "Net weight (kg), automatic": "الوزن الصافي (كجم)، تلقائي", "Weighing ticket": "تذكرة وزن", "Formula": "التركيبة", "Raw material": "المادة الخام", "Line": "الخط", "Outputs (% of input)": "المخرجات (% من المدخلات)", "Process loss %": "نسبة الفاقد %", "Stages": "المراحل", "Edit formula": "تعديل التركيبة", "New formula": "تركيبة جديدة", "Formula name": "اسم التركيبة", "Production line": "خط الإنتاج", "Expected process loss %": "نسبة الفاقد المتوقعة %", "Standard conversion cost per MT input (optional)": "تكلفة التحويل القياسية لكل طن مدخل (اختياري)", "Order": "الأمر", "Factory / line": "المصنع / الخط", "Source": "المصدر", "Planned in MT": "المخطط (طن)", "Actual in": "الفعلي (مدخل)", "Yield %": "الإنتاجية %", "Stage": "المرحلة", "Manager": "المدير", "Create a formula first": "أنشئ تركيبة أولاً", "New production order": "أمر إنتاج جديد", "Formula (sets raw material and line)": "التركيبة (تحدد المادة الخام والخط)", "Raw material source (warehouse / batch)": "مصدر المادة الخام (مخزن / دفعة)", "Planned input quantity (MT)": "كمية المدخلات المخططة (طن)", "Production date": "تاريخ الإنتاج", "Expected completion": "الإنجاز المتوقع", "Production manager": "مدير الإنتاج", "Actual raw material consumed (MT)": "المادة الخام المستهلكة فعلياً (طن)", "Store in": "التخزين في", "Remaining work in process (MT)": "الإنتاج تحت التشغيل المتبقي (طن)", "Process loss (MT), recorded not assumed": "الفاقد (طن)، مسجّل وليس مفترضاً", "Reason for any difference or loss": "سبب أي فرق أو فقد", "Actual production": "الإنتاج الفعلي", "Production order": "أمر الإنتاج", "Output": "المخرجات", "Expected": "المتوقع", "Actual": "الفعلي", "Variance": "الانحراف", "Mass balance": "الميزان الكتلي", "Input": "المدخلات", "Efficiency": "الكفاءة", "Select a batch (every received shipment is a batch)": "اختر دفعة (كل شحنة مستلمة دفعة)", "Pick a batch to see: Import, Receiving, Warehouse, Production, Finished goods.": "اختر دفعة لعرض: الاستيراد، الاستلام، المخزن، الإنتاج، المنتجات النهائية.", "Origin of this batch:": "مصدر هذه الدفعة:", "Import": "الاستيراد", "Produced by": "أُنتجت بواسطة", "In stock:": "في المخزون:", "Consumed in production:": "المستهلك في الإنتاج:", "Sold / delivered:": "المباع / المسلّم:", "Internal moves:": "الحركات الداخلية:", "Export full backup (JSON)": "تصدير نسخة احتياطية كاملة (JSON)", "Import backup": "استيراد نسخة احتياطية", "Data storage:": "تخزين البيانات:", "User / role": "المستخدم / الدور", "Action": "الإجراء", "New customer": "عميل جديد", "Customer name": "اسم العميل", "Credit limit": "حد الائتمان", "Currency": "العملة", "Available to sell": "المتاح للبيع", "Physical": "الفعلي", "Available": "المتاح", "Customer": "العميل", "Price": "السعر", "Value": "القيمة", "Terms": "الشروط", "Salesperson": "مندوب المبيعات", "Dispatched": "المشحون", "Customer accounts": "حسابات العملاء", "Cur": "العملة", "Total sales": "إجمالي المبيعات", "Invoiced": "المفوتر", "Outstanding": "مستحق", "Credit used": "الائتمان المستخدم", "New sales order": "أمر بيع جديد", "Sell from (warehouse / batch, available stock)": "البيع من (مخزن / دفعة، المخزون المتاح)", "Future production (needs General Manager)": "إنتاج مستقبلي (يتطلب المدير العام)", "Unit price per MT": "سعر الوحدة للطن", "Delivery terms": "شروط التسليم", "Ex-silo": "من الصومعة", "Delivery location": "موقع التسليم", "Payment terms (days)": "شروط الدفع (أيام)", "Order date": "تاريخ الأمر", "Delivery schedule (free text)": "جدول التسليم (نص حر)", "Approved": "معتمد", "Delivery": "التسليم", "Sales order": "أمر البيع", "Exit ticket": "تذكرة الخروج", "Loaded MT": "المحمّل (طن)", "Delivered MT": "المسلّم (طن)", "Short / excess": "عجز / زيادة", "Invoiced MT": "المفوتر (طن)", "No approved sales orders awaiting dispatch": "لا توجد أوامر بيع معتمدة بانتظار الشحن", "Dispatch / delivery": "شحن / تسليم", "Dispatch": "شحن", "Invoice": "فاتورة", "Unit price": "سعر الوحدة", "Discount": "الخصم", "Tax %": "الضريبة %", "Total": "الإجمالي", "Paid": "مسدد", "Due": "المستحق", "New sales invoice": "فاتورة مبيعات جديدة", "Discount (amount)": "الخصم (مبلغ)", "Invoice date": "تاريخ الفاتورة", "Aging report": "تقرير أعمار الديون", "Current (not due)": "حالي (غير مستحق)", "1-30 days": "1-30 يوماً", "Over 90": "أكثر من 90", "Collections": "التحصيلات", "Method": "الطريقة", "Amount": "المبلغ", "Bank account": "الحساب البنكي", "Receipt no.": "رقم الإيصال", "Applied to": "مطبّق على", "Unapplied": "غير مطبّق", "No customers": "لا يوجد عملاء", "Record collection": "تسجيل تحصيل", "Cash": "نقداً", "Bank Transfer": "تحويل بنكي", "Cheque": "شيك", "Other": "أخرى", "Payment date": "تاريخ الدفع", "Receipt number": "رقم الإيصال", "Attachment note / file name": "ملاحظة المرفق / اسم الملف", "Collection": "التحصيل", "Plate": "اللوحة", "Location": "الموقع", "Fuel L/100km": "الوقود لتر/100كم", "Maintenance": "الصيانة", "New vehicle / equipment": "مركبة / معدة جديدة", "Vehicle / Tractor ID (e.g. T-001)": "رقم المركبة / الجرار (مثال T-001)", "Plate number": "رقم اللوحة", "Tractor": "جرار", "Loader": "لودر", "Forklift": "رافعة شوكية", "Current location": "الموقع الحالي", "Operating status": "حالة التشغيل", "In use": "قيد الاستخدام", "Out of service": "خارج الخدمة", "Fuel consumption": "استهلاك الوقود", "Maintenance status": "حالة الصيانة", "Due soon": "مستحقة قريباً", "In maintenance": "في الصيانة", "Trips today": "رحلات اليوم", "Qty moved MT": "الكمية المنقولة (طن)", "Late movements": "حركات متأخرة", "Incomplete": "غير مكتملة", "Cost per MT": "التكلفة لكل طن", "Avg trip min": "متوسط الرحلة (دقيقة)", "Vehicle": "المركبة", "Sent MT": "المرسل (طن)", "Received MT": "المستلم (طن)", "Fuel L": "الوقود (لتر)", "Cost": "التكلفة", "Departure": "المغادرة", "Arrival": "الوصول", "Internal movement order": "أمر حركة داخلية", "Vehicle / tractor": "المركبة / الجرار", "Source warehouse": "المخزن المصدر", "Destination warehouse / line": "المخزن / الخط المستلم", "Expected arrival": "الوصول المتوقع", "Quantity received (MT)": "الكمية المستلمة (طن)", "Fuel used (litres)": "الوقود المستخدم (لتر)", "Transport cost": "تكلفة النقل", "Warehouse Expenses": "مصروفات المخازن", "Manufacturing Expenses": "مصروفات التصنيع", "Internal Transportation": "النقل الداخلي", "Fuel": "الوقود", "Labor": "العمالة", "Electricity": "الكهرباء", "Loading & Unloading": "التحميل والتفريغ", "Storage Fees": "رسوم التخزين", "Chemicals": "مواد كيميائية", "None": "بدون", "Import Transaction": "عملية استيراد", "Production Order": "أمر إنتاج", "Sales Order": "أمر بيع", "By category": "حسب الفئة", "No expenses yet": "لا توجد مصروفات بعد", "Category": "الفئة", "Description": "الوصف", "Linked to": "مرتبط بـ", "Supplier accounts": "حسابات الموردين", "Purchases (received x cost)": "المشتريات (المستلم × التكلفة)", "Invoices": "الفواتير", "Payments": "المدفوعات", "Advances": "الدفعات المقدمة", "Outstanding payable": "المستحق الدفع", "Receipt / note": "إيصال / ملاحظة", "New expense": "مصروف جديد", "Link to": "ربط بـ", "Expense": "مصروف", "Supplier invoice / payment / advance": "فاتورة مورد / دفعة / سلفة", "Supplier name": "اسم المورد", "Supplier invoice": "فاتورة المورد", "Payment": "دفعة", "Advance payment": "دفعة مقدمة", "Raw in MT": "الخام (طن)", "Raw material cost": "تكلفة المادة الخام", "Conversion cost": "تكلفة التحويل", "Total production cost": "إجمالي تكلفة الإنتاج", "Cost / MT input": "التكلفة / طن مدخل", "Policy": "السياسة", "By weight": "حسب الوزن", "By sales value": "حسب قيمة المبيعات", "Custom %": "نسبة مخصصة %", "Margin": "الهامش", "Item": "البند", "Per MT input": "لكل طن مدخل", "Allocated cost": "التكلفة الموزعة", "Cost / MT": "التكلفة / طن", "Sale price / MT": "سعر البيع / طن", "Allocation method": "طريقة التوزيع", "By weight (physical quantity)": "حسب الوزن (الكمية الفعلية)", "By sales value (needs prices)": "حسب قيمة المبيعات (يتطلب أسعاراً)", "Custom percentages": "نسب مخصصة", "Allocation policy": "سياسة التوزيع", "Warehouse Stock Report": "تقرير مخزون المخازن", "Cost/MT": "التكلفة/طن", "Stock Movement Report": "تقرير حركة المخزون", "Raw Material Consumption": "استهلاك المواد الخام", "Consumed MT": "المستهلك (طن)", "Production Yield Report": "تقرير إنتاجية الإنتاج", "Input MT": "المدخل (طن)", "Output MT": "المخرج (طن)", "Loss MT": "الفاقد (طن)", "WIP MT": "تحت التشغيل (طن)", "Production Variance Report": "تقرير انحرافات الإنتاج", "Expected MT": "المتوقع (طن)", "Actual MT": "الفعلي (طن)", "Variance MT": "الانحراف (طن)", "Variance %": "الانحراف %", "Finished Goods Report": "تقرير المنتجات النهائية", "Batch Traceability Report": "تقرير تتبع الدفعات", "In stock MT": "في المخزون (طن)", "Sold MT": "المباع (طن)", "Parent batch": "الدفعة الأم", "Tractor Movement Report": "تقرير حركة الجرارات", "Weighbridge Report": "تقرير الميزان", "Dir": "الاتجاه", "Sales Report": "تقرير المبيعات", "Customer Outstanding Report": "تقرير مستحقات العملاء", "Collections Report": "تقرير التحصيلات", "Receipt": "الإيصال", "Bank": "البنك", "Manufacturing Cost Report": "تقرير تكلفة التصنيع", "Raw cost": "تكلفة الخام", "Std conv/MT": "تحويل قياسي/طن", "Actual conv/MT": "تحويل فعلي/طن", "Product Profitability Report": "تقرير ربحية المنتجات", "Net revenue (invoiced)": "صافي الإيراد (المفوتر)", "Cost of goods": "تكلفة البضاعة", "Gross margin": "إجمالي الهامش", "Margin %": "الهامش %", "Daily Factory Operations Report (uses \"To\" date)": "تقرير العمليات اليومية للمصنع (بتاريخ \"إلى\")", "Receipts approved (MT)": "الإيصالات المعتمدة (طن)", "Trucks weighed": "الشاحنات الموزونة", "Raw material consumed (MT)": "المواد الخام المستهلكة (طن)", "Finished output (MT)": "الإنتاج النهائي (طن)", "Dispatched (MT)": "المشحون (طن)", "Internal trips completed": "الرحلات الداخلية المكتملة", "Collections recorded": "التحصيلات المسجلة", "Expenses recorded": "المصروفات المسجلة", "Complete Commodity Flow Report": "تقرير تدفق السلعة الكامل", "Import batch": "دفعة الاستيراد", "Outputs MT": "المخرجات (طن)", "Period Comparison (A vs B)": "مقارنة الفترات (أ مقابل ب)", "Receipts approved MT": "الإيصالات المعتمدة (طن)", "Raw consumed MT": "الخام المستهلك (طن)", "Finished output MT": "الإنتاج النهائي (طن)", "Expenses": "المصروفات", "Metric": "المؤشر", "Period A (From-To)": "الفترة أ (من-إلى)", "Period B (compare)": "الفترة ب (للمقارنة)", "Change": "التغيير", "Report": "التقرير", "Compare from": "المقارنة من", "Compare to": "المقارنة إلى", "All": "الكل", "Enter": "أدخل", "No match": "لا توجد نتيجة", "Saving...": "جارٍ الحفظ...", "Saved to cloud": "تم الحفظ في السحابة", "Cloud error": "خطأ في السحابة", "Offline": "غير متصل", "Connecting...": "جارٍ الاتصال...", "Loading...": "جارٍ التحميل...", "Saved": "تم الحفظ", "Uploaded": "تم الرفع", "Pending": "معلق", "Files": "الملفات", "File": "الملف", "Choose a file": "اختر ملفاً", "No files yet": "لا توجد ملفات بعد", "Attach a file": "إرفاق ملف", "Nothing needs attention.": "لا شيء يحتاج إلى اهتمام.", "Import / receipt": "استيراد / إيصال", "Customer invoice": "فاتورة عميل", "Reference (e.g. RCV-0001, PRD-0001, INV-0002)": "المرجع (مثال RCV-0001، PRD-0001، INV-0002)", "File (PDF, image, Excel, up to 20 MB)": "الملف (PDF، صورة، Excel، حتى 20 ميجابايت)", "Only the General Manager can manage users.": "المدير العام فقط يمكنه إدارة المستخدمين.", "The first account created becomes General Manager. Later accounts need the General Manager to approve them.": "أول حساب يُنشأ يصبح المدير العام. الحسابات التالية تحتاج موافقة المدير العام.", "Your account was created. The General Manager must activate it and set your role. Then press Check again.": "تم إنشاء حسابك. يجب على المدير العام تفعيله وتحديد دورك، ثم اضغط تحقق مرة أخرى.", "Remove all demo data and start with an empty system?": "حذف كل البيانات التجريبية والبدء بنظام فارغ؟", "Receipt drafted": "تمت صياغة الإيصال", "Receipt approved:": "تم اعتماد الإيصال:", "Posted.": "تم الترحيل.", "Warehouse created": "تم إنشاء المخزن", "Customer created": "تم إنشاء العميل", "Sales order approved": "تم اعتماد أمر البيع", "Invoice issued": "تم إصدار الفاتورة", "Production started": "بدأ الإنتاج", "Movement received": "تم استلام الحركة", "Movement departed": "غادرت الحركة", "Vehicle added": "تمت إضافة المركبة", "Formula saved": "تم حفظ التركيبة", "Backup restored": "تمت استعادة النسخة الاحتياطية", "Not permitted for role": "غير مسموح لهذا الدور", "Code already exists": "الرمز موجود مسبقاً", "Quantity must be positive": "يجب أن تكون الكمية موجبة", "Your role can view stock only.": "دورك يسمح بعرض المخزون فقط.", "Auditor role is read-only.": "دور المراجع للقراءة فقط.", "Silo": "صومعة", "Warehouse": "المخزن", "Tank": "خزان", "Open Yard": "ساحة مكشوفة", "Production Storage": "مخزن الإنتاج", "Demo data loaded": "تم تحميل البيانات التجريبية", "Insufficient stock:": "مخزون غير كافٍ:", "Capacity exceeded at": "تم تجاوز السعة في", "Not permitted": "غير مسموح", "Production approved:": "تم اعتماد الإنتاج:", "Posted:": "تم الترحيل:", "Reversed": "تم العكس", "Alerts (": "التنبيهات (", "Nothing to reverse": "لا يوجد ما يُعكس", "draft": "مسودة", "approved": "معتمد", "completed": "مكتمل", "planned": "مخطط", "in_progress": "قيد التنفيذ", "reversed": "معكوس", "system": "النظام", "Silo A (raw)": "صومعة أ (خام)", "Warehouse 1": "مخزن 1", "Meal store": "مخزن الكسب", "Soy oil tank": "خزان زيت الصويا", "Hulls yard": "ساحة القشور", "Factory 1": "المصنع 1", "Soybean Crushing": "عصر فول الصويا", "Wheat Milling": "طحن القمح", "Line 1": "الخط 1", "Mill 1": "المطحنة 1", "Overview": "نظرة عامة", "Inventory & Production": "المخزون والإنتاج", "Logistics & Sales": "اللوجستيات والمبيعات", "Finance & Reports": "المالية والتقارير", "System": "النظام", "STANDALONE · STAGE 4": "نظام مستقل · المرحلة 4", "START HERE": "ابدأ من هنا", "Set up your first operation record": "جهّز أول سجل تشغيل", "Add a warehouse or silo, add a customer, then receive your first cargo.": "أضف مخزناً أو صومعة، ثم عميلاً، ثم استلم أول شحنة.", "+ 1 · New warehouse / silo": "+ 1 · مخزن / صومعة جديد", "+ 2 · New customer": "+ 2 · عميل جديد", "+ 3 · Receive cargo": "+ 3 · استلام شحنة", "↻ Refresh": "↻ تحديث", "Refreshed": "تم التحديث", "Live view of stock, production, sales and cash across your factory": "عرض مباشر للمخزون والإنتاج والمبيعات والنقد في مصنعك", "Silos, warehouses and tanks with capacity and contents": "الصوامع والمخازن والخزانات بسعتها ومحتوياتها", "Stock by warehouse and batch, built only from ledger movements": "المخزون حسب المخزن والدفعة، من حركات السجل فقط", "Receive imported cargo, check it against the bill of lading and approve": "استلم الشحنات المستوردة وقارنها ببوليصة الشحن ثم اعتمد", "Weighing tickets for trucks coming in and going out": "تذاكر وزن الشاحنات الداخلة والخارجة", "Production orders, stages, actual output and mass balance": "أوامر الإنتاج والمراحل والإنتاج الفعلي والميزان الكتلي", "Yield formulas, outputs and expected process loss": "تركيبات الإنتاجية والمخرجات والفاقد المتوقع", "Finished goods and byproducts available to sell": "المنتجات النهائية والثانوية المتاحة للبيع", "Tractors, loaders and forklifts with status and maintenance": "الجرارات واللودرات والرافعات مع الحالة والصيانة", "Move stock between warehouses and production lines": "نقل المخزون بين المخازن وخطوط الإنتاج", "Customers, sales orders and reservations of available stock": "العملاء وأوامر البيع وحجز المخزون المتاح", "Load, weigh and deliver approved sales orders": "تحميل ووزن وتسليم أوامر البيع المعتمدة", "Issue and follow customer invoices": "إصدار ومتابعة فواتير العملاء", "Record payments and see who owes you": "سجّل المدفوعات واعرف من عليه مستحقات", "Raw material and conversion cost per production order": "تكلفة الخام والتحويل لكل أمر إنتاج", "Factory expenses and supplier accounts": "مصروفات المصنع وحسابات الموردين", "Operational, financial and traceability reports": "تقارير التشغيل والمالية والتتبع", "Follow any batch from import to delivery": "تتبع أي دفعة من الاستيراد حتى التسليم", "Every action recorded, plus backup and restore": "كل إجراء مسجل، مع النسخ الاحتياطي والاستعادة", "Items that need your attention": "بنود تحتاج إلى اهتمامك", "Documents attached to imports, orders and invoices": "مستندات مرفقة بالاستيراد والأوامر والفواتير", "Accounts, roles and activation": "الحسابات والأدوار والتفعيل", "Theme": "المظهر", "All commodities": "كل السلع", "All warehouses": "كل المخازن", "All currencies": "كل العملات", "Date from": "من تاريخ", "Date to": "إلى تاريخ", "↻ Reset": "↻ إعادة ضبط", "+ New warehouse / silo": "+ مخزن / صومعة جديد", "+ New receiving record": "+ سجل استلام جديد", "+ New weighing ticket": "+ تذكرة وزن جديدة", "+ New formula": "+ تركيبة جديدة", "+ New production order": "+ أمر إنتاج جديد", "+ New vehicle / equipment": "+ مركبة / معدة جديدة", "+ New movement order": "+ أمر حركة جديد", "+ New sales order": "+ أمر بيع جديد", "+ New customer": "+ عميل جديد", "+ New delivery / dispatch": "+ شحن / تسليم جديد", "+ New invoice from delivery": "+ فاتورة جديدة من التسليم", "+ Record collection": "+ تسجيل تحصيل", "+ New expense": "+ مصروف جديد", "+ Supplier invoice / payment / advance": "+ فاتورة / دفعة / سلفة مورد", "all currencies as entered": "كل العملات كما أُدخلت", "at purchase / allocated cost": "بسعر الشراء / التكلفة الموزعة", "invoices": "فواتير", "deliveries": "عمليات تسليم", "In production:": "قيد الإنتاج:", "Packaging": "التعبئة", "Allowed materials (names separated by commas; empty = any)": "المواد المسموحة (الأسماء مفصولة بفواصل؛ فارغ = أي مادة)", "Reference (import ref, PRD-0001, warehouse code, SO-0001, vehicle ID, customer or supplier name)": "المرجع (مرجع الاستيراد، PRD-0001، رمز المخزن، SO-0001، رقم المركبة، اسم العميل أو المورد)", "Receipt / invoice no. / note": "رقم الإيصال / الفاتورة / ملاحظة", "Import quantities are not physical stock until a receipt is approved. The Import Transaction reference is typed in for now; the link to AgriTrade Pro Import Operations is a prepared integration point for a later stage.": "كميات الاستيراد لا تُعد مخزوناً فعلياً حتى يُعتمد الإيصال. مرجع عملية الاستيراد يُكتب يدوياً حالياً؛ الربط مع عمليات الاستيراد في AgriTrade Pro نقطة ربط مجهزة لمرحلة لاحقة.", "Stock leaves the source and enters the destination only when receipt is confirmed. GPS tracking is a prepared integration point, not connected.": "يخرج المخزون من المصدر ويدخل الوجهة فقط عند تأكيد الاستلام. تتبع GPS نقطة ربط مجهزة وغير متصلة.", "Stock leaves the warehouse only when a dispatch is approved. Loading weight is deducted; customer-confirmed quantity gives shortage / excess.": "يخرج المخزون من المخزن فقط عند اعتماد الشحن. يُخصم وزن التحميل، والكمية المؤكدة من العميل تحدد العجز / الزيادة.", "Sales, reservations and dispatch of finished goods come in Stage 2.": "مبيعات المنتجات النهائية وحجزها وشحنها في صفحات المبيعات والشحن.", "per approved production order: raw material cost (from the receipt cost per MT) plus conversion costs (expenses linked to the order). Choose the allocation policy per order; nothing is fixed. Add conversion costs in Expenses & Settlements, linking them to the production order.": "لكل أمر إنتاج معتمد: تكلفة المادة الخام (من تكلفة الإيصال للطن) زائد تكاليف التحويل (المصروفات المرتبطة بالأمر). اختر سياسة التوزيع لكل أمر؛ لا شيء ثابت. أضف تكاليف التحويل في المصروفات والتسويات واربطها بأمر الإنتاج.", "Data is stored in the shared cloud database and every signed-in user sees the same data. A copy is also kept in this browser. Export a backup regularly. Access follows the role of each user.": "البيانات مخزنة في قاعدة بيانات سحابية مشتركة ويرى كل مستخدم مسجل الدخول نفس البيانات. تُحفظ نسخة أيضاً في هذا المتصفح. صدّر نسخة احتياطية بانتظام. الوصول يتبع دور كل مستخدم.", "New accounts stay inactive until you activate them here and choose a role. Only active users can read or write company data. Auditor is read-only.": "الحسابات الجديدة تبقى غير نشطة حتى تفعّلها هنا وتختار دوراً. المستخدمون النشطون فقط يمكنهم قراءة بيانات الشركة أو كتابتها. المراجع للقراءة فقط.", "1. Warehouse Stock Report": "1. تقرير مخزون المخازن", "2. Stock Movement Report": "2. تقرير حركة المخزون", "3. Raw Material Consumption": "3. استهلاك المواد الخام", "4. Production Yield Report": "4. تقرير إنتاجية الإنتاج", "5. Production Variance Report": "5. تقرير انحرافات الإنتاج", "6. Finished Goods Report": "6. تقرير المنتجات النهائية", "7. Batch Traceability Report": "7. تقرير تتبع الدفعات", "8. Tractor Movement Report": "8. تقرير حركة الجرارات", "9. Weighbridge Report": "9. تقرير الميزان", "10. Sales Report": "10. تقرير المبيعات", "11. Customer Outstanding Report": "11. تقرير مستحقات العملاء", "12. Collections Report": "12. تقرير التحصيلات", "13. Manufacturing Cost Report": "13. تقرير تكلفة التصنيع", "14. Product Profitability Report": "14. تقرير ربحية المنتجات", "15. Daily Factory Operations Report (uses \"To\" date)": "15. تقرير العمليات اليومية للمصنع (بتاريخ \"إلى\")", "16. Complete Commodity Flow Report": "16. تقرير تدفق السلعة الكامل", "17. Period Comparison (A vs B)": "17. مقارنة الفترات (أ مقابل ب)", "to": "إلى", "Filters:": "المرشحات:", "any": "أي", "Raw Material Preparation": "تجهيز المواد الخام", "Cleaning": "التنظيف", "Dehulling": "إزالة القشور", "Crushing": "العصر", "Extraction": "الاستخلاص", "Refining": "التكرير", "Final Product Storage": "تخزين المنتج النهائي", "Milling": "الطحن", "Generated": "تاريخ الإنشاء", "Cost sheet per approved production order: raw material cost (from the receipt cost per MT) plus conversion costs (expenses linked to the order). Choose the allocation policy per order; nothing is fixed. Add conversion costs in Expenses & Settlements, linking them to the production order.": "كشف التكلفة لكل أمر إنتاج معتمد: تكلفة المادة الخام (من تكلفة الإيصال للطن) زائد تكاليف التحويل (المصروفات المرتبطة بالأمر). اختر سياسة التوزيع لكل أمر؛ لا شيء ثابت. أضف تكاليف التحويل في المصروفات والتسويات واربطها بأمر الإنتاج.", "available": "متاح", "Brazil": "البرازيل", "USA": "الولايات المتحدة", "Ukraine": "أوكرانيا", "Argentina": "الأرجنتين", "Russia": "روسيا", "Egypt": "مصر", "Romania": "رومانيا", "Cloud backups (daily, kept 30 days)": "النسخ الاحتياطية السحابية (يومياً، تُحفظ 30 يوماً)", "Back up now": "نسخ احتياطي الآن", "Version": "الإصدار", "Download JSON": "تنزيل JSON", "No backups yet.": "لا توجد نسخ احتياطية بعد.", "To restore: download a copy, then press Import backup above.": "للاستعادة: نزّل نسخة ثم اضغط استيراد نسخة احتياطية أعلاه.", "UTC": "UTC", "Email me a sign-in link": "أرسل لي رابط تسجيل الدخول", "Forgot password": "نسيت كلمة المرور", "Enter your email first.": "أدخل بريدك الإلكتروني أولاً.", "If this email has an account, a link was sent. Open it on this device.": "إذا كان لهذا البريد حساب فقد أُرسل رابط. افتحه على هذا الجهاز.", "Set a new password": "تعيين كلمة مرور جديدة", "New password (min 8 characters)": "كلمة المرور الجديدة (8 أحرف على الأقل)", "Save password": "حفظ كلمة المرور", "Password must be at least 8 characters.": "يجب ألا تقل كلمة المرور عن 8 أحرف.", "Continue with Google": "المتابعة عبر Google", "Ports and vessels": "الموانئ والسفن", "Silos and storage": "الصوامع والتخزين", "Photos: Unsplash and Pexels, free to use under their licenses.": "الصور: من Unsplash وPexels، مجانية الاستخدام بموجب تراخيصها.", "Warehouse utilization (%)": "استغلال المخازن (%)", "Stock by warehouse (MT)": "المخزون حسب المخزن (طن)", "Receipts by month (MT)": "الاستلام حسب الشهر (طن)", "Production input vs output by month (MT)": "مدخلات ومخرجات الإنتاج حسب الشهر (طن)", "Invoiced vs collected by month": "المفوتر مقابل المحصّل حسب الشهر", "Receivables status": "حالة المستحقات", "Sales orders by status": "أوامر البيع حسب الحالة", "Deliveries by month (MT)": "التسليمات حسب الشهر (طن)", "Expenses by category": "المصروفات حسب الفئة", "Demo": "تجريبي", "No data yet": "لا توجد بيانات بعد", "Used %": "نسبة الاستخدام", "cancelled": "ملغي", "closed": "مغلق", "All customers": "كل العملاء", "Quick range": "نطاق سريع", "Last 30 days": "آخر 30 يوماً", "This month": "هذا الشهر", "This year": "هذه السنة", "All time": "كل الفترات", "Click a bar, slice or point to open the matching list": "اضغط على عمود أو شريحة أو نقطة لفتح القائمة المطابقة"};
+{const q=new URLSearchParams(location.search).get('lang');if(['both','en','ar'].includes(q))localStorage.setItem('iom.lang',q)}
+const LANG=localStorage.getItem('iom.lang')||'both';window.IOM_LANG=LANG;window.IOM_TR=t=>tr(t);
+const keys=Object.keys(DICT).filter(k=>k.length>=4).sort((a,b)=>b.length-a.length);
+const PATS=[[/^(\d+) rows?\b(.*)$/,(m)=>m[1]+' صفوف'+(m[2]?' '+m[2].replace('. Filters:','. المرشحات:'):'')],[/^(\d+) approved orders$/,m=>m[1]+' أوامر معتمدة'],[/^(\d+) invoices$/,m=>m[1]+' فواتير'],[/^(\d+) deliveries$/,m=>m[1]+' عمليات تسليم'],[/^([\d,\.]+) MT reserved$/,m=>m[1]+' طن محجوز'],[/^Receipt (\S+) is waiting for approval$/,m=>'الإيصال '+m[1]+' بانتظار الاعتماد'],[/^Production order (\S+) has actuals recorded and is waiting for approval$/,m=>'أمر الإنتاج '+m[1]+' سُجلت فعلياته وبانتظار الاعتماد']];
+const wkeys=Object.keys(DICT).filter(k=>k.length>=4&&/^[A-Za-z]/.test(k)).sort((a,b)=>b.length-a.length);
+const wre=wkeys.length?new RegExp('(?<![A-Za-z])('+wkeys.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?![A-Za-z])','g'):null;
+function fin(o){return o.replace(/(\d[\d,\.]*)\s*MT\b/g,'$1 طن').replace(/\bavailable\b/g,'متاح').replace(/\bincoming \(receipts awaiting approval\)/g,'القادم (إيصالات بانتظار الاعتماد)').replace(/\bany\b/g,'أي').replace(/ to /g,' إلى ')}
+function tr(t){const k=t.trim();if(!k)return null;if(DICT[k])return DICT[k];
+ for(const[p,f]of PATS){const m=k.match(p);if(m)return fin(f(m))}
+ let out=null;const lead=t.trimStart();
+ for(const key of keys){if(lead.startsWith(key)){const rest=lead.slice(key.length);if(rest===''||/^[^A-Za-z]/.test(rest)){out=DICT[key]+rest;break}}}
+ if(out===null)out=k;
+ if(wre){out=out.replace(wre,x=>DICT[x])}
+ out=fin(out);return out===k?null:out}
+document.documentElement.lang=LANG==='ar'?'ar':'en';
+document.documentElement.dir=LANG==='ar'?'rtl':'ltr';
+document.title=LANG==='ar'?DICT['Integrated Operations Management']:(LANG==='both'?'Integrated Operations Management | '+DICT['Integrated Operations Management']:document.title);
+const seen=new WeakSet();
+function inlineParent(el){return /^(BUTTON|A|OPTION|TD|SMALL|LABEL|SPAN|B)$/.test(el.tagName)&&!el.matches('.kpi .l,.kpi .n,.tag')?true:false}
+function textNode(n){
+ if(seen.has(n))return;const p=n.parentNode;if(!p||p.nodeType!==1)return;
+ if(/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.tagName)||p.closest('.ar')||p.closest('#lang'))return;
+ const a=tr(n.nodeValue);if(!a)return;seen.add(n);
+ if(LANG==='ar'){n.nodeValue=n.nodeValue.replace(n.nodeValue.trim(),a);return}
+ if(p.tagName==='OPTION'){return}
+ const sp=document.createElement('span');sp.className='ar '+((p.tagName==='BUTTON'||p.tagName==='A'||p.tagName==='TD'||p.tagName==='SMALL'||p.tagName==='SPAN')?'i':'b');sp.textContent=a;
+ if(p.tagName==='TD'&&sp.className.includes('i')){sp.className='ar b'}
+ n.parentNode.insertBefore(sp,n.nextSibling)}
+function opt(o){if(o.dataset.t)return;const a=tr(o.textContent);if(!a)return;o.dataset.t=1;o.textContent=LANG==='ar'?a:o.textContent+' / '+a}
+function attrs(el){['placeholder','title'].forEach(at=>{if(el.getAttribute&&el.getAttribute(at)&&!el.dataset['t'+at]){const a=tr(el.getAttribute(at));if(a){el.dataset['t'+at]=1;el.setAttribute(at,LANG==='ar'?a:el.getAttribute(at)+' / '+a)}}})}
+function walk(root){
+ if(root.nodeType===3){textNode(root);return}
+ if(root.nodeType!==1||root.closest&&root.closest('.ar'))return;
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const ns=[];while(w.nextNode())ns.push(w.currentNode);ns.forEach(textNode);
+ root.querySelectorAll&&root.querySelectorAll('option').forEach(opt);if(root.tagName==='OPTION')opt(root);
+ attrs(root);root.querySelectorAll&&root.querySelectorAll('[placeholder],[title]').forEach(attrs)}
+let busy=false;
+const mo=new MutationObserver(ms=>{if(busy)return;busy=true;try{for(const m of ms)m.addedNodes.forEach(n=>walk(n))}finally{busy=false;mo.takeRecords()}});
+function langSel(){const top=document.querySelector('.top');if(!top||document.getElementById('lang'))return;
+ const s=document.createElement('select');s.id='lang';s.title='Language / اللغة';
+ s.innerHTML='<option value="both">English + العربية</option><option value="en">English</option><option value="ar">العربية</option>';s.value=LANG;
+ s.onchange=()=>{localStorage.setItem('iom.lang',s.value);location.reload()};
+ top.appendChild(s)}
+function start(){langSel();if(LANG!=='en'){walk(document.body);mo.observe(document.body,{childList:true,subtree:true})}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0));else setTimeout(start,0);
+})();
+</script>
+</body></html>

@@ -1,0 +1,5 @@
+window.PORTAL_CFG = {
+  url: "https://nimfkykshfijxbgwgkrg.supabase.co",
+  anon: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWZreWtzaGZpanhiZ3dna3JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2ODY4NzgsImV4cCI6MjExMTI2Mjg3OH0.ubwLjgwwTGkbIHdYHGJ6oyZ7F_-rkhvuEtN-eun1dT0",
+  admin: "fathyeid620@gmail.com"
+};

@@ -1,0 +1,119 @@
+{
+ "rewrites": [
+  {
+   "source": "/team/api/ask",
+   "destination": "/api/team-ask"
+  },
+  {
+   "source": "/team/api/push",
+   "destination": "/api/team-push"
+  },
+  {
+   "source": "/grain/api/assistant",
+   "destination": "/api/grain-assistant"
+  },
+  {
+   "source": "/inst/api/news",
+   "destination": "/api/inst-news"
+  },
+  {
+   "source": "/chart/api/:fn",
+   "destination": "/api/chart-api?fn=:fn"
+  },
+  {
+   "source": "/poultry",
+   "destination": "https://fathyeid.github.io/poultry-platform/"
+  },
+  {
+   "source": "/poultry/",
+   "destination": "https://fathyeid.github.io/poultry-platform/"
+  },
+  {
+   "source": "/poultry/:p*",
+   "destination": "https://fathyeid.github.io/poultry-platform/:p*"
+  },
+  {
+   "source": "/chart",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/chart/index.html"
+  },
+  {
+   "source": "/chart/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/chart/index.html"
+  },
+  {
+   "source": "/dispute",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/dispute/index.html"
+  },
+  {
+   "source": "/dispute/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/dispute/index.html"
+  },
+  {
+   "source": "/feed",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/feed/index.html"
+  },
+  {
+   "source": "/feed/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/feed/index.html"
+  },
+  {
+   "source": "/grain",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/grain/index.html"
+  },
+  {
+   "source": "/grain/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/grain/index.html"
+  },
+  {
+   "source": "/inst",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/inst/index.html"
+  },
+  {
+   "source": "/inst/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/inst/index.html"
+  },
+  {
+   "source": "/iom",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/iom/index.html"
+  },
+  {
+   "source": "/iom/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/iom/index.html"
+  },
+  {
+   "source": "/team",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/team/index.html"
+  },
+  {
+   "source": "/team/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/team/index.html"
+  },
+  {
+   "source": "/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/"
+  },
+  {
+   "source": "/:path*",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/:path*"
+  }
+ ],
+ "headers": [
+  {
+   "source": "/(.*)",
+   "headers": [
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    },
+    {
+     "key": "Cache-Control",
+     "value": "public, max-age=0, must-revalidate"
+    }
+   ]
+  }
+ ]
+}
