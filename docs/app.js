@@ -182,6 +182,7 @@ function injectHide(){
   const id=$('#frame').dataset.mod, c=SUBS[id], d=frameDoc();
   if(!c||!c.hide||!d||!d.head||d.getElementById('portal-hide')) return;
   if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js';d.head.appendChild(j)}
+  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js';d.head.appendChild(j)}
   const s=d.createElement('style');s.id='portal-hide';
   s.textContent=c.hide+'{display:none!important}'+(PORTAL_FIX[id]||'');
   d.head.appendChild(s);
