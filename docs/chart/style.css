@@ -183,3 +183,18 @@ html.ar .a{margin-right:auto;margin-left:0}
 .ttile{background:#12151b;border:1px solid var(--line);padding:3px 5px;min-width:0}.tk{color:#8a93a6;font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tv{font-size:13px;font-weight:600;white-space:nowrap}.ts{color:#8a93a6;font-size:9.5px}
 .tup{color:#26a69a}.tdn{color:#ef5350}.thist{flex:1;min-height:40px;display:flex;align-items:flex-end;gap:2px;padding:4px 6px}.tbar{flex:1;background:#4a5568}.tbar.up{background:#26a69a}.tbar.dn{background:#ef5350}.tpaper{padding:4px 6px;font-size:12px}
 body.term #left{display:none}body.term .tgrid{grid-template-columns:1fr 1fr}
+
+/* COT tab */
+.cot-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.cot-pills button{padding:3px 9px;border-radius:12px;font-size:12px}.cot-pills button.on{background:var(--on);color:#fff;border-color:#2962ff}
+.cot-t{width:100%;border-collapse:collapse;font-size:12px}.cot-t th{text-align:start;color:var(--mut);font-weight:600;padding:4px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+.cot-t td{padding:5px 4px;border-bottom:1px solid var(--line);vertical-align:middle}.cot-list tbody tr{cursor:pointer}.cot-list tbody tr:hover{background:var(--btnh)}
+.cot-ex{font-size:10px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cot-up{color:var(--g)}.cot-dn{color:var(--r)}
+.cot-bar{height:8px;border-radius:4px;background:var(--r);overflow:hidden;min-width:60px}.cot-bar i{display:block;height:100%;background:var(--g)}
+.mbox.wide:has(.cot-d){width:min(1000px,96vw)}
+.cot-dh{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}
+.cot-kpi{border:1px solid var(--line);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:2px}.cot-kpi small{color:var(--mut)}.cot-kpi b{font-size:20px}.cot-kpi span{font-size:12px}
+.cot-svg{width:100%;height:auto;display:block}.cot-lg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;margin:6px 0 12px}.cot-lg i{display:inline-block;width:12px;height:3px;margin-inline-end:5px;vertical-align:middle}
+.cot-open{float:inline-end;margin-bottom:6px}
+@media(max-width:700px){.cot-dh{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cot-t td,.cot-kpi b,.cot-kpi span,.cot-dh .cot-up,.cot-dh .cot-dn{unicode-bidi:plaintext}
