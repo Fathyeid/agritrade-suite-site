@@ -25,7 +25,7 @@ async function rd(sb,table,cols,filter){if(table.startsWith('gs_')){let r=await 
 let cache=null,cacheAt=0;
 async function load(sb){
  if(cache&&Date.now()-cacheAt<60000)return cache;
- const [iom,parties,cont,disp,lots,stock,gcom,gal,pp,pfl,psl,tasks,appr,txn,act,notif,feed]=await Promise.all([
+ const [iom,parties,cont,disp,lots,stock,gcom,gal,pp,pfl,psl,tasks,appr,txn,act,notif,feed,pmat]=await Promise.all([
   rd(sb,'iom_state','data'),rd(sb,'dc_parties','id,name,party_type'),rd(sb,'dc_contracts','id,contract_no,commodity,seller_id,buyer_id'),rd(sb,'dc_disputes','id,status'),
   rd(sb,'gs_lots','id,lot_code,commodity_id,supplier,initial_qty_mt,status'),rd(sb,'gs_stock','lot_id,qty_mt'),rd(sb,'gs_commodities','id,key,name_en,name_ar'),
   rd(sb,'gs_alerts','id,category,severity,status,detected_at',q=>q.eq('status','new').order('detected_at',{ascending:false})),
@@ -33,8 +33,8 @@ async function load(sb){
   rd(sb,'tasks','id,status,due_date'),rd(sb,'approvals','id,status'),rd(sb,'transactions','id,code,type,title,commodity,counterparty,status'),
   rd(sb,'activity_log','id,actor_name,action,module,ref,created_at',q=>q.order('created_at',{ascending:false})),
   rd(sb,'notifications','id,title,body,link,read,created_at',q=>q.eq('read',false).order('created_at',{ascending:false})),
-  rd(sb,'feed_state','data')]);
- cache={iom:iom&&iom[0]&&iom[0].data,parties,cont,disp,lots,stock,gcom,gal,pp,pfl,psl,tasks,appr,txn,act,notif,feed:feed&&feed[0]&&feed[0].data};cacheAt=Date.now();return cache;
+  rd(sb,'feed_state','data'),rd(sb,'poultry_materials','id,name,kind,unit')]);
+ cache={iom:iom&&iom[0]&&iom[0].data,parties,cont,disp,lots,stock,gcom,gal,pp,pfl,psl,tasks,appr,txn,act,notif,feed:feed&&feed[0]&&feed[0].data,pmat};cacheAt=Date.now();return cache;
 }
 const n=a=>a==null?null:a.length;
 function kpis(d,l){const t=L[l],i=d.iom||{};const mt=d.stock?d.stock.reduce((s,r)=>s+Number(r.qty_mt||0),0):null;
@@ -80,8 +80,11 @@ async function directory(el,api){
  el.querySelector('#hq').oninput=draw;el.querySelector('#hm').onchange=draw;draw();
 }
 const ALIAS={soybeans:['sbm44','sbm48','soy'],corn:['corn'],wheat:['wheat'],sorghum:['sorghum'],barley:['barley'],rice:['rice']};
+/* one key per commodity across programs: Corn = Maize = Maize (corn) = Yellow corn = ذرة */
+const SYN=[[/\b(corn|maize)\b|(^|\s)(ال)?ذره(\s|$)/,'corn'],[/\bsoy(a|bean)?s?\b|صويا/,'soybeans'],[/\bwheat\b|(^|\s)(ال)?قمح(\s|$)/,'wheat'],[/\bbarley\b|(^|\s)(ال)?شعير(\s|$)/,'barley'],[/\brice\b|(^|\s)(ال)?ارز(\s|$)/,'rice']];
+function canon(name){const k=norm(name);if(!k)return '';if(/ذره رفيعه|sorghum/.test(k))return 'sorghum';if(/\b(meal|oil|cake|gluten|ddgs|bran)\b|كسب|زيت|نخاله|جلوتين/.test(k))return k.replace(/s$/,'');for(const [r,c] of SYN)if(r.test(k))return c;return k.replace(/s$/,'')}
 function commodities(d,l){const t=L[l],m=new Map();
- const i=d.iom||{},ck=s=>norm(s).replace(/s$/,'');
+ const i=d.iom||{},ck=canon;
  function get(name){const k=ck(name);if(!k)return null;if(!m.has(k))m.set(k,{name:String(name).trim(),iom:0,grain:0,txn:0,cont:0,feed:null});return m.get(k)}
  const cn={};(i.commodities||[]).forEach(c=>{cn[c.id]=c.name;get(c.name)});
  (i.receipts||[]).forEach(r=>{const e=get(cn[r.c]);if(e)e.iom++});
@@ -90,7 +93,7 @@ function commodities(d,l){const t=L[l],m=new Map();
  (d.lots||[]).forEach(x=>{const e=get(gn[x.commodity_id]);if(e)e.grain+=lotMt[x.id]!=null?lotMt[x.id]:Number(x.initial_qty_mt||0)});
  (d.txn||[]).forEach(x=>{const e=get(x.commodity);if(e)e.txn++});
  (d.cont||[]).forEach(x=>{const e=get(x.commodity);if(e)e.cont++});
- m.forEach((e,k)=>{const al=ALIAS[k]||ALIAS[k+'s']||[];if(d.feed&&d.feed.ing){const hit=al.map(a=>d.feed.ing[a]).filter(Boolean)[0];if(hit)e.feed=hit.price}});
+ m.forEach((e,k)=>{const al=ALIAS[k]||ALIAS[k+'s']||ALIAS[k.replace(/s$/,'')]||[];if(d.feed&&d.feed.ing){const hit=al.map(a=>d.feed.ing[a]).filter(Boolean)[0];if(hit)e.feed=hit.price}});
  return [...m.values()];}
 async function comm(el,api){
  const l=api.lang(),t=L[l];el.innerHTML=`<h3 class="hh">${t.com}</h3><p class="sub">${t.comNote}</p><div id="hl" class="sub">${t.loading}</div>`;
@@ -99,14 +102,14 @@ async function comm(el,api){
 }
 
 /* ---- Links: traceable, idempotent, reversible posting between programs (no deletes) ---- */
-const LT={ar:{t:'الربط بين البرامج',note:'ترحيل سجل من برنامج إلى آخر. كل ترحيل يُسجَّل بمصدره ووجهته، لا يتكرر، ويمكن عكسه (إلغاء) دون حذف أي شيء.',src:'استلام العمليات',post:'ترحيل لمخزن الحبوب',void:'إلغاء الترحيل',posted:'مرحَّل',voided:'مُلغى',nogr:'سجّل دخولك في برنامج تخزين الحبوب مرة واحدة ليسمح بالكتابة',nocom:'لا توجد سلعة مطابقة في الحبوب',ledger:'سجل الترحيل',none:'لا توجد استلامات مؤهلة (غير مسودة)',err:'تعذر التنفيذ: ',okp:'تم الترحيل',okv:'تم الإلغاء',qty:'الكمية (طن)',st:'الحالة',src2:'أوامر البيع (IOM)',post2:'ترحيل كعقد لمركز النزاعات',none2:'لا توجد أوامر بيع مؤهلة (غير مسودة)',val:'القيمة'},
- en:{t:'Cross-program links',note:'Post a record from one program to another. Every post is logged with source and destination, cannot repeat, and can be reversed (voided) without deleting anything.',src:'IOM receipt',post:'Post to Grain Storage',void:'Void post',posted:'Posted',voided:'Voided',nogr:'Sign in to Grain Storage once so it allows writing',nocom:'No matching grain commodity',ledger:'Posting ledger',none:'No eligible receipts (non-draft)',err:'Failed: ',okp:'Posted',okv:'Voided',qty:'Qty (MT)',st:'Status',src2:'IOM sales orders',post2:'Post as Dispute contract',none2:'No eligible sales orders (non-draft)',val:'Value'}};
+const LT={ar:{t:'الربط بين البرامج',note:'ترحيل سجل من برنامج إلى آخر. كل ترحيل يُسجَّل بمصدره ووجهته، لا يتكرر، ويمكن عكسه (إلغاء) دون حذف أي شيء.',src:'استلام العمليات',post:'ترحيل لمخزن الحبوب',void:'إلغاء الترحيل',posted:'مرحَّل',voided:'مُلغى',nogr:'سجّل دخولك في برنامج تخزين الحبوب مرة واحدة ليسمح بالكتابة',nocom:'لا توجد سلعة مطابقة في الحبوب',ledger:'سجل الترحيل',none:'لا توجد استلامات مؤهلة (غير مسودة)',err:'تعذر التنفيذ: ',okp:'تم الترحيل',okv:'تم الإلغاء',qty:'الكمية (طن)',st:'الحالة',src2:'أوامر البيع (IOM)',post2:'ترحيل كعقد لمركز النزاعات',none2:'لا توجد أوامر بيع مؤهلة (غير مسودة)',val:'القيمة',src3:'دفعات العلف المعتمدة (تركيب الأعلاف)',post3:'ترحيل لمخزون علف الدواجن',none3:'لا توجد دفعات علف معتمدة (نهائية)',kg:'المُنتَج (كجم)',mat:'صنف العلف في الدواجن',nomat:'أضف صنف علف (نوع: علف) في برنامج الدواجن أولاً',srcvoid:'الدفعة أُلغيت في برنامج الأعلاف: ألغِ الترحيل',already:'مرحَّل من قبل',nomatch:'لا توجد سلعة مطابقة في الحبوب',denied:'حسابك لا يملك صلاحية الكتابة في البرنامج الوجهة'},
+ en:{t:'Cross-program links',note:'Post a record from one program to another. Every post is logged with source and destination, cannot repeat, and can be reversed (voided) without deleting anything.',src:'IOM receipt',post:'Post to Grain Storage',void:'Void post',posted:'Posted',voided:'Voided',nogr:'Sign in to Grain Storage once so it allows writing',nocom:'No matching grain commodity',ledger:'Posting ledger',none:'No eligible receipts (non-draft)',err:'Failed: ',okp:'Posted',okv:'Voided',qty:'Qty (MT)',st:'Status',src2:'IOM sales orders',post2:'Post as Dispute contract',none2:'No eligible sales orders (non-draft)',val:'Value',src3:'Final feed batches (Feed Formulation)',post3:'Post to Poultry feed stock',none3:'No final feed batches',kg:'Produced (kg)',mat:'Poultry feed item',nomat:'Add a feed item (kind: feed) in Poultry first',srcvoid:'Batch was voided in Feed: void this post',already:'Already posted',nomatch:'No matching grain commodity',denied:'Your account cannot write to the destination program'}};
 function jwtSub(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).sub}catch(e){return null}}
 async function grest(method,path,body){const C=window.PORTAL_CFG,tok=localStorage.getItem('gs_tok');if(!tok)throw new Error('no grain login');
  const r=await fetch(C.url+'/rest/v1/'+path,{method,headers:{apikey:C.anon,Authorization:'Bearer '+tok,'Content-Type':'application/json',Prefer:'return=representation'},body:body?JSON.stringify(body):undefined});
  const j=await r.json().catch(()=>null);if(!r.ok)throw new Error((j&&(j.message||j.error))||r.status);return j}
 async function postReceipt(sb,d,rc,opts){opts=opts||{};
- const i=d.iom||{},cn=(i.commodities||[]).find(c=>c.id===rc.c),gc=cn&&(d.gcom||[]).find(g=>{const f=x=>norm(x).replace(/s$/,'').replace(/^corn$/,'maize corn').replace(/^maize$/,'maize corn');return f(g.name_en)===f(cn.name)||f(g.name_en).startsWith(f(cn.name)+' ')});
+ const i=d.iom||{},cn=(i.commodities||[]).find(c=>c.id===rc.c),gc=cn&&((d.gcom||[]).find(g=>canon(g.name_en)===canon(cn.name))||(d.gcom||[]).find(g=>{const f=x=>norm(x).replace(/s$/,'');return f(g.name_en).startsWith(f(cn.name)+' ')}));
  if(!gc)throw new Error('no matching grain commodity');
  const claim=await sb.from('suite_links').insert({src_prog:'iom',src_id:rc.ref,dst_prog:'grain',status:'posted',note:opts.test?'TEST':null}).select().single();
  if(claim.error)throw new Error(/duplicate|unique/i.test(claim.error.message)?'already posted':claim.error.message);
@@ -123,18 +126,39 @@ async function postSale(sb,d,so,opts){opts=opts||{};
   if(r.error)throw new Error(r.error.message);
   await sb.from('suite_links').update({dst_id:r.data.id}).eq('id',claim.data.id);return {link:claim.data.id,contract:r.data.id};
  }catch(e){await sb.from('suite_links').update({status:'voided',voided_at:new Date().toISOString(),note:'failed: '+e.message}).eq('id',claim.data.id);throw e}}
-async function voidLink(sb,lk){if(lk.dst_prog==='dispute'&&lk.dst_id){const u=await sb.from('dc_contracts').update({voided_at:new Date().toISOString()}).eq('id',lk.dst_id);if(u.error)throw new Error(u.error.message)}
+/* Feed batch (FB-...) -> Poultry feed stock. Traceable (suite_links + notes 'FEED:<id>'), idempotent (unique live link),
+   reversible (void inserts an equal negative 'adjust' move; nothing is deleted). Only final batches with a produced quantity are eligible. */
+function batchCostKg(b){let c=0;Object.keys(b.actual||{}).forEach(k=>{const x=Number(b.actual[k]);if(x>0)c+=x*Number((b.price||{})[k]||0)/1000});const kg=Number(b.produced||0);return kg>0&&c>0?c/kg:null}
+async function postFeedBatch(sb,d,b,materialId,opts){opts=opts||{};
+ if(!b||b.status!=='final')throw new Error('batch is not final');const kg=Number(b.produced||0);if(!(kg>0))throw new Error('no produced quantity');
+ const mat=(d.pmat||[]).find(m=>m.id===materialId);if(!mat)throw new Error('pick a poultry feed item');
+ const claim=await sb.from('suite_links').insert({src_prog:'feed',src_id:b.id,dst_prog:'poultry',status:'posted',note:opts.test?'TEST':null}).select().single();
+ if(claim.error)throw new Error(/duplicate|unique/i.test(claim.error.message)?'already posted':claim.error.message);
+ try{const day=new Date(b.finalAt||b.at||Date.now()).toISOString().slice(0,10);
+  const r=await sb.from('poultry_stock_moves').insert({material_id:mat.id,move_date:day,qty:kg,unit_cost:batchCostKg(b),kind:'production_out',notes:(opts.test?'TEST ':'')+'FEED:'+b.id+' via Suite link'}).select('id').single();
+  if(r.error)throw new Error(r.error.message);
+  await sb.from('suite_links').update({dst_id:String(r.data.id)}).eq('id',claim.data.id);return {link:claim.data.id,move:r.data.id};
+ }catch(e){await sb.from('suite_links').update({status:'voided',voided_at:new Date().toISOString(),note:'failed: '+e.message}).eq('id',claim.data.id);throw e}}
+async function voidLink(sb,lk){if(lk.dst_prog==='poultry'&&lk.dst_id){const o=await sb.from('poultry_stock_moves').select('material_id,qty,unit_cost').eq('id',lk.dst_id).single();if(o.error)throw new Error(o.error.message);
+  const rv=await sb.from('poultry_stock_moves').insert({material_id:o.data.material_id,move_date:new Date().toISOString().slice(0,10),qty:-Number(o.data.qty||0),unit_cost:o.data.unit_cost,kind:'adjust',notes:'VOID FEED:'+lk.src_id+' (reverses Suite post)'});if(rv.error)throw new Error(rv.error.message)}
+ if(lk.dst_prog==='dispute'&&lk.dst_id){const u=await sb.from('dc_contracts').update({voided_at:new Date().toISOString()}).eq('id',lk.dst_id);if(u.error)throw new Error(u.error.message)}
  if(lk.dst_prog==='grain'&&lk.dst_id)await grest('PATCH','gs_lots?id=eq.'+lk.dst_id,{status:'closed',initial_quality_note:'VOID: reversed from Suite link'});
  const r=await sb.from('suite_links').update({status:'voided',voided_at:new Date().toISOString()}).eq('id',lk.id);if(r.error)throw new Error(r.error.message)}
+function msgL(e,t){const m=String(e&&e.message||e);if(/already posted/.test(m))return t.already;if(/no matching grain/.test(m))return t.nomatch;if(/row-level security|permission denied|42501/i.test(m))return t.denied;return m}
 async function links(el,api){const l=api.lang(),t=LT[l];cache=null;
  el.innerHTML=`<h3 class="hh">${t.t}</h3><p class="sub">${t.note}</p><div id="hl" class="sub">${L[l].loading}</div>`;
  const d=await load(api.sb),lk=(await api.sb.from('suite_links').select('*').order('created_at',{ascending:false}).limit(200)).data||[];
  const posted=new Set(lk.filter(x=>x.status==='posted'&&x.src_prog==='iom').map(x=>x.src_id));
  const rcs=((d.iom&&d.iom.receipts)||[]).filter(r=>r.status&&r.status!=='draft');
  const hasG=!!localStorage.getItem('gs_tok');const postedS=new Set(lk.filter(x=>x.status==='posted'&&x.src_prog==='iom-sale').map(x=>x.src_id));const sos=((d.iom&&d.iom.sales)||[]).filter(r=>r.status&&r.status!=='draft');
- el.querySelector('#hl').innerHTML=`<table class="htb"><tr><th>${t.src}</th><th>${t.qty}</th><th></th></tr>`+(rcs.length?rcs.map(r=>`<tr><td><b>${esc(r.ref)}</b> · ${esc(r.supplier||'')}</td><td>${esc(r.rec||r.dis||'')}</td><td>${posted.has(r.ref)?'<span class="chip">'+t.posted+'</span>':(hasG?`<a class="chip" data-p="${esc(r.ref)}">${t.post}</a>`:'<span class="sub">'+t.nogr+'</span>')}</td></tr>`).join(''):`<tr><td colspan=3 class="sub">${t.none}</td></tr>`)+`</table><h3 class="hh">${t.src2}</h3><table class="htb"><tr><th>${t.src2}</th><th>${t.val}</th><th></th></tr>`+(sos.length?sos.map(r=>`<tr><td><b>${esc(r.ref)}</b></td><td>${esc(((r.qty||0)*(r.price||0))+' '+(r.cur||''))}</td><td>${postedS.has(r.ref)?'<span class="chip">'+t.posted+'</span>':`<a class="chip" data-s="${esc(r.ref)}">${t.post2}</a>`}</td></tr>`).join(''):`<tr><td colspan=3 class="sub">${t.none2}</td></tr>`)+`</table><h3 class="hh">${t.ledger}</h3><table class="htb"><tr><th>${t.src}</th><th>→</th><th>${t.st}</th><th></th></tr>`+lk.map(x=>`<tr><td>${esc(x.src_prog)}:${esc(x.src_id)}</td><td>${esc(x.dst_prog)}:${esc(String(x.dst_id||'').slice(0,8))}</td><td>${t[x.status]}${x.note?' · '+esc(x.note):''}</td><td>${x.status==='posted'?`<a class="chip" data-v="${x.id}">${t.void}</a>`:''}</td></tr>`).join('')+'</table>';
- el.querySelectorAll('[data-p]').forEach(a=>a.onclick=async()=>{try{await postReceipt(api.sb,d,rcs.find(r=>r.ref===a.dataset.p));alert(t.okp)}catch(e){alert(t.err+e.message)}links(el,api)});
- el.querySelectorAll('[data-s]').forEach(a=>a.onclick=async()=>{try{await postSale(api.sb,d,sos.find(r=>r.ref===a.dataset.s));alert(t.okp)}catch(e){alert(t.err+e.message)}links(el,api)});
- el.querySelectorAll('[data-v]').forEach(a=>a.onclick=async()=>{try{await voidLink(api.sb,lk.find(x=>x.id===a.dataset.v));alert(t.okv)}catch(e){alert(t.err+e.message)}links(el,api)});}
-window.Hub={postSale,postReceipt,voidLink,load,views:{directory:directory,commodities:comm,links:links},rollup:rollup,labels:L};
+ const fbs=((d.feed&&d.feed.batches)||[]).filter(b=>b&&b.id&&(b.status==='final'||b.status==='void'));const liveF=new Map(lk.filter(x=>x.status==='posted'&&x.src_prog==='feed').map(x=>[x.src_id,x]));
+ const fmats=(d.pmat||[]).filter(m=>m.kind==='feed');const mopt=sel=>fmats.map(m=>`<option value="${esc(m.id)}"${m.id===sel?' selected':''}>${esc(m.name)} (${esc(m.unit||'kg')})</option>`).join('');
+ const guess=b=>{const nm=norm(b.name||b.stage||'');const m=fmats.find(x=>nm&&norm(x.name)===nm)||fmats.find(x=>nm&&(norm(x.name).includes(nm)||nm.includes(norm(x.name))));return m?m.id:(fmats[0]&&fmats[0].id)};
+ const feedTbl=`<table class="htb"><tr><th>${t.src3}</th><th>${t.kg}</th><th>${t.mat}</th><th></th></tr>`+(fbs.filter(b=>b.status==='final'||liveF.has(b.id)).length?fbs.filter(b=>b.status==='final'||liveF.has(b.id)).map(b=>{const lv=liveF.get(b.id);return `<tr><td><b>${esc(b.id)}</b> · ${esc(b.name||'')}</td><td>${esc(Math.round(Number(b.produced||0)).toLocaleString())}</td><td>${lv?'':(fmats.length?`<select data-fm="${esc(b.id)}">${mopt(guess(b))}</select>`:`<span class="sub">${t.nomat}</span>`)}</td><td>${lv?(b.status==='void'?`<span class="chip" style="background:#fdecec;color:#b91c1c">${t.srcvoid}</span>`:`<span class="chip">${t.posted}</span>`):(b.status==='final'&&fmats.length&&Number(b.produced)>0?`<a class="chip" data-f="${esc(b.id)}">${t.post3}</a>`:'')}</td></tr>`}).join(''):`<tr><td colspan=4 class="sub">${t.none3}</td></tr>`)+'</table>';
+ el.querySelector('#hl').innerHTML=`<table class="htb"><tr><th>${t.src}</th><th>${t.qty}</th><th></th></tr>`+(rcs.length?rcs.map(r=>`<tr><td><b>${esc(r.ref)}</b> · ${esc(r.supplier||'')}</td><td>${esc(r.rec||r.dis||'')}</td><td>${posted.has(r.ref)?'<span class="chip">'+t.posted+'</span>':(hasG?`<a class="chip" data-p="${esc(r.ref)}">${t.post}</a>`:'<span class="sub">'+t.nogr+'</span>')}</td></tr>`).join(''):`<tr><td colspan=3 class="sub">${t.none}</td></tr>`)+`</table><h3 class="hh">${t.src2}</h3><table class="htb"><tr><th>${t.src2}</th><th>${t.val}</th><th></th></tr>`+(sos.length?sos.map(r=>`<tr><td><b>${esc(r.ref)}</b></td><td>${esc(((r.qty||0)*(r.price||0))+' '+(r.cur||''))}</td><td>${postedS.has(r.ref)?'<span class="chip">'+t.posted+'</span>':`<a class="chip" data-s="${esc(r.ref)}">${t.post2}</a>`}</td></tr>`).join(''):`<tr><td colspan=3 class="sub">${t.none2}</td></tr>`)+`</table><h3 class="hh">${t.src3}</h3>`+feedTbl+`<h3 class="hh">${t.ledger}</h3><table class="htb"><tr><th>${t.src}</th><th>→</th><th>${t.st}</th><th></th></tr>`+lk.map(x=>`<tr><td>${esc(x.src_prog)}:${esc(x.src_id)}</td><td>${esc(x.dst_prog)}:${esc(String(x.dst_id||'').slice(0,8))}</td><td>${t[x.status]}${x.note?' · '+esc(x.note):''}</td><td>${x.status==='posted'?`<a class="chip" data-v="${x.id}">${t.void}</a>`:''}</td></tr>`).join('')+'</table>';
+ el.querySelectorAll('[data-p]').forEach(a=>a.onclick=async()=>{try{await postReceipt(api.sb,d,rcs.find(r=>r.ref===a.dataset.p));alert(t.okp)}catch(e){alert(t.err+msgL(e,t))}links(el,api)});
+ el.querySelectorAll('[data-s]').forEach(a=>a.onclick=async()=>{try{await postSale(api.sb,d,sos.find(r=>r.ref===a.dataset.s));alert(t.okp)}catch(e){alert(t.err+msgL(e,t))}links(el,api)});
+ el.querySelectorAll('[data-f]').forEach(a=>a.onclick=async()=>{const s=el.querySelector(`[data-fm="${a.dataset.f}"]`);try{await postFeedBatch(api.sb,d,fbs.find(b=>b.id===a.dataset.f),s&&s.value);alert(t.okp)}catch(e){alert(t.err+msgL(e,t))}links(el,api)});
+ el.querySelectorAll('[data-v]').forEach(a=>a.onclick=async()=>{try{await voidLink(api.sb,lk.find(x=>x.id===a.dataset.v));alert(t.okv)}catch(e){alert(t.err+msgL(e,t))}links(el,api)});}
+window.Hub={postSale,postReceipt,postFeedBatch,voidLink,load,views:{directory:directory,commodities:comm,links:links},rollup:rollup,labels:L};
 })();

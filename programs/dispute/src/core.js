@@ -140,6 +140,7 @@ async function loadLookups() {
     sb.from('dc_institutions').select('*').order('name').then(r => r.data || [])
   ]);
   S.insts = ins; S.cats = c; S.parties = p; S.users = u; S.contracts = k;
+  try { const vr = await sb.from('dc_contracts').select('*').not('voided_at', 'is', null).order('voided_at', {ascending: false}); S.voidedContracts = vr.error ? [] : (vr.data || []); } catch (e) { S.voidedContracts = []; }
 }
 const catName = id => { const c = S.cats.find(x => x.id === id); return c ? (LANG === 'ar' ? (c.name_ar || c.name_en) : c.name_en) : '-'; };
 const partyName = id => S.parties.find(x => x.id === id)?.name || '-';

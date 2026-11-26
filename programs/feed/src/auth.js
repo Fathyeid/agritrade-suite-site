@@ -16,11 +16,16 @@
       history.replaceState(null, '', location.pathname + location.search);
     }
     if (!sess) return;
-    try { const u = await fetchUser(); window.FFI_USER = { email: (u.email || '').toLowerCase(), name: (u.user_metadata && u.user_metadata.full_name) || u.email, id: u.id }; await pull(); }
+    try { const u = await fetchUser(); window.FFI_USER = { email: (u.email || '').toLowerCase(), name: (u.user_metadata && u.user_metadata.full_name) || u.email, id: u.id }; await pull(); await links(); }
     catch (e) { localStorage.removeItem(SK); sess = null; }
     window.FFI_RENDER && window.FFI_RENDER();
   }
   const KEYS = ['saved', 'scenarios', 'quotes', 'batches', 'inv', 'market', 'ing', 'qty', 'currency', 'plantP', 'tol'];
+  /* posting state of saved batches to Poultry feed stock (table suite_links, written by the suite portal) */
+  async function links() {
+    try { const r = await fetch(cfg.SUPABASE_URL + '/rest/v1/suite_links?src_prog=eq.feed&dst_prog=eq.poultry&status=eq.posted&select=src_id,created_at', { headers: H(sess.access_token) });
+      if (r.ok) { const m = {}; (await r.json()).forEach(x => m[x.src_id] = x.created_at); window.FFI_LINKS = m; } } catch (e) { }
+  }
   async function pull() {
     try {
       const r = await fetch(cfg.SUPABASE_URL + '/rest/v1/feed_state?user_id=eq.' + window.FFI_USER.id + '&select=data', { headers: H(sess.access_token) });

@@ -109,12 +109,26 @@ function contractForm(after, c) {
     {k: 'arbitration_clause', l: ['Arbitration clause (as written in the contract, pending legal review)', 'شرط التحكيم (كما ورد في العقد، بانتظار المراجعة القانونية)'], t: 'textarea', wide: true}],
     onSave: async (v, M) => { if (c) await Q(sb.from('dc_contracts').update(v).eq('id', c.id)); else { v.created_by = S.me.id; await Q(sb.from('dc_contracts').insert(v)); } await loadLookups(); M.close(); toast(T('Saved', 'تم الحفظ')); after && after(); }});
 }
+/* void, never delete: sets voided_at; a contract posted from IOM also voids its Suite link so it can be re-posted */
+function voidContract(c, after) {
+  confirmBox(T('Void contract ' + c.contract_no + '? It stays in the record as voided and is hidden from dispute forms.', 'إلغاء العقد ' + c.contract_no + '؟ سيبقى في السجل كعقد ملغى ولن يظهر في نماذج النزاعات.'), async () => {
+    try {
+      const now = new Date().toISOString();
+      const r = await sb.from('dc_contracts').update({voided_at: now}).eq('id', c.id).select('id');
+      if (r.error) throw r.error;
+      if (!r.data || !r.data.length) throw new Error(T('Your account cannot change this contract.', 'حسابك لا يملك صلاحية تعديل هذا العقد.'));
+      if (c.source_ref) { try { await sb.from('suite_links').update({status: 'voided', voided_at: now, note: 'voided in Dispute Center'}).eq('dst_prog', 'dispute').eq('dst_id', c.id).eq('status', 'posted'); } catch (e) {} }
+      await loadLookups(); toast(T('Contract voided', 'تم إلغاء العقد')); after && after();
+    } catch (e) { toast(T('Could not void: ', 'تعذر الإلغاء: ') + (e.message || e), true); }
+  });
+}
 PAGES.contracts = async () => {
   await loadLookups();
   const wr = ROLE_WRITE.includes(S.me.role);
   const draw = () => renderRoute();
   return h('div', null, head(T('Contracts & Parties', 'العقود والأطراف'), T('Contracts here are the registry the disputes link to.', 'سجل العقود الذي تُربط به النزاعات.'), wr ? h('button', {class: 'btn ghost', onclick: () => partyForm(draw)}, '＋ ' + T('Party', 'طرف')) : null, wr ? h('button', {class: 'btn gold', onclick: () => contractForm(draw)}, '＋ ' + T('Contract', 'عقد')) : null),
-    h('div', {class: 'card'}, h('h3', null, T('Contracts', 'العقود')), tbl([[T('No.', 'الرقم'), r => h('b', null, r.contract_no)], [T('Date', 'التاريخ'), r => fmtD(r.contract_date)], [T('Seller', 'البائع'), r => partyName(r.seller_id)], [T('Buyer', 'المشتري'), r => partyName(r.buyer_id)], [T('Commodity', 'السلعة'), r => r.commodity ? lab('commodity', r.commodity) : '-'], [T('Qty', 'الكمية'), r => fmtN(r.quantity) + ' ' + (r.qty_unit || '')], [T('Value', 'القيمة'), r => fmtN(r.total_value) + ' ' + (r.price_currency || '')], [T('Incoterms', 'التسليم'), r => r.incoterms || '-']], S.contracts, wr ? r => contractForm(draw, r) : null)),
+    h('div', {class: 'card'}, h('h3', null, T('Contracts', 'العقود')), tbl([[T('No.', 'الرقم'), r => h('b', null, r.contract_no)], [T('Date', 'التاريخ'), r => fmtD(r.contract_date)], [T('Seller', 'البائع'), r => partyName(r.seller_id)], [T('Buyer', 'المشتري'), r => partyName(r.buyer_id)], [T('Commodity', 'السلعة'), r => r.commodity ? lab('commodity', r.commodity) : '-'], [T('Qty', 'الكمية'), r => fmtN(r.quantity) + ' ' + (r.qty_unit || '')], [T('Value', 'القيمة'), r => fmtN(r.total_value) + ' ' + (r.price_currency || '')], [T('Incoterms', 'التسليم'), r => r.incoterms || '-'], [T('Source', 'المصدر'), r => r.source_ref ? h('span', {class: 'chip-src'}, r.source_ref) : '-'], [T('Status', 'الحالة'), r => h('span', null, h('span', {class: 'st-ok'}, T('Active', 'ساري')), wr ? h('button', {class: 'btn ghost sm', style: 'margin-inline-start:8px', onclick: ev => { ev.stopPropagation(); voidContract(r, draw); }}, T('Void', 'إلغاء')) : null)]], S.contracts, wr ? r => contractForm(draw, r) : null)),
+    (S.voidedContracts || []).length ? h('div', {class: 'card'}, h('h3', null, T('Voided contracts', 'العقود الملغاة')), h('p', {class: 'sub'}, T('Voided contracts are kept for the record (never deleted) and are hidden from dispute forms.', 'العقود الملغاة محفوظة في السجل (لا تُحذف أبداً) ولا تظهر في نماذج النزاعات.')), tbl([[T('No.', 'الرقم'), r => h('b', null, r.contract_no)], [T('Date', 'التاريخ'), r => fmtD(r.contract_date)], [T('Commodity', 'السلعة'), r => r.commodity ? lab('commodity', r.commodity) : '-'], [T('Value', 'القيمة'), r => fmtN(r.total_value) + ' ' + (r.price_currency || '')], [T('Source', 'المصدر'), r => r.source_ref || '-'], [T('Status', 'الحالة'), r => h('span', {class: 'st-void'}, T('Voided', 'ملغى') + ' · ' + fmtD(r.voided_at))]], S.voidedContracts)) : null,
     h('div', {class: 'card'}, h('h3', null, T('Parties', 'الأطراف')), tbl([[T('Name', 'الاسم'), r => h('b', null, r.name)], [T('Type', 'النوع'), r => lab('ptype', r.party_type)], [T('Country', 'الدولة'), r => r.country || '-'], [T('Contact', 'التواصل'), r => [r.contact_name, r.contact_email, r.contact_phone].filter(Boolean).join(' · ')]], S.parties)));
 };
 

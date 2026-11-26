@@ -150,3 +150,5 @@ table{border:1px solid var(--line);border-radius:10px;overflow:hidden}
 @media(max-width:700px){.banner{padding:14px;min-height:96px}.banner b{font-size:17px}.banner i{width:42px;height:42px;font-size:22px}}
 .chartbox{position:relative;height:270px}.sechead{color:var(--navy);margin:20px 4px 10px;font-size:17px}.charts .card{margin-bottom:0}@media(max-width:700px){.chartbox{height:240px}.grid2.charts{grid-template-columns:1fr!important}}
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}.cfilters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;margin-bottom:12px}.cfilters label{font-size:11.5px;color:var(--mut);display:block;margin-bottom:3px}.cfilters input,.cfilters select{width:100%}
+
+.st-ok{display:inline-block;background:#e8f7ee;color:#15803d;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}.st-void{display:inline-block;background:#fdecec;color:#b91c1c;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}.chip-src{display:inline-block;background:#e0f2fe;color:#1d4ed8;border-radius:20px;padding:2px 10px;font-size:12px}

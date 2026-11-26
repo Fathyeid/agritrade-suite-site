@@ -95,7 +95,13 @@ function shell(body) {
   const user = window.FFI_USER ? `<span class="usr">${esc(window.FFI_USER.email)} · ${esc(role)}</span>` : `<span class="usr muted">${esc(t('login_none'))}</span>`;
   return `<header class="top"><div class="brand"><div class="logo">F</div><div><b>${esc(t('app'))}</b><small>${esc(t('sub'))}</small></div></div>
   <div class="tools">${user}<div id="gsi"></div><button class="btn ghost" data-act="lang">${esc(t('lang'))}</button></div></header>
-  <div class="layout"><nav class="side">${nav}${later ? '<div class="sp">' + esc(t('nav_later')) + '</div>' + later : ''}</nav><main class="main">${body}</main></div>`;
+  <div class="layout"><nav class="side">${nav}${later ? '<div class="sp">' + esc(t('nav_later')) + '</div>' + later : ''}</nav><main class="main">${pageHero()}${body}</main></div>`;
+}
+/* page banner, same look as the other suite programs: real photo under a light veil (ds.js), icon, title, one-line purpose */
+const HERO = { dash: ['📊', 'silo'], work: ['🧮', 'corn'], mat: ['🌽', 'corn'], req: ['🐄', 'wheat'], market: ['💹', 'port'], subst: ['🔁', 'soy'], inv: ['📦', 'silo'], sup: ['🏪', 'port'], batch: ['🧪', 'soy'], ai: ['🤖', 'wheat'], add: ['💊', 'soy'], roles: ['👥', 'silo'], scn: ['🎲', 'corn'], hist: ['📑', 'wheat'], src: ['🔗', 'port'] };
+function pageHero() {
+  const h = HERO[S.route] || HERO.work, k = (NAV.find(n => n[0] === S.route) || NAV.find(n => n[0] === 'work'))[1];
+  return `<section class="hero fhero" style="background-image:url(img/${h[1]}.jpg)"><div class="hi">${h[0]}</div><div class="ht"><h2>${esc(t(k))}</h2><p>${esc(t('hd_' + (S.route in HERO ? S.route : 'work')))}</p></div><span class="hcr">${esc(t('photo_credit'))}</span></section>`;
 }
 
 function viewWork() {
@@ -147,7 +153,7 @@ function viewWork() {
   // alerts
   const alerts = failing.map(c => {
     const helpers = helpIngredients(c.k, c.status === 'low');
-    return `<li class="al"><b>${esc(t('p_' + c.k))}</b>: ${esc(t(c.status))} ${nutFmt(c.k, c.delta)} ${c.k === 'me' ? t('unit_me') : (c.k === 'capratio' ? '' : '%')}${helpers.length && c.status === 'low' ? `<br><small>${esc(t('can_help'))}: ${helpers.map(esc).join('، ')}</small>` : ''}</li>`;
+    return `<li class="al"><b>${esc(t('p_' + c.k))}</b>: ${esc(t(c.status))} ${nutFmt(c.k, c.delta)} ${c.k === 'me' ? t('unit_me') : (c.k === 'capratio' ? '' : '%')}${helpers.length && c.status === 'low' ? `<br><small>${esc(t('can_help'))}: ${helpers.map(esc).join(getLang() === 'ar' ? '، ' : ', ')}</small>` : ''}</li>`;
   });
   if (!ok100) alerts.unshift(`<li class="al"><b>${esc(t('total_incl'))}</b>: ${fx(tot, 3)}%. ${esc(t('not100'))}</li>`);
   const miss = Object.keys(a.missing).filter(k => a.missing[k].length && st.req[k]).map(k => `${t('p_' + k)}: ${[...new Set(a.missing[k])].map(id => ingName(ING.find(i => i.id === id))).join(', ')}`);
@@ -178,7 +184,7 @@ function helpIngredients(k, low) {
 function bindingHtml(o) {
   const name = b => b.k ? (b.kind === 'min-nutrient' ? '≥ ' : '≤ ') + t('p_' + b.k) : (b.kind === 'max' ? ingName(ING.find(i => i.id === b.id)) + ' ≤ max' : b.kind === 'min' ? ingName(ING.find(i => i.id === b.id)) + ' ≥ min' : t('p_capratio'));
   const rows = o.binding.map(b => `<tr><td>${esc(name(b))}</td><td class="n">${fx(b.dual, 3)}</td></tr>`).join('');
-  const unused = ING.filter(i => S.ing[i.id].enabled && (S.formula[i.id] || 0) < 0.0005).map(i => ingName(i)).join('، ') || '-';
+  const unused = ING.filter(i => S.ing[i.id].enabled && (S.formula[i.id] || 0) < 0.0005).map(i => ingName(i)).join(getLang() === 'ar' ? '، ' : ', ') || '-';
   return `<section class="card"><h3>${esc(t('binding'))}</h3><p class="note">${esc(t('shadow_note'))} (${esc(curLabel())}/MT)</p><table class="tb sm"><tbody>${rows}</tbody></table><p class="note"><b>${esc(t('unused'))}:</b> ${esc(unused)}</p></section>`;
 }
 function altsHtml() {
@@ -314,7 +320,7 @@ function viewBatch() {
     let aa = ''; if (allIn) { const tt = Object.values(af).reduce((s, y) => s + y, 0); const nf = {}; ING.forEach(i => nf[i.id] = (af[i.id] || 0) / tt * 100); const A = E.analyse(nf, ING, optP()); aa = `<p class="note">${esc(t('actual_an'))}: CP ${fx(A.cp, 2)}% / ME ${fx(A.me, 0)} kcal/kg &nbsp;(${esc(t('planned'))}: CP ${fx(b.a.cp, 2)}% / ME ${fx(b.a.me, 0)})</p>`; }
     const lab = b.lab || {}; const dev = lab.cp !== '' && lab.cp != null ? lab.cp - b.a.cp : null; const labOut = dev != null && Math.abs(dev) > tol.cp;
     const acts = b.status === 'open' ? `<button class="btn gold" data-act="bfinal">${esc(t('bfinal'))}</button> <button class="btn ghost" data-act="bvoid">${esc(t('bvoid'))}</button>` : b.status === 'final' ? `<button class="btn" data-act="bjson">${esc(t('bjson'))}</button> <button class="btn ghost" data-act="bvoid">${esc(t('bvoid'))}</button>` : '';
-    const meta = b.status === 'open' ? `<p class="note">${esc(t('bopen_note'))}</p>` : `<p class="note">${esc(t('bmeta'))}: ${esc(b.id)} · ${esc(b.by || '')} · ${esc(new Date(b.finalAt || b.at).toLocaleString(getLang() === 'ar' ? 'ar-EG' : 'en-GB'))} · ${esc(t('produced'))}: ${fx(b.produced, 1)} kg · ${esc(t('chk'))} ${esc(b.chk || '')} · ${esc(t('stock_state'))}: ${esc(t('stock_not_posted'))}</p>`;
+    const meta = b.status === 'open' ? `<p class="note">${esc(t('bopen_note'))}</p>` : `<p class="note">${esc(t('bmeta'))}: ${esc(b.id)} · ${esc(b.by || '')} · ${esc(new Date(b.finalAt || b.at).toLocaleString(getLang() === 'ar' ? 'ar-EG' : 'en-GB'))} · ${esc(t('produced'))}: ${fx(b.produced, 1)} kg · ${esc(t('chk'))} ${esc(b.chk || '')} · ${esc(t('stock_state'))}: ${window.FFI_LINKS && window.FFI_LINKS[b.id] ? esc(t('stock_posted')) : esc(t('stock_not_posted')) + (b.status === 'final' && window.parent !== window ? ' · <a href="#" data-act="bpost">' + esc(t('stock_post_go')) + '</a>' : '')}</p>`;
     const vd = b.status === 'void' ? `<p class="note warnt"><span class="pill bad">${esc(t('bs_void'))}</span> ${esc(b.voidReason || '')} · ${esc(b.voidBy || '')} · ${esc(new Date(b.voidAt).toLocaleString(getLang() === 'ar' ? 'ar-EG' : 'en-GB'))}</p>` : '';
     det = `<section class="card"><h3>${esc(b.id)} · ${esc(bname(b))} <small>${fx(b.qty, 1)} MT</small></h3><div class="bar">${acts}</div>${meta}${vd}<div class="scroll"><table class="tb sm"><thead><tr><th>${esc(t('ingredient'))}</th><th>${esc(t('planned'))} kg</th><th>${esc(t('actual'))} kg</th><th>${esc(t('variance'))} kg</th><th>%</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="note">${esc(t('cost_var'))}: ${fx(pc, 0)} → ${allIn ? fx(ac, 0) : '-'} USD ${allIn ? '(' + fx(ac - pc, 0) + ')' : ''} &nbsp; ${bad ? '<span class="pill bad">' + bad + ' ' + esc(t('out_tol')) + '</span>' : ''}</p>${aa}</section>
@@ -472,6 +478,7 @@ document.addEventListener('click', e => {
   else if (a === 'adel') S.add.splice(+v, 1);
   else if (a === 'apm') { const dose = S.add.reduce((s, x) => s + x.dose, 0), cost = S.add.reduce((s, x) => s + x.dose * x.cost / 1000, 0); if (dose > 0) { setPrice('premix', Math.round(cost / (dose / 1000) * 100) / 100); S.market.premix = Object.assign(S.market.premix || {}, { type: 'contract', date: new Date().toISOString().slice(0, 10), note: 'premix worksheet' }); S.opt = null; } }
   else if (a === 'bopen') S.bsel = +v;
+  else if (a === 'bpost') { if (e && e.preventDefault) e.preventDefault(); try { window.parent.location.hash = '#/links'; } catch (x) { } return; }
   else if (a === 'bfinal') { if (!canWrite()) return alert('Read-only'); const b = S.batches[S.bsel]; if (!b || b.status !== 'open') return; const ids = Object.keys(b.planned); if (ids.some(k => b.actual[k] == null || b.actual[k] === '')) return alert(t('bfinal_need')); if (!confirm(t('bfinal_confirm') + ' ' + b.id + '?')) return; b.produced = ids.reduce((s, k) => s + b.actual[k], 0); b.status = 'final'; b.finalAt = Date.now(); b.by = (window.FFI_USER && window.FFI_USER.email) || 'local'; b.stock = { posted: false }; b.chk = fnv(JSON.stringify([b.id, b.planned, b.actual, b.price, b.lab, b.qty, b.stageId])); }
   else if (a === 'bvoid') { if (!canWrite()) return alert('Read-only'); const b = S.batches[S.bsel]; if (!b || b.status === 'void') return; const r = prompt(t('bvoid_reason')); if (!r || !r.trim()) return; b.status = 'void'; b.voidReason = r.trim(); b.voidAt = Date.now(); b.voidBy = (window.FFI_USER && window.FFI_USER.email) || 'local'; }
   else if (a === 'bjson') { const b = S.batches[S.bsel]; const pl = { batch_id: b.id, status: b.status, finalized_at: new Date(b.finalAt).toISOString(), finalized_by: b.by, stage: b.stageId, planned_kg: b.planned, actual_kg: b.actual, unit_price_usd_per_mt: b.price, produced_kg: b.produced, lab: b.lab, checksum: b.chk, source: 'feed-formulation-intelligence' }; const url = URL.createObjectURL(new Blob([JSON.stringify(pl, null, 2)], { type: 'application/json' })); const l = document.createElement('a'); l.href = url; l.download = b.id + '.json'; l.click(); return; }
