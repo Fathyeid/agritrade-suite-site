@@ -33,6 +33,9 @@ The owner sent two dashboard mockups (light blue background, white 18px cards, p
 
 Poultry dashboard: `portal/ds/poultry-dash.js` (injected by the portal into the Poultry frame only) replaces Poultry's global `vDash()` with the mockup layout (banner + date, 5 KPI tiles, Poultry Performance / Layers / Stock & Feed Mill cards with blue headers, Market Intelligence from `/chart/api/chart` and `/chart/api/quotes` (ZS, ZC, ZW, ZM, ZL), stock-value donut, recent activities, quick actions, strip). It reads Poultry's own globals (`S`, `calc`, `bal`, `avgCost`, `activity`, `nf`, `t`, `LANG`, `canW`, `draw`); if Poultry renames them the original dashboard comes back automatically. With no flocks it falls back to Poultry's own empty state.
 
+IOM dashboard: `portal/ds/iom-dash.js` (injected into the IOM frame) wraps IOM's global `render()` and, on the Operations Overview, draws the first mockup layout (banner, 4 KPI tiles, commodity prices from `/chart/api/chart`, warehouses table, Market Intelligence, quick actions, receiving vs delivery bars, sales/purchases table, sales donut, storage card, feature tiles). The original overview is one click away ("Full overview"). Shared dashboard styles: `portal/ds/dash.css`.
+Portal header/sidebar (mockup): search across programs and cached sub-sections, notifications bell (team notifications + grain alerts from Hub.load), user chip with Google photo, sidebar logo and profile card with sign-out.
+
 ## Hard rules
 1. Light theme only for the 7 programs (royal and sky blue, green for positive, gold for alerts, white cards, soft shadows, rounded corners). The Chart keeps its own look.
 2. Arabic mode must be 100% Arabic, English mode 100% English, no mixing. Typed user data stays as entered. Official organization and treaty names stay Latin.
