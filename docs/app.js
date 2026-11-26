@@ -84,7 +84,7 @@ function route(){
   const m=visible().find(x=>x.id===id);
   renderSide();
   const fw=$('#frameWrap'), home=$('#home');
-  if(!m){ fw.classList.add('hidden'); home.classList.remove('hidden'); $('#openfull').classList.add('hidden'); $('#frame').src='about:blank'; $('#frame').dataset.mod=''; if(window.Hub&&HUBV.some(h=>h.id===id)){home.innerHTML='<div id="hubv"></div>';Hub.views[id]($('#hubv'),HUBAPI)} else {renderHome(); if(window.Hub&&isAdmin){const b=document.createElement('div');b.id='hubr';const pr=$('#progs');pr?home.insertBefore(b,pr):home.appendChild(b);Hub.rollup(b,HUBAPI)}} return; }
+  if(!m){ fw.classList.add('hidden'); home.classList.remove('hidden'); $('#openfull').classList.add('hidden'); activate(BLANK); if(window.Hub&&HUBV.some(h=>h.id===id)){home.innerHTML='<div id="hubv"></div>';Hub.views[id]($('#hubv'),HUBAPI)} else {renderHome(); if(window.Hub&&isAdmin){const b=document.createElement('div');b.id='hubr';const pr=$('#progs');pr?home.insertBefore(b,pr):home.appendChild(b);Hub.rollup(b,HUBAPI)}} return; }
   home.classList.add('hidden'); fw.classList.remove('hidden');
   $('#openfull').classList.remove('hidden'); $('#openfull').onclick=()=>{location.href=m.url};
   const bl=$('#blocked'), fr=$('#frame'), fn=$('#fnote');
@@ -92,9 +92,9 @@ function route(){
     bl.classList.add('hidden'); fr.classList.remove('hidden'); fn.classList.add('hidden');
     fn.innerHTML=`<span>${t('fnote')}</span><button class="pill" style="background:#1d4ed8;color:#fff" id="fn2">${t('openFull')}</button>`;
     $('#fn2').onclick=()=>{location.href=m.url};
-    if(fr.dataset.mod!==m.id){seedSso(m.id);fr.dataset.mod=m.id;fr.src=m.url}
+    if(fr.dataset.mod!==m.id){const nf=frameFor(m.id,m.url);const was=nf.dataset.ready==='1';activate(nf);if(was){setLive(true);subSig='';injectHide();hideLangToggles();renderSubs()}else setLive(false)}
   } else {
-    fr.classList.add('hidden'); fr.src='about:blank'; fr.dataset.mod=''; fn.classList.add('hidden'); bl.classList.remove('hidden');
+    activate(BLANK); BLANK.classList.add('hidden'); fn.classList.add('hidden'); bl.classList.remove('hidden');
     bl.innerHTML=`<div style="font-size:50px">${m.ic}</div><h3>${m.n[lang]}</h3>${m.link?'':`<p><b>${t('blockedT')}</b></p><p>${t('blockedD')}</p>`}<a class="btn" href="${m.url}">${t('open')} ↗</a>`;
   }
 }
@@ -107,17 +107,19 @@ function show(){
   if(!session){ $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); applyLang(); return; }
   isAdmin=(session.user.email||'').toLowerCase()===C.admin;
   $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
-  $('#uemail').textContent=session.user.email; userChip(); applyLang(); setTimeout(bellLoad,1500);
+  $('#uemail').textContent=session.user.email; userChip(); applyLang(); setTimeout(bellLoad,1500); setTimeout(prefetchMods,4000);
 }
+/* warm the browser cache with each program's page while the user is on the portal */
+function prefetchMods(){visible().forEach(m=>{if(document.querySelector('link[data-pf="'+m.id+'"]'))return;const l=document.createElement('link');l.rel='prefetch';l.href=m.url;l.dataset.pf=m.id;document.head.appendChild(l)})}
 $('#gbtn').onclick=async()=>{
   $('#lerr').textContent='';
   const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/',queryParams:{prompt:'select_account'}}});
   if(error) $('#lerr').textContent=t('cantSign')+error.message;
 };
-$('#logout').onclick=$('#logout2').onclick=async()=>{await sb.auth.signOut();session=null;location.hash='';show()};
+$('#logout').onclick=$('#logout2').onclick=async()=>{dropAll();await sb.auth.signOut();session=null;location.hash='';show()};
 $('#menu').onclick=()=>{$('#sidew').classList.toggle('open');$('#shade').classList.toggle('on')};
 $('#shade').onclick=closeMenu; $('#brand').onclick=()=>go('');
-$$('[data-lang-toggle]').forEach(b=>b.onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('lang',lang);Object.values(LKEY).forEach(k=>{try{localStorage.setItem(k,lang)}catch{}});applyLang();subSig='';try{if($('#frame').dataset.mod==='chart'){try{$('#frame').contentWindow.dispatchEvent(new CustomEvent('suite-lang',{detail:lang}))}catch{}}else if($('#frame').dataset.mod){setLive(false);const fr=$('#frame');const cur=fr.contentWindow.location.href;fr.contentWindow.location.replace('about:blank');setTimeout(()=>{syncKeys();fr.contentWindow.location.replace(cur)},150)}}catch{}});
+$$('[data-lang-toggle]').forEach(b=>b.onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('lang',lang);Object.values(LKEY).forEach(k=>{try{localStorage.setItem(k,lang)}catch{}});applyLang();subSig='';dropParked();try{if($('#frame').dataset.mod==='chart'){try{$('#frame').contentWindow.dispatchEvent(new CustomEvent('suite-lang',{detail:lang}))}catch{}}else if($('#frame').dataset.mod){setLive(false);const fr=$('#frame');const cur=fr.contentWindow.location.href;fr.contentWindow.location.replace('about:blank');setTimeout(()=>{syncKeys();fr.contentWindow.location.replace(cur)},150)}}catch{}});
 window.addEventListener('hashchange',route);
 const q=new URLSearchParams(location.hash.replace('#','?')); 
 if(location.hash.includes('error_description')){ setTimeout(()=>{$('#lerr').textContent=t('cantSign')+(q.get('error_description')||'')},200) }
@@ -181,9 +183,9 @@ function readSubs(){
 function injectHide(){
   const id=$('#frame').dataset.mod, c=SUBS[id], d=frameDoc();
   if(!c||!c.hide||!d||!d.head||d.getElementById('portal-hide')) return;
-  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js';d.head.appendChild(j)}
-  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js';d.head.appendChild(j)}
-  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js';d.head.appendChild(j)}
+  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611262224';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611262224';d.head.appendChild(j)}
+  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611262224';d.head.appendChild(j)}
+  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611262224';d.head.appendChild(j)}
   const s=d.createElement('style');s.id='portal-hide';
   s.textContent=c.hide+'{display:none!important}'+(PORTAL_FIX[id]||'');
   d.head.appendChild(s);
@@ -235,7 +237,17 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
   side.addEventListener('mouseover',e=>{const a=e.target.closest('a[data-go]'); if(!a) return; clearTimeout(leaveT); const id=a.dataset.go; if(previewId===id) return; clearTimeout(hoverT); hoverT=setTimeout(()=>{hoverT=null;previewId=id;renderSubs()},120)});
   side.addEventListener('mouseleave',()=>{clearTimeout(hoverT);hoverT=null;clearTimeout(leaveT);leaveT=setTimeout(()=>{previewId=null;subSig='';renderSubs()},350)});
 }
-$('#frame').addEventListener('load',()=>{ if($('#frame').dataset.mod){setLive(true);injectHide();hideLangToggles();subSig='';renderSubs()}});
+/* keep-alive frames: each program opened stays loaded (hidden) so switching back is instant; the 4 most recent are kept */
+const BLANK=$('#frame'); BLANK.dataset.mod=''; const POOL=new Map(), KEEP=4;
+function onFrameLoad(e){const f=e.target;if(!f.dataset.mod||f.src==='about:blank')return;f.dataset.ready='1';if(f.id==='frame'){setLive(true);injectHide();hideLangToggles();subSig='';renderSubs()}}
+function frameFor(id,url){let f=POOL.get(id);if(f){POOL.delete(id);POOL.set(id,f);return f}
+  f=document.createElement('iframe');f.className='pframe parked';f.title='module';f.setAttribute('allow',BLANK.getAttribute('allow')||'');f.dataset.mod=id;f.addEventListener('load',onFrameLoad);
+  seedSso(id);f.src=url;$('#frameWrap').appendChild(f);POOL.set(id,f);
+  while(POOL.size>KEEP){const [k,old]=POOL.entries().next().value;if(old.id==='frame')break;POOL.delete(k);old.remove()}
+  return f}
+function activate(f){const cur=$('#frame');if(cur&&cur!==f){cur.removeAttribute('id');cur.classList.add('parked')}f.id='frame';f.classList.remove('parked','hidden')}
+function dropParked(){POOL.forEach((f,k)=>{if(f.id!=='frame'){f.remove();POOL.delete(k)}})}
+function dropAll(){activate(BLANK);POOL.forEach(f=>f.remove());POOL.clear()}
 /* the portal is the single source of truth for language: if a program (or its saved profile) writes another language, the portal key wins */
 setInterval(()=>{ if(Object.values(LKEY).some(k=>localStorage.getItem(k)!==lang)){syncKeys()} if(session&&$('#frame').dataset.mod){injectHide();hideLangToggles();renderSubs()} },700);
 const LANG_BTN=/^(english|en|العربية|عربي|ع|ar|عربى|🌐\s*(en|ar|english|العربية|عربي))$/i;

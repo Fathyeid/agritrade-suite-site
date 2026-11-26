@@ -79,3 +79,17 @@ json.dump({"name":"agritrade-suite","private":True,"dependencies":{"web-push":"^
 print('built'); 
 
 sub(OUT+'/iom/index.html',[("SB_URL='https://umksjkamcwkazkcmqlll.supabase.co',SB_KEY='sb_publishable_qfb4bszqsaD8_Dgr5BoDPQ_-GQXn9Cd'","SB_URL='https://nimfkykshfijxbgwgkrg.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbWZreWtzaGZpanhiZ3dna3JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU2ODY4NzgsImV4cCI6MjExMTI2Mjg3OH0.ubwLjgwwTGkbIHdYHGJ6oyZ7F_-rkhvuEtN-eun1dT0'"),("sb.from('profiles')","sb.from('iom_profiles')"),(" const{data:pr,error}=await sb.from('iom_profiles').select('*').eq('id',session.user.id)"," try{await sb.rpc('iom_ensure_profile')}catch(e){}\n const{data:pr,error}=await sb.from('iom_profiles').select('*').eq('id',session.user.id)")])
+
+# cache stamp: every local script/stylesheet referenced from a page gets ?v=<build> so browsers fetch new files right after a deploy
+import time as _t
+BUILD=_t.strftime('%Y%m%d%H%M')
+for p in subprocess.check_output("find %s -name '*.html'" % OUT, shell=True, text=True).split():
+    h=open(p,encoding='utf-8').read()
+    h2=re.sub(r'((?:src|href)=")((?!https?:|//|data:|#)[^"?]+\.(?:js|css))"', lambda m: m.group(1)+m.group(2)+'?v='+BUILD+'"', h)
+    if h2!=h: open(p,'w',encoding='utf-8').write(h2)
+s=open(OUT+'/app.js',encoding='utf-8').read()
+s=re.sub(r"'(/ds/[a-z-]+\.(?:js|css))'", lambda m: "'"+m.group(1)+"?v="+BUILD+"'", s)
+open(OUT+'/app.js','w',encoding='utf-8').write(s)
+for f in ['ds/ds.js','ds/poultry-dash.js','ds/iom-dash.js']:
+    q=OUT+'/'+f; t=open(q,encoding='utf-8').read(); t2=t.replace("'/ds/dash.css'","'/ds/dash.css?v="+BUILD+"'"); open(q,'w',encoding='utf-8').write(t2)
+print('stamped', BUILD)

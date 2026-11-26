@@ -128,3 +128,5 @@ main{top:64px!important}
 @media(max-width:820px){.slogo{display:none}.sidew{inset-inline-start:0;width:270px;transform:translateX(-105%);transition:.2s;box-shadow:0 0 30px #0005;z-index:40}[dir=rtl] .sidew{transform:translateX(105%)}.sidew.open{transform:none!important}
  .gsr{display:none}.un,.uch{display:none}.top{height:58px;padding:0 10px;gap:8px}.sidew{top:58px}main{top:58px!important}.bell{width:40px;height:40px}.uav{width:36px;height:36px}}
 @media(max-width:420px){.top .pill[data-lang-toggle]{padding:6px 8px;font-size:12px}.brand b{font-size:16px}}
+
+.frameWrap iframe{flex:1;width:100%;border:0;background:#fff}.frameWrap iframe.parked{display:none!important}
