@@ -47,3 +47,6 @@ Do NOT touch the separate apps AgriTrade Pro, Lisan and Athar. The suite brand s
 - This repo: https://github.com/Fathyeid/agritrade-suite-site
 - Feed (original, still live): https://github.com/Fathyeid/feed-formulation
 - Poultry (original, still live): https://github.com/Fathyeid/poultry-platform
+
+## Link: Feed batch -> Poultry feed stock
+Hub.postFeedBatch (portal/hub.js). Source ref feed-batch, destination poultry. Writes one additive stock move (kind adjust, notes carry batch id). Void inserts a reversing move. Tested with TEST data only.
