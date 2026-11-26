@@ -126,13 +126,13 @@ async function postSale(sb,d,so,opts){opts=opts||{};
   if(r.error)throw new Error(r.error.message);
   await sb.from('suite_links').update({dst_id:r.data.id}).eq('id',claim.data.id);return {link:claim.data.id,contract:r.data.id};
  }catch(e){await sb.from('suite_links').update({status:'voided',voided_at:new Date().toISOString(),note:'failed: '+e.message}).eq('id',claim.data.id);throw e}}
-/* Feed batch (FB-...) -> Poultry feed stock. Traceable (suite_links + notes 'FEED:<id>'), idempotent (unique live link),
+/* Feed batch (FB-...) -> Poultry feed stock. Traceable (suite_links src_prog 'feed-batch' + notes 'FEED:<id>'), idempotent (unique live link),
    reversible (void inserts an equal negative 'adjust' move; nothing is deleted). Only final batches with a produced quantity are eligible. */
 function batchCostKg(b){let c=0;Object.keys(b.actual||{}).forEach(k=>{const x=Number(b.actual[k]);if(x>0)c+=x*Number((b.price||{})[k]||0)/1000});const kg=Number(b.produced||0);return kg>0&&c>0?c/kg:null}
 async function postFeedBatch(sb,d,b,materialId,opts){opts=opts||{};
  if(!b||b.status!=='final')throw new Error('batch is not final');const kg=Number(b.produced||0);if(!(kg>0))throw new Error('no produced quantity');
  const mat=(d.pmat||[]).find(m=>m.id===materialId);if(!mat)throw new Error('pick a poultry feed item');
- const claim=await sb.from('suite_links').insert({src_prog:'feed',src_id:b.id,dst_prog:'poultry',status:'posted',note:opts.test?'TEST':null}).select().single();
+ const claim=await sb.from('suite_links').insert({src_prog:'feed-batch',src_id:b.id,dst_prog:'poultry',status:'posted',note:opts.test?'TEST':null}).select().single();
  if(claim.error)throw new Error(/duplicate|unique/i.test(claim.error.message)?'already posted':claim.error.message);
  try{const day=new Date(b.finalAt||b.at||Date.now()).toISOString().slice(0,10);
   const r=await sb.from('poultry_stock_moves').insert({material_id:mat.id,move_date:day,qty:kg,unit_cost:batchCostKg(b),kind:'production_out',notes:(opts.test?'TEST ':'')+'FEED:'+b.id+' via Suite link'}).select('id').single();
@@ -151,7 +151,7 @@ async function links(el,api){const l=api.lang(),t=LT[l];cache=null;
  const posted=new Set(lk.filter(x=>x.status==='posted'&&x.src_prog==='iom').map(x=>x.src_id));
  const rcs=((d.iom&&d.iom.receipts)||[]).filter(r=>r.status&&r.status!=='draft');
  const hasG=!!localStorage.getItem('gs_tok');const postedS=new Set(lk.filter(x=>x.status==='posted'&&x.src_prog==='iom-sale').map(x=>x.src_id));const sos=((d.iom&&d.iom.sales)||[]).filter(r=>r.status&&r.status!=='draft');
- const fbs=((d.feed&&d.feed.batches)||[]).filter(b=>b&&b.id&&(b.status==='final'||b.status==='void'));const liveF=new Map(lk.filter(x=>x.status==='posted'&&x.src_prog==='feed').map(x=>[x.src_id,x]));
+ const fbs=((d.feed&&d.feed.batches)||[]).filter(b=>b&&b.id&&(b.status==='final'||b.status==='void'));const liveF=new Map(lk.filter(x=>x.status==='posted'&&(x.src_prog==='feed-batch'||x.src_prog==='feed')).map(x=>[x.src_id,x]));
  const fmats=(d.pmat||[]).filter(m=>m.kind==='feed');const mopt=sel=>fmats.map(m=>`<option value="${esc(m.id)}"${m.id===sel?' selected':''}>${esc(m.name)} (${esc(m.unit||'kg')})</option>`).join('');
  const guess=b=>{const nm=norm(b.name||b.stage||'');const m=fmats.find(x=>nm&&norm(x.name)===nm)||fmats.find(x=>nm&&(norm(x.name).includes(nm)||nm.includes(norm(x.name))));return m?m.id:(fmats[0]&&fmats[0].id)};
  const feedTbl=`<table class="htb"><tr><th>${t.src3}</th><th>${t.kg}</th><th>${t.mat}</th><th></th></tr>`+(fbs.filter(b=>b.status==='final'||liveF.has(b.id)).length?fbs.filter(b=>b.status==='final'||liveF.has(b.id)).map(b=>{const lv=liveF.get(b.id);return `<tr><td><b>${esc(b.id)}</b> · ${esc(b.name||'')}</td><td>${esc(Math.round(Number(b.produced||0)).toLocaleString())}</td><td>${lv?'':(fmats.length?`<select data-fm="${esc(b.id)}">${mopt(guess(b))}</select>`:`<span class="sub">${t.nomat}</span>`)}</td><td>${lv?(b.status==='void'?`<span class="chip" style="background:#fdecec;color:#b91c1c">${t.srcvoid}</span>`:`<span class="chip">${t.posted}</span>`):(b.status==='final'&&fmats.length&&Number(b.produced)>0?`<a class="chip" data-f="${esc(b.id)}">${t.post3}</a>`:'')}</td></tr>`}).join(''):`<tr><td colspan=4 class="sub">${t.none3}</td></tr>`)+'</table>';

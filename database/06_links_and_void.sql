@@ -4,7 +4,7 @@
 
 create table if not exists public.suite_links (
   id uuid primary key default gen_random_uuid(),
-  src_prog text not null,            -- 'iom' | 'iom-sale' | 'feed'
+  src_prog text not null,            -- 'iom' | 'iom-sale' | 'feed-batch'
   src_id   text not null,            -- IOM receipt/sales ref, Feed batch id (FB-YYYYMMDD-NNN)
   dst_prog text not null,            -- 'grain' | 'dispute' | 'poultry'
   dst_id   text,                     -- id of the created destination row
