@@ -1,0 +1,28 @@
+/* Agritrade Pro shared light design system (presentation only) */
+:root{--ds-royal:#1d4ed8;--ds-royal2:#1e40af;--ds-sky:#0ea5e9;--ds-sky2:#e0f2fe;--ds-green:#16a34a;--ds-gold:#d4a017;--ds-bg:#f5f8fd;--ds-line:#e3eaf4;--ds-ink:#0b2a5b;--ds-card:#fff;--ds-sh:0 1px 2px rgba(11,42,91,.05),0 6px 20px rgba(11,42,91,.06);--ds-r:14px}
+html,body{overflow-x:hidden;max-width:100%}
+body{background:var(--ds-bg)!important;color-scheme:light}
+/* light only: hide dark-mode switches */
+#thm,#th,.theme-toggle,[data-theme-toggle]{display:none!important}
+/* hero banners: light overlay, dark text */
+.hero,.banner,.pghero,.hero.photo{position:relative!important;color:var(--ds-ink)!important;border:1px solid var(--ds-line);box-shadow:var(--ds-sh)}
+.hero,.banner,.pghero,.hero.photo{background:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important;background-image:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important}
+.hero::before,.hero::after,.banner::before,.banner::after,.pghero::before,.pghero::after{background:transparent!important;display:none!important}
+.hero *,.banner *,.pghero *{color:var(--ds-ink)!important;text-shadow:none!important}
+.pghero .ico{background:var(--ds-sky2)!important}.pghero .ico svg{stroke:var(--ds-royal)!important}
+/* tables */
+.ds-tw{overflow:auto;max-height:68vh;border:1px solid var(--ds-line);border-radius:12px;background:#fff;-webkit-overflow-scrolling:touch}
+.ds-tw table{margin:0!important;width:100%}
+.ds-tw thead th,.ds-tw tr:first-child th{position:sticky;top:0;z-index:2;background:#eef4fc!important;color:var(--ds-ink)!important}
+.ds-tw tbody tr:hover td{background:#f3f8ff}
+.ds-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.ds-bar input{padding:8px 12px;border:1px solid var(--ds-line);border-radius:10px;min-width:200px;font:inherit;background:#fff;color:var(--ds-ink)}
+.ds-bar input:focus{outline:2px solid var(--ds-sky);border-color:var(--ds-sky)}
+.ds-pg{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin:8px 0;font-size:13px;color:#5b6b85}
+.ds-pg button{border:1px solid var(--ds-line);background:#fff;color:var(--ds-royal);border-radius:8px;padding:5px 12px;cursor:pointer;font:inherit}
+.ds-pg button:disabled{opacity:.4;cursor:default}.ds-pg button:not(:disabled):hover{background:var(--ds-sky2)}
+th[data-ds-sort]{cursor:pointer;user-select:none}th[data-ds-sort]::after{content:" \2195";opacity:.35;font-size:.85em}th[data-ds-sort=asc]::after{content:" \25B2";opacity:.9}th[data-ds-sort=desc]::after{content:" \25BC";opacity:.9}
+/* focus + touch */
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ds-sky);outline-offset:2px}
+@media (max-width:760px){button,.btn,select,input{min-height:40px}.ds-bar input{min-width:0;flex:1}img,svg,canvas{max-width:100%}}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#c9d6ea;border-radius:8px}::-webkit-scrollbar-track{background:#f1f5fb}

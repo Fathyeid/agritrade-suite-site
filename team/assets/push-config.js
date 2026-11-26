@@ -1,0 +1,1 @@
+window.VAPID_PUBLIC="BF4DFk_7RMq4BMyi9joR_RVDYnbSld1_8zv_0R247RjfTavetSe9PDu5jibPYPKzg-abrcSwun9FtFNSQSvOZjw";
