@@ -25,13 +25,13 @@ const T = {
   tagEmb:'داخل المنصة',tagLink:'رابط خارجي',blockedT:'هذا البرنامج لا يسمح بالعرض داخل المنصة',blockedD:'لأسباب أمان يفتح في صفحة كاملة. اضغط الزر وارجع لهذه المنصة من المتصفح.',
   fnote:'لو طلب البرنامج تسجيل دخول بجوجل وما اشتغلش داخل المنصة، افتحه في صفحة كاملة.',
   sso:'دخول واحد بحساب جوجل يفتح كل البرامج. الأقسام الفرعية لكل برنامج تظهر تحت اسمه في القائمة.',
-  notadmin:'حسابك مسجّل كمستخدم عادي، ويظهر لك فريق العمل فقط.',heroSub:'منصة متكاملة لتجارة الحاصلات الزراعية وإدارة الدواجن',heroTag:'أدِر · حلّل · انمُ',explore:'استكشف البرامج',progs:'البرامج',quick:'إجراءات سريعة',strip:'إدارة أذكى .. إنتاجية أعلى',qa:['إضافة قطيع','تسجيل بيع','متابعة الأسعار','تسجيل نزاع','تركيبة علف','التقارير'],ft:['بيانات السوق','تحليلات ورسوم','تركيب الأعلاف','المزارع والمخزون','الشحن والتتبع','العقود والعمليات','مؤسسات التجارة','فريق العمل'],cantSign:'تعذر تسجيل الدخول: ',lang:'English'},
+  notadmin:'حسابك مسجّل كمستخدم عادي، ويظهر لك فريق العمل فقط.',heroSub:'منصة متكاملة لتجارة الحاصلات الزراعية وإدارة الدواجن',heroTag:'أدِر · حلّل · انمُ',explore:'استكشف البرامج',progs:'البرامج',quick:'إجراءات سريعة',strip:'إدارة أذكى .. إنتاجية أعلى',qa:['إضافة قطيع','تسجيل بيع','متابعة الأسعار','تسجيل نزاع','تركيبة علف','التقارير'],ft:['بيانات السوق','تحليلات ورسوم','تركيب الأعلاف','المزارع والمخزون','الشحن والتتبع','العقود والعمليات','مؤسسات التجارة','فريق العمل'],cantSign:'تعذر تسجيل الدخول: ',lang:'English',search:'ابحث في البرامج والأقسام…',noRes:'لا نتائج',notif:'الإشعارات',noNotif:'لا توجد تنبيهات حالياً',alertW:'تنبيه تخزين'},
  en:{title:'Agritrade Pro',loginSub:'Sign in with Google to reach all your programs from one place.',google:'Continue with Google',logout:'Sign out',home:'Home',
   admin:'Admin',user:'User',welcome:'Welcome',sub:'All your programs in one portal. Pick one to start.',open:'Open',openFull:'Open full page',
   tagEmb:'Inside portal',tagLink:'External link',blockedT:'This program does not allow embedding',blockedD:'For security it opens as a full page. Use the browser back button to return to this portal.',
   fnote:'If a program asks for Google sign-in and it fails inside the portal, open it as a full page.',
   sso:'One Google sign-in opens every program. Each program\'s sections are listed under its name in the menu.',
-  notadmin:'Your account is a regular user, so only Team Workspace is shown.',heroSub:'Integrated Platform for Agricultural Trade & Poultry Management',heroTag:'Manage · Analyze · Grow',explore:'Explore programs',progs:'Programs',quick:'Quick Actions',strip:'Smarter Management .. Higher Productivity',qa:['Add Flock','Record Sale','Check Prices','New Dispute','Feed Formula','Reports'],ft:['Live Market Data','Advanced Analytics & Charts','Feed Formulation','Farm & Stock','Logistics & Shipping','Contracts & Operations','Trade Institutions','Team Workspace'],cantSign:'Sign-in failed: ',lang:'العربية'}
+  notadmin:'Your account is a regular user, so only Team Workspace is shown.',heroSub:'Integrated Platform for Agricultural Trade & Poultry Management',heroTag:'Manage · Analyze · Grow',explore:'Explore programs',progs:'Programs',quick:'Quick Actions',strip:'Smarter Management .. Higher Productivity',qa:['Add Flock','Record Sale','Check Prices','New Dispute','Feed Formula','Reports'],ft:['Live Market Data','Advanced Analytics & Charts','Feed Formulation','Farm & Stock','Logistics & Shipping','Contracts & Operations','Trade Institutions','Team Workspace'],cantSign:'Sign-in failed: ',lang:'العربية',search:'Search programs and sections…',noRes:'No results',notif:'Notifications',noNotif:'No alerts right now',alertW:'Storage alert'}
 };
 let lang = localStorage.getItem('lang') || 'ar';
 let session=null, isAdmin=false;
@@ -45,7 +45,7 @@ function applyLang(){
   $$('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
   $$('[data-lang-toggle]').forEach(e=>e.textContent=t('lang'));
   document.title=t('title');
-  if(session){ $('#ubadge').textContent=isAdmin?t('admin'):t('user'); renderSide(); route(); }
+  if(session){ $('#ubadge').textContent=$('#prole').textContent=isAdmin?t('admin'):t('user'); $('#gsq').placeholder=t('search'); renderSide(); route(); bellDraw(); }
 }
 const HUBV=[{id:'directory',ic:'📇',n:{ar:'دليل الأطراف',en:'Parties Directory'}},{id:'commodities',ic:'🌐',n:{ar:'السلع عبر البرامج',en:'Commodities'}},{id:'links',ic:'🔗',n:{ar:'الربط بين البرامج',en:'Cross-program links'}}];
 window.HUBSB=sb;const HUBAPI={sb,lang:()=>lang,jump:(id,rx)=>jumpTo(id,rx)};
@@ -77,7 +77,7 @@ function renderHome(){
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function seedSso(id){try{if(!session)return;const k={feed:'ffi_sb_session',poultry:'pl_sb_session'}[id];if(k)localStorage.setItem(k,JSON.stringify({access_token:session.access_token,refresh_token:'portal-managed'}))}catch{}}
 function go(id){location.hash=id?'#/'+id:'#/'}
-function closeMenu(){$('#side').classList.remove('open');$('#shade').classList.remove('on')}
+function closeMenu(){$('#sidew').classList.remove('open');$('#shade').classList.remove('on')}
 function route(){
   if(!session) return;
   const id=(location.hash.match(/#\/(\w+)/)||[])[1]||'';
@@ -107,15 +107,15 @@ function show(){
   if(!session){ $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); applyLang(); return; }
   isAdmin=(session.user.email||'').toLowerCase()===C.admin;
   $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
-  $('#uemail').textContent=session.user.email; applyLang();
+  $('#uemail').textContent=session.user.email; userChip(); applyLang(); setTimeout(bellLoad,1500);
 }
 $('#gbtn').onclick=async()=>{
   $('#lerr').textContent='';
   const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/',queryParams:{prompt:'select_account'}}});
   if(error) $('#lerr').textContent=t('cantSign')+error.message;
 };
-$('#logout').onclick=async()=>{await sb.auth.signOut();session=null;location.hash='';show()};
-$('#menu').onclick=()=>{$('#side').classList.toggle('open');$('#shade').classList.toggle('on')};
+$('#logout').onclick=$('#logout2').onclick=async()=>{await sb.auth.signOut();session=null;location.hash='';show()};
+$('#menu').onclick=()=>{$('#sidew').classList.toggle('open');$('#shade').classList.toggle('on')};
 $('#shade').onclick=closeMenu; $('#brand').onclick=()=>go('');
 $$('[data-lang-toggle]').forEach(b=>b.onclick=()=>{lang=lang==='ar'?'en':'ar';localStorage.setItem('lang',lang);Object.values(LKEY).forEach(k=>{try{localStorage.setItem(k,lang)}catch{}});applyLang();subSig='';try{if($('#frame').dataset.mod==='chart'){try{$('#frame').contentWindow.dispatchEvent(new CustomEvent('suite-lang',{detail:lang}))}catch{}}else if($('#frame').dataset.mod){setLive(false);const fr=$('#frame');const cur=fr.contentWindow.location.href;fr.contentWindow.location.replace('about:blank');setTimeout(()=>{syncKeys();fr.contentWindow.location.replace(cur)},150)}}catch{}});
 window.addEventListener('hashchange',route);
@@ -259,3 +259,29 @@ function translateFrame(){
   }
 }
 setInterval(()=>{try{if(session)translateFrame()}catch{}},900);
+
+/* ---- header: user chip, global search, notifications bell ---- */
+function userChip(){const m=session.user.user_metadata||{},nm=m.full_name||m.name||session.user.email.split('@')[0],pic=m.avatar_url||m.picture;
+  const av=pic?`<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer">`:esc(nm[0].toUpperCase());
+  $('#uav').innerHTML=av;$('#pav').innerHTML=av;$('#uname').textContent=nm;$('#pname').textContent=nm;}
+$('#uchip').onclick=e=>{if(e.target.closest('#umenu'))return;$('#umenu').classList.toggle('hidden');$('#bellm').classList.add('hidden')};
+document.addEventListener('click',e=>{if(!e.target.closest('#uchip'))$('#umenu').classList.add('hidden');if(!e.target.closest('.bellw'))$('#bellm').classList.add('hidden');if(!e.target.closest('#gsr'))$('#gsres').classList.add('hidden')});
+function searchItems(q){q=q.trim().toLowerCase();if(!q)return[];const out=[];
+  HUBV.forEach(h=>{if(h.n[lang].toLowerCase().includes(q))out.push({ic:h.ic,l:h.n[lang],s:t('home'),go:h.id})});
+  visible().forEach(m=>{if((m.n[lang]+' '+m.d[lang]).toLowerCase().includes(q))out.push({ic:m.ic,l:m.n[lang],s:'',go:m.id});
+    const c=cacheGet(m.id)||[];c.forEach(x=>{if(x.label.toLowerCase().includes(q))out.push({ic:x.icon,l:x.label,s:m.n[lang],go:m.id,sub:x.label})})});
+  return out.slice(0,14)}
+$('#gsq').oninput=()=>{const r=searchItems($('#gsq').value),box=$('#gsres');if(!$('#gsq').value.trim()){box.classList.add('hidden');return}
+  box.innerHTML=r.length?r.map((x,i)=>`<a data-n="${i}"><span>${x.ic}</span><span><b>${esc(x.l)}</b>${x.s?'<small>'+esc(x.s)+'</small>':''}</span></a>`).join(''):`<div class="nr">${t('noRes')}</div>`;box.classList.remove('hidden');
+  box.querySelectorAll('a').forEach(a=>a.onclick=()=>{const x=r[+a.dataset.n];box.classList.add('hidden');$('#gsq').value='';if(x.sub)jumpTo(x.go,new RegExp('^'+x.sub.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));else go(x.go)})};
+$('#gsq').onkeydown=e=>{if(e.key==='Enter'){const a=$('#gsres a');if(a)a.click()}if(e.key==='Escape'){$('#gsres').classList.add('hidden')}};
+let BELL=[];
+async function bellLoad(){if(!session||!window.Hub)return;try{const d=await Hub.load(sb);BELL=[];
+  (d.notif||[]).forEach(n=>BELL.push({dt:n.created_at,ic:'🔔',tx:n.title||n.body||'',go:'team',rx:/chat|محادث|activity|النشاط/i}));
+  (d.gal||[]).forEach(a=>BELL.push({dt:a.detected_at,ic:'🌾',tx:t('alertW')+': '+(a.category||'')+' · '+(a.severity||''),go:'grain',rx:/alert|التنبيهات/i}));
+  BELL.sort((a,b)=>String(b.dt).localeCompare(String(a.dt)));bellDraw()}catch(e){}}
+function bellDraw(){const c=$('#bellc');if(!c)return;c.textContent=BELL.length>99?'99+':BELL.length;c.classList.toggle('hidden',!BELL.length);
+  $('#bellm').innerHTML=`<b>${t('notif')}</b>`+(BELL.length?BELL.slice(0,12).map((x,i)=>`<a data-n="${i}"><span>${x.ic}</span><span>${esc(x.tx)}<small>${esc(String(x.dt||'').slice(0,16).replace('T',' '))}</small></span></a>`).join(''):`<div class="nr">${t('noNotif')}</div>`);
+  $('#bellm').querySelectorAll('a').forEach(a=>a.onclick=()=>{const x=BELL[+a.dataset.n];$('#bellm').classList.add('hidden');jumpTo(x.go,x.rx)})}
+$('#bell').onclick=e=>{e.stopPropagation();$('#bellm').classList.toggle('hidden');$('#umenu').classList.add('hidden')};
+setInterval(()=>{if(session&&document.visibilityState==='visible')bellLoad()},120000);
