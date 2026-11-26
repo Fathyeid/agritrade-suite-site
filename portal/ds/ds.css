@@ -6,8 +6,10 @@ body{background:var(--ds-bg)!important;color-scheme:light}
 #thm,#th,.theme-toggle,[data-theme-toggle]{display:none!important}
 /* hero banners: light overlay, dark text */
 .hero,.banner,.pghero,.hero.photo{position:relative!important;color:var(--ds-ink)!important;border:1px solid var(--ds-line);box-shadow:var(--ds-sh)}
-.hero,.banner,.pghero,.hero.photo{background:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important;background-image:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important}
-.hero::before,.hero::after,.banner::before,.banner::after,.pghero::before,.pghero::after{background:transparent!important;display:none!important}
+.hero:not(.ds-raw),.banner:not(.ds-raw),.pghero:not(.ds-raw),.hero.photo:not(.ds-raw){background:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important;background-image:linear-gradient(120deg,#eef6ff,#dcecfb 55%,#cfe6fb)!important}
+/* real licensed photo kept under a light veil (ds.js finds the program's own photo and sets --ds-img) */
+.hero.ds-hero:not(.ds-raw),.banner.ds-hero:not(.ds-raw),.pghero.ds-hero:not(.ds-raw),.hero.photo.ds-hero:not(.ds-raw){background:var(--ds-img) center/cover no-repeat!important;background-image:var(--ds-img)!important;background-size:cover!important;background-position:center!important}
+.hero:not(.ds-raw)::before,.hero:not(.ds-raw)::after,.banner:not(.ds-raw)::before,.banner:not(.ds-raw)::after,.pghero:not(.ds-raw)::before,.pghero:not(.ds-raw)::after{background:transparent!important;display:none!important}
 .hero *,.banner *,.pghero *{color:var(--ds-ink)!important;text-shadow:none!important}
 .pghero .ico{background:var(--ds-sky2)!important}.pghero .ico svg{stroke:var(--ds-royal)!important}
 /* tables */

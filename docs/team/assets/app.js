@@ -118,7 +118,7 @@ async function start(){
  const {data:{session}}=await sb.auth.getSession();if(!session)return renderAuth();
  await loadBase();S.me=S.profiles.get(session.user.id);
  if(!S.me){await new Promise(r=>setTimeout(r,800));await loadBase();S.me=S.profiles.get(session.user.id);}
- if(!S.me){await sb.auth.signOut();return renderAuth();}
+ if(!S.me){return renderAuth();}
  if(S.me.status==='suspended'||S.me.status==='terminated'){await sb.auth.signOut();toast(t('Account is disabled'));return renderAuth();}
  await Promise.all([loadConvs(),loadTasks(),loadNotifs()]);
  setLang(localStorage.getItem('tw_lang')||S.me.locale||S.lang);

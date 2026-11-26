@@ -284,7 +284,7 @@ async function boot() {
   const {data: {session}} = await sb.auth.getSession();
   if (!session) return loginView();
   const a = await afterLogin();
-  if (!a.ok) { await sb.auth.signOut(); return loginView(); }
+  if (!a.ok) { return loginView(); }
   renderShell();
 }
 sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') loginView({recovery: true}); });

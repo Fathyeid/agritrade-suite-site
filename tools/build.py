@@ -41,13 +41,13 @@ open(OUT+'/api/chart-api.mjs','w').write(imp+f"const M={{{mp}}};\nexport default
 sub(OUT+'/team/index.html',[('href="/manifest.webmanifest','href="/team/manifest.webmanifest'),('href="/assets/icon-180.png','href="/team/assets/icon-180.png')])
 sub(OUT+'/team/manifest.webmanifest',[('"start_url":"/"','"start_url":"/team/"'),('"scope":"/"','"scope":"/team/"'),('"/assets/','"/team/assets/')])
 sub(OUT+'/team/sw.js',[("'/assets/","'/team/assets/")])
-sub(OUT+'/team/assets/app.js',[("register('/sw.js')","register('/team/sw.js',{scope:'/team/'})"),("fetch('/api/ask'","fetch('/team/api/ask'"),("setLang(S.me.locale||S.lang)","setLang(localStorage.getItem('tw_lang')||S.me.locale||S.lang)"),("redirectTo:location.origin+'/'","redirectTo:location.origin+'/team/'"),("location.origin+'/?join='","location.origin+'/team/?join='")])
+sub(OUT+'/team/assets/app.js',[("register('/sw.js')","register('/team/sw.js',{scope:'/team/'})"),("fetch('/api/ask'","fetch('/team/api/ask'"),("setLang(S.me.locale||S.lang)","setLang(localStorage.getItem('tw_lang')||S.me.locale||S.lang)"),("redirectTo:location.origin+'/'","redirectTo:location.origin+'/team/'"),("location.origin+'/?join='","location.origin+'/team/?join='"),("if(!S.me){await sb.auth.signOut();return renderAuth();}","if(!S.me){return renderAuth();}")])
 sub(OUT+'/grain/app.js' if False else OUT+'/grain/stage9.js',[("fetch('/api/assistant'","fetch('/grain/api/assistant'")])
 
 sub(OUT+'/grain/app.js',[(" if(TOKEN&&ME)boot();else render()})();",""" if(!(TOKEN&&ME)){try{const ss=JSON.parse(localStorage.getItem('sb-nimfkykshfijxbgwgkrg-auth-token')||'null');if(ss&&ss.access_token){const rr=await fetch(CFG.url+'/rest/v1/rpc/gs_sso',{method:'POST',headers:{apikey:CFG.anon,'Content-Type':'application/json',Authorization:'Bearer '+ss.access_token},body:'{}'});if(rr.ok){const j=await rr.json();TOKEN=j.token;localStorage.gs_tok=TOKEN;ME=j.user}}}catch{}}
  if(TOKEN&&ME)boot();else render()})();""")])
 sub(OUT+'/inst/app.js',[("fetch('/api/news'","fetch('/inst/api/news'")])
-sub(OUT+'/dispute/core.js',[("storageKey:'dc-center-auth'","storageKey:'sb-nimfkykshfijxbgwgkrg-auth-token'"),("redirectTo: location.origin + '/'","redirectTo: location.origin + '/dispute/'")])
+sub(OUT+'/dispute/core.js',[("storageKey:'dc-center-auth'","storageKey:'sb-nimfkykshfijxbgwgkrg-auth-token'"),("redirectTo: location.origin + '/'","redirectTo: location.origin + '/dispute/'"),("const a = await afterLogin();\n  if (!a.ok) { await sb.auth.signOut(); return loginView(); }","const a = await afterLogin();\n  if (!a.ok) { return loginView(); }")])
 sub(OUT+'/iom/index.html',[("redirectTo:location.origin+'/'","redirectTo:location.origin+'/iom/'"),("emailRedirectTo:location.origin+'/'","emailRedirectTo:location.origin+'/iom/'")])
 for f in os.listdir(OUT+'/chart/js'):
     p=OUT+'/chart/js/'+f; s=open(p,encoding='utf-8').read()
