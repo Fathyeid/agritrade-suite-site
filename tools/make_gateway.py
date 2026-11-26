@@ -18,14 +18,14 @@ for d in dirs:  # folder routes need an explicit index.html, otherwise Pages ans
     rw += [{"source": "/" + d, "destination": GP + "/" + d + "/index.html"}, {"source": "/" + d + "/", "destination": GP + "/" + d + "/index.html"}]
 rw += [{"source": "/", "destination": GP + "/"}, {"source": "/:path*", "destination": GP + "/:path*"}]
 v['rewrites'] = rw
-# caching: pages always revalidate (short edge cache); scripts/styles cache briefly (the build stamps ?v=<build> on the ones
+# caching: no edge cache for pages/scripts/styles (a response cached while Pages was still publishing broke the portal styling once); scripts/styles cache briefly in the browser (the build stamps ?v=<build> on the ones
 # pages reference, so a new deploy is picked up at once); images, fonts and vendor libraries cache for a week.
 SEC = [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}]
 v['headers'] = [
-    {"source": "/(.*)", "headers": SEC + [{"key": "Cache-Control", "value": "public, max-age=0, s-maxage=60, stale-while-revalidate=300"}]},
-    {"source": "/(.*)\\.(js|css|json|webmanifest)", "headers": [{"key": "Cache-Control", "value": "public, max-age=600, s-maxage=600, stale-while-revalidate=86400"}]},
-    {"source": "/(.*)\\.(jpg|jpeg|png|webp|svg|gif|ico|woff2?|ttf)", "headers": [{"key": "Cache-Control", "value": "public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000"}]},
-    {"source": "/(.*)/(vendor|lwc|chart\\.umd|chart\\.min|supabase)(.*)\\.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=604800, s-maxage=604800"}]},
+    {"source": "/(.*)", "headers": SEC + [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]},
+    {"source": "/(.*)\\.(js|css|json|webmanifest)", "headers": [{"key": "Cache-Control", "value": "public, max-age=300"}]},
+    {"source": "/(.*)\\.(jpg|jpeg|png|webp|svg|gif|ico|woff2?|ttf)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400"}]},
+    {"source": "/(.*)/(vendor|lwc|chart\\.umd|chart\\.min|supabase)(.*)\\.js", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400"}]},
     {"source": "/(.*)sw\\.js", "headers": [{"key": "Cache-Control", "value": "no-cache"}]},
     {"source": "/(team|grain|inst|chart)/api/(.*)", "headers": [{"key": "Cache-Control", "value": "no-store"}]}]
 json.dump(v, open(G + '/vercel.json', 'w'), indent=1)
