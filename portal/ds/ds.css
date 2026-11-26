@@ -52,3 +52,39 @@ th.ds-dc::after{content:none!important}
 .hero2.ds-hero h2,.hero2.ds-hero p,.hero2.ds-hero small{color:var(--ds-ink)!important;text-shadow:none!important}
 .hero2.ds-hero .cr{color:#5b6b85!important}
 .hero2.ds-hero .btn.ghost{background:#fff!important;color:var(--ds-royal)!important;border:1px solid var(--ds-line)!important}
+/* ===================== Agritrade Pro look v2 (owner's mockups) — all programs except the Chart ===================== */
+:root{--ds-royal:#1d6ff2;--ds-royal2:#1d63e8;--ds-ink:#0b1f4b;--ds-line:#e4edfb;--ds-sky2:#e8f1ff;--ds-sh:0 6px 22px rgba(29,111,242,.08);--ds-r:18px}
+body{background:linear-gradient(180deg,#f7fbff 0%,#eaf2fe 100%) fixed!important}
+h1,h2,h3{color:var(--ds-ink)}
+/* cards and panels */
+.card,.panel,.box,.kpi,.tile{background:#fff!important;border:1px solid var(--ds-line)!important;border-radius:var(--ds-r)!important;box-shadow:var(--ds-sh)!important}
+.card>h3:first-child,.card>h2:first-child,.panel>h3:first-child,.box>h3:first-child,.card>.hd h3,.card>header h3{font-weight:800!important;font-size:17px!important;color:var(--ds-ink)!important;display:flex;align-items:center;gap:8px}
+.ds-ti{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;font-size:17px;background:radial-gradient(circle at 30% 30%,#eef5ff,#d6e6ff);flex:none}
+/* KPI tiles: icon circle + big number */
+.kpi.ds-kd{position:relative;padding-inline-start:78px!important;min-height:78px}
+.ds-ki{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:26px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.06),0 6px 14px rgba(29,111,242,.12)}
+.ds-c-blue{background:radial-gradient(circle at 30% 30%,#e8f1ff,#cfe0ff)}.ds-c-green{background:radial-gradient(circle at 30% 30%,#e9fbef,#c8f0d6)}.ds-c-gold{background:radial-gradient(circle at 30% 30%,#fff7df,#ffe7a6)}
+.ds-c-red{background:radial-gradient(circle at 30% 30%,#fff0f0,#ffd2d2)}.ds-c-purple{background:radial-gradient(circle at 30% 30%,#f4efff,#e0d4ff)}.ds-c-cyan{background:radial-gradient(circle at 30% 30%,#e8fbff,#c6eef8)}
+.kpi b,.kpi strong,.kpi .v,.kpi .n,.kpi .val,.kpi .num,.kpi big{color:var(--ds-ink)!important;font-weight:900!important}
+/* buttons */
+.btn:not(.ghost):not(.gold):not(.red):not(.danger):not(.bad):not(.sec):not(.secondary):not(.light):not(.outline):not(.link):not(.ds-ib){background:linear-gradient(180deg,#2f80ff,#1d63e8)!important;color:#fff!important;border:0!important;border-radius:12px!important;font-weight:700!important;box-shadow:0 4px 12px rgba(29,111,242,.25)}
+.btn.gold{background:linear-gradient(180deg,#ffd04d,#f2a900)!important;color:#2a1d00!important;border:0!important;border-radius:12px!important;font-weight:800!important;box-shadow:0 6px 14px rgba(242,169,0,.3)}
+.btn.ghost{background:#fff!important;color:var(--ds-royal)!important;border:1px solid #d7e4fa!important;border-radius:12px!important;font-weight:700!important}
+.btn.ghost:hover{background:var(--ds-sky2)!important}
+/* tabs / segmented controls: pills, selected = blue */
+.tabs,.tabs2,.seg{gap:6px!important;border:0!important;flex-wrap:wrap}
+.tabs>*,.tabs2>*,.seg>*{border-radius:999px!important;border:1px solid #dbe6f8!important;background:#fff!important;color:var(--ds-ink)!important;padding:6px 16px!important;font-weight:600!important;box-shadow:none!important}
+.tabs>.on,.tabs>.active,.tabs>.sel,.tabs>[aria-selected=true],.tabs2>.on,.tabs2>.active,.tabs2>.sel,.seg>.on,.seg>.active{background:linear-gradient(180deg,#2f80ff,#1d63e8)!important;color:#fff!important;border-color:transparent!important}
+.pill,.chip{border-radius:999px!important}
+/* tables */
+table th{background:#f1f6fe!important;color:var(--ds-ink)!important;font-weight:700!important;font-size:13px}
+table td{border-bottom:1px solid #edf2fa}
+.ds-tw{border-radius:16px!important;box-shadow:none}
+/* banners: illustration on the far side, fading to white behind the text */
+.hero.ds-hero h1,.hero.ds-hero h2,.banner.ds-hero h1,.banner.ds-hero h2,.pghero.ds-hero h1,.pghero.ds-hero h2,.hero2.ds-hero h2,.fhero h2{font-size:clamp(22px,2.8vw,32px)!important;font-weight:900!important;color:var(--ds-ink)!important;letter-spacing:-.3px}
+.hero.ds-hero,.banner.ds-hero,.pghero.ds-hero,.hero2.ds-hero{border-radius:22px!important;min-height:150px;box-shadow:0 10px 30px rgba(29,111,242,.12)!important;background-position:var(--ds-pos,right) center!important}
+/* inputs */
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{border-radius:12px}
+.ds-bar input{border-radius:999px!important;background:#fff}
+.kpi.ds-kd{min-width:0;overflow-wrap:anywhere}
+@media (max-width:760px){.kpi.ds-kd{padding-inline-start:60px!important;min-height:64px}.ds-ki{width:40px;height:40px;font-size:20px;inset-inline-start:10px}.kpis{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))!important}}

@@ -28,6 +28,9 @@ Do NOT touch the separate apps AgriTrade Pro, Lisan and Athar. The suite brand s
 - Dispute contracts: status column (Active/Voided), Void button (sets `voided_at`; a contract posted from IOM also voids its Suite link), and a "Voided contracts" list kept for the record. SQL for `suite_links`, `dc_contracts.voided_at`, `source_ref` is now recorded in `database/06_links_and_void.sql` (IF NOT EXISTS, additive).
 - Not built on purpose: poultry sale to stock (poultry already does it; would double count).
 
+## Design (owner's mockups, 2026-11-26)
+The owner sent two dashboard mockups (light blue background, white 18px cards, photo banners fading to white behind the text, KPI tiles with coloured icon circles, pill tabs, blue/gold buttons). This look is applied to every program except the Chart: portal home (`renderHome` in app.js, styles at the end of portal/style.css) and the shared skin (end of portal/ds/ds.css; ds.js `decorate()` adds emoji icon circles to `.kpi` tiles and card titles from their label, `charts()` restyles Chart.js charts). Banner art `portal/ds/img/c_*.jpg` is cropped from the owner's own mockup images (`*_rtl.jpg` are mirrored for Arabic); banners without a photo use it, banners with a program photo keep that photo.
+
 ## Hard rules
 1. Light theme only for the 7 programs (royal and sky blue, green for positive, gold for alerts, white cards, soft shadows, rounded corners). The Chart keeps its own look.
 2. Arabic mode must be 100% Arabic, English mode 100% English, no mixing. Typed user data stays as entered. Official organization and treaty names stay Latin.

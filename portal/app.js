@@ -2,21 +2,21 @@ const C = window.PORTAL_CFG;
 {const j=new URLSearchParams(location.search).get('join');if(j){location.replace('/team/?join='+encodeURIComponent(j))}}
 const sb = supabase.createClient(C.url, C.anon, {auth:{persistSession:true,detectSessionInUrl:true,flowType:'implicit'}});
 const MODS = [
- {id:'iom',ic:'⚙️',url:'/iom/',embed:true,
+ {id:'iom',ic:'🚢',col:'blue',url:'/iom/',embed:true,
   n:{ar:'إدارة العمليات المتكاملة',en:'Integrated Operations'},d:{ar:'العمليات والشحنات والعقود والمخزون في مكان واحد.',en:'Operations, shipments, contracts and inventory in one place.'}},
- {id:'team',ic:'👥',url:'/team/',embed:true,everyone:true,
+ {id:'team',ic:'👥',col:'purple',url:'/team/',embed:true,everyone:true,
   n:{ar:'فريق العمل',en:'Team Workspace'},d:{ar:'المهام والموظفين والموافقات والمحادثات.',en:'Tasks, employees, approvals and team chat.'}},
- {id:'grain',ic:'🌾',url:'/grain/',embed:true,
+ {id:'grain',ic:'🌾',col:'gold',url:'/grain/',embed:true,
   n:{ar:'تخزين الحبوب',en:'Grain Storage'},d:{ar:'الصوامع والمخزون والتنبيهات والآفات والقراءات.',en:'Silos, stock, alerts, pests and sensor readings.'}},
- {id:'dispute',ic:'⚖️',url:'/dispute/',embed:true,
+ {id:'dispute',ic:'⚖️',col:'red',url:'/dispute/',embed:true,
   n:{ar:'مركز النزاعات والتحكيم',en:'Dispute & Arbitration Center'},d:{ar:'متابعة النزاعات والتحكيم والمطالبات المالية.',en:'Disputes, arbitration stages and claims.'}},
- {id:'inst',ic:'🏛️',url:'/inst/',embed:true,
+ {id:'inst',ic:'🏛️',col:'cyan',url:'/inst/',embed:true,
   n:{ar:'مؤسسات التجارة العالمية',en:'Trade Institutions'},d:{ar:'دليل الهيئات والمؤسسات التجارية الدولية.',en:'Directory of global trade bodies and authorities.'}},
- {id:'feed',ic:'🧪',url:'/feed/',embed:true,
+ {id:'feed',ic:'🌽',col:'green',url:'/feed/',embed:true,
   n:{ar:'تركيب الأعلاف',en:'Feed Formulation'},d:{ar:'حساب تركيبة الأعلاف وأقل تكلفة وتحليل العناصر الغذائية.',en:'Feed formulation, least-cost mixes and nutrient analysis.'}},
- {id:'poultry',ic:'🐔',url:'/poultry/',embed:true,
+ {id:'poultry',ic:'🐔',col:'gold',url:'/poultry/',embed:true,
   n:{ar:'منصة الدواجن الذكية',en:'Poultry Intelligence'},d:{ar:'القطعان والأعلاف والبيطري والمبيعات والمالية لشركات الدواجن.',en:'Flocks, feed, veterinary, sales and finance for poultry companies.'}},
- {id:'chart',ic:'📈',url:'/chart/',embed:true,
+ {id:'chart',ic:'📈',col:'blue',url:'/chart/',embed:true,
   n:{ar:'شارت العقود الآجلة',en:'Futures Charts'},d:{ar:'رسوم العقود الآجلة للسلع.',en:'Commodity futures charts.'}}
 ];
 const T = {
@@ -25,13 +25,13 @@ const T = {
   tagEmb:'داخل المنصة',tagLink:'رابط خارجي',blockedT:'هذا البرنامج لا يسمح بالعرض داخل المنصة',blockedD:'لأسباب أمان يفتح في صفحة كاملة. اضغط الزر وارجع لهذه المنصة من المتصفح.',
   fnote:'لو طلب البرنامج تسجيل دخول بجوجل وما اشتغلش داخل المنصة، افتحه في صفحة كاملة.',
   sso:'دخول واحد بحساب جوجل يفتح كل البرامج. الأقسام الفرعية لكل برنامج تظهر تحت اسمه في القائمة.',
-  notadmin:'حسابك مسجّل كمستخدم عادي، ويظهر لك فريق العمل فقط.',cantSign:'تعذر تسجيل الدخول: ',lang:'English'},
+  notadmin:'حسابك مسجّل كمستخدم عادي، ويظهر لك فريق العمل فقط.',heroSub:'منصة متكاملة لتجارة الحاصلات الزراعية وإدارة الدواجن',heroTag:'أدِر · حلّل · انمُ',explore:'استكشف البرامج',progs:'البرامج',quick:'إجراءات سريعة',strip:'إدارة أذكى .. إنتاجية أعلى',qa:['إضافة قطيع','تسجيل بيع','متابعة الأسعار','تسجيل نزاع','تركيبة علف','التقارير'],ft:['بيانات السوق','تحليلات ورسوم','تركيب الأعلاف','المزارع والمخزون','الشحن والتتبع','العقود والعمليات','مؤسسات التجارة','فريق العمل'],cantSign:'تعذر تسجيل الدخول: ',lang:'English'},
  en:{title:'Agritrade Pro',loginSub:'Sign in with Google to reach all your programs from one place.',google:'Continue with Google',logout:'Sign out',home:'Home',
   admin:'Admin',user:'User',welcome:'Welcome',sub:'All your programs in one portal. Pick one to start.',open:'Open',openFull:'Open full page',
   tagEmb:'Inside portal',tagLink:'External link',blockedT:'This program does not allow embedding',blockedD:'For security it opens as a full page. Use the browser back button to return to this portal.',
   fnote:'If a program asks for Google sign-in and it fails inside the portal, open it as a full page.',
   sso:'One Google sign-in opens every program. Each program\'s sections are listed under its name in the menu.',
-  notadmin:'Your account is a regular user, so only Team Workspace is shown.',cantSign:'Sign-in failed: ',lang:'العربية'}
+  notadmin:'Your account is a regular user, so only Team Workspace is shown.',heroSub:'Integrated Platform for Agricultural Trade & Poultry Management',heroTag:'Manage · Analyze · Grow',explore:'Explore programs',progs:'Programs',quick:'Quick Actions',strip:'Smarter Management .. Higher Productivity',qa:['Add Flock','Record Sale','Check Prices','New Dispute','Feed Formula','Reports'],ft:['Live Market Data','Advanced Analytics & Charts','Feed Formulation','Farm & Stock','Logistics & Shipping','Contracts & Operations','Trade Institutions','Team Workspace'],cantSign:'Sign-in failed: ',lang:'العربية'}
 };
 let lang = localStorage.getItem('lang') || 'ar';
 let session=null, isAdmin=false;
@@ -57,12 +57,22 @@ function renderSide(){
    visible().map(m=>`<a data-go="${m.id}" class="${cur===m.id?'on':''}">${m.ic} ${m.n[lang]}${m.link?'<span class="ext">↗</span>':''}</a>`).join('');
   $$('#side a').forEach(a=>a.onclick=()=>{go(a.dataset.go);closeMenu()});
 }
+const QA=[['poultry','🐣','gold',/flock|القطعان/i],['iom','🛒','blue',/sales|المبيعات/i],['chart','📊','blue',/markets|الأسواق/i],['dispute','⚖️','red',/register|تسجيل/i],['feed','🌽','green',/formulation|تركيب/i],['iom','📑','purple',/report|التقارير/i]];
+const FT=[['chart','🌐','blue'],['chart','📈','blue'],['feed','🧮','green'],['poultry','🏠','gold'],['iom','🚢','cyan'],['dispute','📄','blue'],['inst','🏛️','cyan'],['team','👥','purple']];
 function renderHome(){
   const u=(session.user.user_metadata&&(session.user.user_metadata.full_name||session.user.user_metadata.name))||session.user.email;
-  $('#home').innerHTML = `<h2>${t('welcome')}، ${esc(u)}</h2><p class="sub">${t('sub')}</p><div class="grid">`+
-   visible().map(m=>`<div class="card" data-go="${m.id}"><div class="ic">${m.ic}</div><h3>${m.n[lang]}</h3><p>${m.d[lang]}</p><span class="tag">${m.link?t('tagLink'):(m.embed?t('tagEmb'):t('tagLink'))}</span></div>`).join('')+
-   `</div><div class="note">${t('sso')}${isAdmin?'':'<br>'+t('notadmin')}</div>`;
-  $$('#home .card').forEach(c=>c.onclick=()=>go(c.dataset.go));
+  const vis=visible(),ok=id=>vis.some(m=>m.id===id);
+  $('#home').innerHTML = `<section class="phero"><div class="pht"><h1>Agritrade <span>Pro</span></h1><p class="phs">${t('heroSub')}</p><p class="phg">${t('heroTag')}</p><p class="phw">${t('welcome')}، ${esc(u)}</p><button class="pcta" id="pcta">${t('explore')} ${lang==='ar'?'←':'→'}</button></div></section>`+
+   `<h3 class="hh2" id="progs">${t('progs')}</h3><div class="grid">`+
+   vis.map(m=>`<div class="card" data-go="${m.id}"><div class="ic ic-${m.col||'blue'}">${m.ic}</div><h3>${m.n[lang]}</h3><p>${m.d[lang]}</p><span class="tag">${t('open')} ${lang==='ar'?'←':'→'}</span></div>`).join('')+
+   `</div>`+
+   (isAdmin?`<h3 class="hh2">${t('quick')}</h3><div class="qa">`+QA.filter(q=>ok(q[0])).map((q,i)=>`<button class="qab" data-q="${QA.indexOf(q)}"><span class="ic ic-${q[2]}">${q[1]}</span><span>${t('qa')[QA.indexOf(q)]}</span></button>`).join('')+`</div>`:'')+
+   `<div class="ftr">`+FT.map((f,i)=>ok(f[0])?`<button class="ftb" data-go="${f[0]}"><span class="fti">${f[1]}</span><span>${t('ft')[i]}</span></button>`:'').join('')+`</div>`+
+   `<div class="pstrip">🏆 <b>${t('strip')}</b></div>`+
+   `<div class="note">${t('sso')}${isAdmin?'':'<br>'+t('notadmin')}</div>`;
+  $$('#home [data-go]').forEach(c=>c.onclick=()=>go(c.dataset.go));
+  $$('#home [data-q]').forEach(b=>b.onclick=()=>{const q=QA[+b.dataset.q];jumpTo(q[0],q[3])});
+  $('#pcta').onclick=()=>$('#progs').scrollIntoView({behavior:'smooth'});
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function seedSso(id){try{if(!session)return;const k={feed:'ffi_sb_session',poultry:'pl_sb_session'}[id];if(k)localStorage.setItem(k,JSON.stringify({access_token:session.access_token,refresh_token:'portal-managed'}))}catch{}}
@@ -74,7 +84,7 @@ function route(){
   const m=visible().find(x=>x.id===id);
   renderSide();
   const fw=$('#frameWrap'), home=$('#home');
-  if(!m){ fw.classList.add('hidden'); home.classList.remove('hidden'); $('#openfull').classList.add('hidden'); $('#frame').src='about:blank'; $('#frame').dataset.mod=''; if(window.Hub&&HUBV.some(h=>h.id===id)){home.innerHTML='<div id="hubv"></div>';Hub.views[id]($('#hubv'),HUBAPI)} else {renderHome(); if(window.Hub&&isAdmin){const b=document.createElement('div');b.id='hubr';home.appendChild(b);Hub.rollup(b,HUBAPI)}} return; }
+  if(!m){ fw.classList.add('hidden'); home.classList.remove('hidden'); $('#openfull').classList.add('hidden'); $('#frame').src='about:blank'; $('#frame').dataset.mod=''; if(window.Hub&&HUBV.some(h=>h.id===id)){home.innerHTML='<div id="hubv"></div>';Hub.views[id]($('#hubv'),HUBAPI)} else {renderHome(); if(window.Hub&&isAdmin){const b=document.createElement('div');b.id='hubr';const pr=$('#progs');pr?home.insertBefore(b,pr):home.appendChild(b);Hub.rollup(b,HUBAPI)}} return; }
   home.classList.add('hidden'); fw.classList.remove('hidden');
   $('#openfull').classList.remove('hidden'); $('#openfull').onclick=()=>{location.href=m.url};
   const bl=$('#blocked'), fr=$('#frame'), fn=$('#fnote');
