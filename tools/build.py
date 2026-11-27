@@ -55,6 +55,7 @@ for f in os.listdir(OUT+'/chart/js'):
     if s2!=s: open(p,'w',encoding='utf-8').write(s2)
 sub(OUT+'/chart/sw.js',[("u.pathname.startsWith('/api/')","u.pathname.includes('/api/')")])
 shutil.copytree(ROOT+'/portal/ds',OUT+'/ds',dirs_exist_ok=True)
+shutil.copytree(ROOT+'/portal/hud',OUT+'/hud',dirs_exist_ok=True)  # Command Center HUD (dark, deliberate exception like the Chart)
 for m in ['iom','team','grain','dispute','inst','feed']:
     p=OUT+'/'+m+'/index.html'
     if os.path.exists(p):

@@ -16,6 +16,8 @@ const MODS = [
   n:{ar:'تركيب الأعلاف',en:'Feed Formulation'},d:{ar:'حساب تركيبة الأعلاف وأقل تكلفة وتحليل العناصر الغذائية.',en:'Feed formulation, least-cost mixes and nutrient analysis.'}},
  {id:'poultry',ic:'🐔',col:'gold',url:'/poultry/',embed:true,
   n:{ar:'منصة الدواجن الذكية',en:'Poultry Intelligence'},d:{ar:'القطعان والأعلاف والبيطري والمبيعات والمالية لشركات الدواجن.',en:'Flocks, feed, veterinary, sales and finance for poultry companies.'}},
+ {id:'hud',ic:'🛰️',col:'gold',url:'/hud/',embed:true,
+  n:{ar:'مركز القيادة',en:'Command Center'},d:{ar:'كل البرامج في لوحة واحدة بأسلوب مركز التحكم: ما يتحرك وما ينتظر قرارك.',en:'Every program on one mission-control screen: what moves and what waits for you.'}},
  {id:'chart',ic:'📈',col:'blue',url:'/chart/',embed:true,
   n:{ar:'شارت العقود الآجلة',en:'Futures Charts'},d:{ar:'رسوم العقود الآجلة للسلع.',en:'Commodity futures charts.'}}
 ];
@@ -183,9 +185,9 @@ function readSubs(){
 function injectHide(){
   const id=$('#frame').dataset.mod, c=SUBS[id], d=frameDoc();
   if(!c||!c.hide||!d||!d.head||d.getElementById('portal-hide')) return;
-  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611271718';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611271718';d.head.appendChild(j)}
-  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611271718';d.head.appendChild(j)}
-  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611271718';d.head.appendChild(j)}
+  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611271740';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611271740';d.head.appendChild(j)}
+  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611271740';d.head.appendChild(j)}
+  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611271740';d.head.appendChild(j)}
   const s=d.createElement('style');s.id='portal-hide';
   s.textContent=c.hide+'{display:none!important}'+(PORTAL_FIX[id]||'');
   d.head.appendChild(s);
@@ -259,7 +261,7 @@ const TR_MON={Jan:'يناير',Feb:'فبراير',Mar:'مارس',Apr:'أبريل
 const TR_RE=[[/\(last known\)/g,'(آخر ما هو معروف)'],[/last known/g,'آخر ما هو معروف'],[/entered into force/g,'دخلت حيز النفاذ'],[/entry into force/g,'دخول حيز النفاذ'],[/mandatory/g,'إلزامي'],[/as amended/g,'بصيغتها المعدّلة'],[/phased in/g,'تطبيق تدريجي'],[/\(and (\d{4}) edition, check which applies\)/g,'(وإصدار $1، راجع أيهما ينطبق)'],[/(\d{4}) edition/g,'إصدار $1'],[/(\d{4}) Rules/g,'قواعد $1'],[/\bper SOLAS\b/g,'وفق سولاس'],[/Check current Rules number/g,'راجع رقم القواعد الحالي'],[/Check current Rules/g,'راجع القواعد الحالية'],[/Check current edition/g,'راجع الإصدار الحالي'],[/Check current/g,'راجع الإصدار الحالي'],[/\b(\d{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4})/g,(m,d,mo,y)=>d+' '+TR_MON[mo]+' '+y],[/HS 2022/g,'النظام المنسق 2022']];
 const trSeen=new WeakMap();
 function translateFrame(){
-  if(lang!=='ar') return; const mod=$('#frame').dataset.mod; if(!mod||mod==='chart') return;
+  if(lang!=='ar') return; const mod=$('#frame').dataset.mod; if(!mod||mod==='chart'||mod==='hud') return;
   const d=frameDoc(); if(!d||!d.body) return;
   const w=d.createTreeWalker(d.body,NodeFilter.SHOW_TEXT); let n;
   while(n=w.nextNode()){

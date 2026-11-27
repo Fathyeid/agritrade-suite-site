@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Command Center · Agritrade Pro</title>
+<meta name="theme-color" content="#07080a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hud.css">
+</head>
+<body>
+<div id="hud" class="hud">
+  <header class="hh">
+    <div class="tag"><b id="tTitle"></b><small id="tSub"></small></div>
+    <div class="hl"><b id="hLine"></b><small id="hSub"></small></div>
+    <div class="hstats" id="hStats"></div>
+    <div class="hctl">
+      <button id="bMode"></button><button id="bDemo"></button><button id="bLang"></button><a id="bBack" href="/"></a>
+    </div>
+  </header>
+  <section class="stage" id="stage">
+    <div class="frame-tl"></div><div class="frame-tr"></div><div class="frame-bl"></div><div class="frame-br"></div>
+    <div class="stitle" id="sTitle"></div><div class="sright" id="sRight"></div>
+    <canvas id="cv"></canvas>
+    <div id="labels"></div>
+    <div class="box tl" id="boxList"></div>
+    <div class="box tr" id="boxRadar"></div>
+    <div class="box bl" id="boxFocus"></div>
+    <div class="sfoot" id="sFoot"></div>
+    <div class="tip hidden" id="tip"></div>
+    <div class="empty hidden" id="empty"></div>
+  </section>
+  <section class="panels" id="panels"></section>
+  <footer class="ticker"><b id="tkL"></b><span id="tk"></span></footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/config.js"></script>
+<script src="/hub.js"></script>
+<script src="hud.js"></script>
+</body>
+</html>

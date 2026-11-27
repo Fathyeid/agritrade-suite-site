@@ -13,3 +13,5 @@ Object.assign(window.I18N_AR,{"Cloud sync & Telegram alerts": "المزامنة 
 Object.assign(window.I18N_AR,{"Insights": "رؤى السوق", "📐 Position": "📐 حجم المركز", "🧠 Analysis": "🧠 تحليل", "Position size: click entry, stop and target on the chart": "حجم المركز: اضغط الدخول والوقف والهدف على الرسم", "Written analysis of the active chart": "تحليل مكتوب للرسم النشط"});
 
 Object.assign(window.I18N_AR,{"Live: Crypto": "لحظي: العملات المشفرة", "Live: Forex": "لحظي: الفوركس", "Live: Commodity ETFs": "لحظي: صناديق السلع", "Live: US stocks": "لحظي: الأسهم الأمريكية", "PAX Gold (1 token = 1 oz gold)": "باكس جولد (١ وحدة = ١ أوقية ذهب)"});
+
+Object.assign(window.I18N_AR,{"🛰️ HUD":"🛰️ مركز القيادة","Command center: all your markets on one screen":"مركز القيادة: كل أسواقك في شاشة واحدة"});

@@ -65,6 +65,14 @@
    "destination": "https://fathyeid.github.io/agritrade-suite-site/grain/index.html"
   },
   {
+   "source": "/hud",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/hud/index.html"
+  },
+  {
+   "source": "/hud/",
+   "destination": "https://fathyeid.github.io/agritrade-suite-site/hud/index.html"
+  },
+  {
    "source": "/inst",
    "destination": "https://fathyeid.github.io/agritrade-suite-site/inst/index.html"
   },
