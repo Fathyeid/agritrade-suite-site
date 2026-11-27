@@ -12,5 +12,6 @@ import h_providers from '../server/chart/providers.mjs';
 import h_quotes from '../server/chart/quotes.mjs';
 import h_search from '../server/chart/search.mjs';
 import h_universe from '../server/chart/universe.mjs';
-const M={calendar:h_calendar,chart:h_chart,contracts:h_contracts,cot:h_cot,detail:h_detail,econ:h_econ,egx:h_egx,market:h_market,mktcountry:h_mktcountry,news:h_news,providers:h_providers,quotes:h_quotes,search:h_search,universe:h_universe};
+import h_usda from '../server/chart/usda.mjs';
+const M={calendar:h_calendar,chart:h_chart,contracts:h_contracts,cot:h_cot,detail:h_detail,econ:h_econ,egx:h_egx,market:h_market,mktcountry:h_mktcountry,news:h_news,providers:h_providers,quotes:h_quotes,search:h_search,universe:h_universe,usda:h_usda};
 export default function handler(req,res){const fn=String((req.query&&req.query.fn)||'');const h=M[fn];if(!h){res.status(404).json({error:'unknown endpoint'});return}return h(req,res)}

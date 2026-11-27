@@ -50,6 +50,7 @@ document.addEventListener('keydown',e=>{const p=window.app&&window.app.active;if
 /* =============================== 2. SHARE CHART LINK =============================== */
 const b64u=bytes=>{let s='';bytes.forEach(b=>s+=String.fromCharCode(b));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
 const ub64u=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const bin=atob(s);return Uint8Array.from(bin,c=>c.charCodeAt(0))};
+window.PRO_PACK=(o)=>pack(o);
 async function pack(obj){const raw=new TextEncoder().encode(JSON.stringify(obj));if(window.CompressionStream){const cs=new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'));return 'z'+b64u(new Uint8Array(await new Response(cs).arrayBuffer()))}return 'j'+b64u(raw)}
 async function unpack(s){const k=s[0],b=ub64u(s.slice(1));if(k==='z'){const ds=new Blob([b]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return JSON.parse(await new Response(ds).text())}return JSON.parse(new TextDecoder().decode(b))}
 App.prototype.shareChart=async function(){const draws=Store.get('draws',{});

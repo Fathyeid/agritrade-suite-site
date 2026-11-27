@@ -27,6 +27,7 @@ pull();setInterval(()=>{if(document.visibilityState==='visible'&&CLOUD.state==='
 window.addEventListener('pagehide',()=>{if(pushT){clearTimeout(pushT);push()}});
 
 /* ---- Telegram alerts card in the Alerts tab ---- */
+window.CLOUD_API={sess:()=>sess(),api:(p,o)=>api(p,o)};
 async function api(path,opt){const s=sess();if(!s)throw new Error('signin');const r=await fetch(SB+'/rest/v1/'+path,{...opt,headers:{...H(s),Prefer:'return=representation',...(opt&&opt.headers||{})}});const t=await r.text();if(!r.ok){if(missing(t)){CLOUD.noTable=true;throw new Error('table')}throw new Error(t.slice(0,140))}return t?JSON.parse(t):null}
 const _alerts=App.prototype.tAlerts;
 App.prototype.tAlerts=function(){_alerts.call(this);const c=this.tabc,p=this.active,s=sess();

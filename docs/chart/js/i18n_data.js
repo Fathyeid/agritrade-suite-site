@@ -18,3 +18,4 @@ Object.assign(window.I18N_AR,{"🛰️ HUD":"🛰️ مركز القيادة","C
 
 Object.assign(window.I18N_AR,{"Plan":"خطة التداول","Academy":"الأكاديمية","🧩 SMC+":"🧩 سمارت موني+","Smart money, auto Fibonacci, harmonics, pivots":"سمارت موني، فيبوناتشي تلقائي، أنماط توافقية، نقاط ارتكاز","Voice and typed commands (Ctrl+K)":"أوامر صوتية ومكتوبة (Ctrl+K)"});
 Object.assign(window.I18N_AR,{"Smart tools":"الأدوات الذكية","🎤 Voice":"🎤 أوامر صوتية"});
+Object.assign(window.I18N_AR,{"Agri":"الزراعة والأسواق","ML Lab":"مختبر الذكاء الاصطناعي","Ideas":"أفكار التداول","▦ Grid":"▦ شبكة الشارتات","Mini charts of the whole watchlist":"شارتات صغيرة لكل قائمة المراقبة"});
