@@ -109,7 +109,7 @@
     return '<div class="pd id">' + '<div class="id-top"><div class="id-left">' + hero + kp + '<div class="id-r2">' + prices + whT + '</div></div><div class="id-right">' + mkt + quick + '</div></div><div class="pd-r4">' + plan + sp + rep + farm + '</div>' + ft + '</div>';
   }
 
-  function css() { if (document.getElementById('pd-css')) return; var l = document.createElement('link'); l.id = 'pd-css'; l.rel = 'stylesheet'; l.href = '/ds/dash.css?v=202611272020'; document.head.appendChild(l); }
+  function css() { if (document.getElementById('pd-css')) return; var l = document.createElement('link'); l.id = 'pd-css'; l.rel = 'stylesheet'; l.href = '/ds/dash.css?v=202611272033'; document.head.appendChild(l); }
   function ready() { try { return typeof S === 'object' && typeof render === 'function' && typeof stockMap === 'function' && typeof PAGE !== 'undefined'; } catch (e) { return false; } }
   function paint() {
     try { if (PAGE !== 'overview' || ST.full) return; var v = document.getElementById('view'); if (!v) return; css(); var demo = v.querySelector('.demo'); v.innerHTML = (demo ? demo.outerHTML : '') + dash(); }
