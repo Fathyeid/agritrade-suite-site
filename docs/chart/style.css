@@ -224,3 +224,4 @@ body.term #left{display:none}body.term .tgrid{grid-template-columns:1fr 1fr}
 .acad-bar .b-buy{background:#26a69a;color:#fff}.acad-bar .b-sell{background:#ef5350;color:#fff}
 .sent{font-size:11px;margin-inline-end:6px;font-weight:600}.news-mood .cot-bar{height:8px}.news-mood .cot-bar i{background:#26a69a}
 .acad-on .psym,.acad-on .lg .t,.acad-on .dhead,.acad-on .dtitle,.acad-on .live-badge{visibility:hidden}
+.cmd-log{max-height:120px;overflow:auto;font-size:12px;margin:4px 0}.cmd-log div{padding:2px 0;border-bottom:1px solid var(--line);unicode-bidi:plaintext}
