@@ -216,3 +216,11 @@ body.term #left{display:none}body.term .tgrid{grid-template-columns:1fr 1fr}
 .ins-an p{line-height:1.8;margin:0 0 8px;font-size:14px}
 
 .dot.live{background:#26a69a;box-shadow:0 0 0 0 rgba(38,166,154,.7);animation:livepulse 1.6s infinite}@keyframes livepulse{0%{box-shadow:0 0 0 0 rgba(38,166,154,.7)}70%{box-shadow:0 0 0 6px rgba(38,166,154,0)}100%{box-shadow:0 0 0 0 rgba(38,166,154,0)}}
+/* smart.js: plan, academy, voice, news mood */
+.row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}.row2 input[type=checkbox]{flex:none}
+#tabc textarea{width:100%;box-sizing:border-box;font:inherit;background:var(--bg2,#1b1f24);color:inherit;border:1px solid var(--line);border-radius:6px;padding:6px}
+.cmd-mic{font-size:18px;min-width:42px}.cmd-mic.on{background:#ef5350!important;color:#fff;animation:mic 1s infinite}@keyframes mic{50%{opacity:.55}}
+.acad-bar{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:30;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(20,24,30,.94);border:1px solid var(--line);border-radius:10px;padding:8px 12px;max-width:92%;color:#fff}
+.acad-bar .b-buy{background:#26a69a;color:#fff}.acad-bar .b-sell{background:#ef5350;color:#fff}
+.sent{font-size:11px;margin-inline-end:6px;font-weight:600}.news-mood .cot-bar{height:8px}.news-mood .cot-bar i{background:#26a69a}
+.acad-on .psym,.acad-on .lg .t,.acad-on .dhead,.acad-on .dtitle,.acad-on .live-badge{visibility:hidden}

@@ -57,7 +57,7 @@ const RULES=[
  [/^(.+ · .+)$/,(m,t)=>{const p=m[1].split(' · ');const o=p.map(x=>D.hasOwnProperty(x)?D[x]:x);return o.some((x,i)=>x!==p[i])?o.join(' · '):null}],
  [/^(\d+)\/(\d+) checks passed$/,(m)=>`نجح ${m[1]} من ${m[2]} فحصاً`],
  [/^page (\d+)\/(\d+)$/,(m)=>`صفحة ${m[1]}/${m[2]}`],
- [/^(\d+) headlines\. Source: Google News RSS \(unofficial\), fetched (.*)\. Headlines only: no article text, no sentiment, not a licensed news feed\.$/,(m)=>`${m[1]} عنواناً. المصدر: Google News RSS (غير رسمي)، جُلب ${AP(m[2])}. عناوين فقط: بلا نص المقال ولا تحليل مشاعر وليست خدمة أخبار مرخصة. تظهر العناوين بلغة مصدرها الأصلية.`],
+ [/^(\d+) headlines\. Source: Google News RSS \(unofficial\), fetched (.*)\. Headlines only: no article text, not a licensed news feed\. Mood badges are keyword-based\.$/,(m)=>`${m[1]} عنواناً. المصدر: Google News RSS (غير رسمي)، جُلب ${AP(m[2])}. عناوين فقط: بلا نص المقال وليست خدمة أخبار مرخصة، وتقييم الاتجاه آلي من كلمات العنوان. تظهر العناوين بلغة مصدرها الأصلية.`],
  [/^(.+?) \| ([A-Z][a-z]{2}) (\d{1,2}), (\d{1,2}:\d{2} [AP]M) \((\d+) (h|d|min) ago\)(?: \| also mentions (.*))?$/,(m)=>`${m[1]} | ${MON[m[2]]||m[2]} ${m[3]}، ${AP(m[4])} (قبل ${m[5]} ${({h:'س',d:'يوم',min:'د'})[m[6]]})${m[7]?' | يذكر أيضاً '+m[7]:''}`],
  [/^(.+) · (\d+\/\d+\/\d{4}), (\d+:\d+:\d+ [AP]M)$/,(m)=>`${m[1]} · ${m[2]}، ${AP(m[3])}`],
  [/^Source: Yahoo Finance, (.*)$/,(m,t)=>`المصدر: ياهو فاينانس، ${t(m[1])}`],
@@ -113,6 +113,7 @@ function trCore(s,depth){
  return s;
 }
 const cache=new Map();
+window.I18N_TR=s=>tr(s);
 function tr(s,depth=0){
  if(LANG!=='ar'||!s||typeof s!=='string'||!hasLetters(s))return s;
  const t=s.trim();if(!t)return s;

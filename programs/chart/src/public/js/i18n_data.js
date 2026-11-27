@@ -15,3 +15,5 @@ Object.assign(window.I18N_AR,{"Insights": "رؤى السوق", "📐 Position": 
 Object.assign(window.I18N_AR,{"Live: Crypto": "لحظي: العملات المشفرة", "Live: Forex": "لحظي: الفوركس", "Live: Commodity ETFs": "لحظي: صناديق السلع", "Live: US stocks": "لحظي: الأسهم الأمريكية", "PAX Gold (1 token = 1 oz gold)": "باكس جولد (١ وحدة = ١ أوقية ذهب)"});
 
 Object.assign(window.I18N_AR,{"🛰️ HUD":"🛰️ مركز القيادة","Command center: all your markets on one screen":"مركز القيادة: كل أسواقك في شاشة واحدة"});
+
+Object.assign(window.I18N_AR,{"Plan":"خطة التداول","Academy":"الأكاديمية","🧩 SMC+":"🧩 سمارت موني+","Smart money, auto Fibonacci, harmonics, pivots":"سمارت موني، فيبوناتشي تلقائي، أنماط توافقية، نقاط ارتكاز","Voice and typed commands (Ctrl+K)":"أوامر صوتية ومكتوبة (Ctrl+K)"});
