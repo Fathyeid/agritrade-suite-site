@@ -25,10 +25,25 @@ const net=x=>x&&x[0]!=null&&x[1]!=null?x[0]-x[1]:null;
 const k=v=>v==null?'-':Math.abs(v)>=1e6?(v/1e6).toFixed(2)+'M':Math.abs(v)>=1e3?(v/1e3).toFixed(1)+'K':String(Math.round(v));
 const sg=v=>v==null?'':(v>0?'+':'')+k(v);
 const clean=n=>String(n||'').replace(/\s+-\s+.*$/,'').replace(/\s+/g,' ').trim();
+/* data: the suite server function /api/cot first; if it is not available (not deployed yet, or down),
+   read the same free CFTC datasets directly from the browser (CFTC's public API allows cross-site reads). */
+const DS={legacy:'6dca-aqww',disagg:'72hh-3qpy',tff:'gpe5-46if'};
+const CAT={legacy:[['spec',/^noncomm_positions_long_all$/,/^noncomm_positions_short_all$/],['comm',/^comm_positions_long_all$/,/^comm_positions_short_all$/],['small',/^nonrept_positions_long_all$/,/^nonrept_positions_short_all$/]],
+ disagg:[['mm',/^m_money_positions_long(_all)?$/,/^m_money_positions_short(_all)?$/],['prod',/^prod_merc_positions_long(_all)?$/,/^prod_merc_positions_short(_all)?$/],['swap',/^swap_+positions_long(_all)?$/,/^swap_+positions_short(_all)?$/],['other',/^other_rept_positions_long(_all)?$/,/^other_rept_positions_short(_all)?$/],['small',/^nonrept_positions_long_all$/,/^nonrept_positions_short_all$/]],
+ tff:[['am',/^asset_mgr_positions_long(_all)?$/,/^asset_mgr_positions_short(_all)?$/],['lev',/^lev_money_positions_long(_all)?$/,/^lev_money_positions_short(_all)?$/],['dealer',/^dealer_positions_long(_all)?$/,/^dealer_positions_short(_all)?$/],['other',/^other_rept_positions_long(_all)?$/,/^other_rept_positions_short(_all)?$/],['small',/^nonrept_positions_long_all$/,/^nonrept_positions_short_all$/]]};
+const fk=(r,re)=>Object.keys(r).find(x=>re.test(x)),nm=v=>v==null||v===''?null:Number(String(v).replace(/,/g,''));
+function norm(r,rep){const g={};CAT[rep].forEach(([c,l,s])=>{const a=fk(r,l),b=fk(r,s);if(a||b)g[c]=[nm(a&&r[a]),nm(b&&r[b])]});
+ return {date:String(r[fk(r,/^report_date_as_yyyy_mm_dd$/)||fk(r,/^report_date/)]||'').slice(0,10),name:r[fk(r,/^market_and_exchange_names?$/)]||'',code:String(r[fk(r,/^cftc_contract_market_code$/)]||'').trim(),oi:nm(r[fk(r,/^open_interest_all$/)]),g,
+  ch:rep==='legacy'?[nm(r[fk(r,/^change_in_noncomm_long_all$/)]),nm(r[fk(r,/^change_in_noncomm_short_all$/)])]:null}}
+async function soc(rep,q){const r=await fetch('https://publicreporting.cftc.gov/resource/'+DS[rep]+'.json?'+q);if(!r.ok)throw new Error('CFTC '+r.status);return r.json()}
+async function srv(q){const r=await fetch('/api/cot'+q);const j=await r.json().catch(()=>null);if(!r.ok||!j||!j.rows)throw new Error((j&&j.error)||('HTTP '+r.status));return j.rows}
+async function directList(){const last=await soc('legacy','$select=report_date_as_yyyy_mm_dd&$order=report_date_as_yyyy_mm_dd%20DESC&$limit=1');const d=String(last[0]&&last[0].report_date_as_yyyy_mm_dd||'').slice(0,10);if(!d)throw new Error('no data');
+ return (await soc('legacy','$where='+encodeURIComponent("report_date_as_yyyy_mm_dd='"+d+"T00:00:00.000'")+'&$limit=3000')).map(r=>norm(r,'legacy'))}
+async function directHist(code,rep){return (await soc(rep,'$where='+encodeURIComponent("cftc_contract_market_code='"+code+"'")+'&$order=report_date_as_yyyy_mm_dd%20DESC&$limit=156')).map(r=>norm(r,rep)).filter(r=>r.date).reverse()}
 let LIST=null,LISTP=null;
-async function getList(){if(LIST)return LIST;if(!LISTP)LISTP=fetch('/api/cot').then(r=>r.json()).then(j=>{if(!j.rows)throw new Error(j.error||'no data');LIST=j.rows.map(r=>Object.assign(r,{grp:grpOf(r)}));return LIST}).catch(e=>{LISTP=null;throw e});return LISTP}
+async function getList(){if(LIST)return LIST;if(!LISTP)LISTP=srv('').catch(()=>directList()).then(rows=>{if(!rows.length)throw new Error('no data');LIST=rows.map(r=>Object.assign(r,{grp:grpOf(r)}));return LIST}).catch(e=>{LISTP=null;throw e});return LISTP}
 const HIST={};
-async function getHist(code,rep){const kk=rep+'|'+code;if(HIST[kk])return HIST[kk];const j=await (await fetch('/api/cot?code='+encodeURIComponent(code)+'&rep='+rep+'&weeks=156')).json();if(!j.rows)throw new Error(j.error||'no data');HIST[kk]=j.rows;return j.rows}
+async function getHist(code,rep){const kk=rep+'|'+code;if(HIST[kk])return HIST[kk];const rows=await srv('?code='+encodeURIComponent(code)+'&rep='+rep+'&weeks=156').catch(()=>directHist(code,rep));HIST[kk]=rows;return rows}
 
 App.prototype.tCOT=function(){
  const c=this.tabc,st=Store.get('cotcfg',{g:'All',q:''});
