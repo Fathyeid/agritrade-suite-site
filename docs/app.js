@@ -183,9 +183,9 @@ function readSubs(){
 function injectHide(){
   const id=$('#frame').dataset.mod, c=SUBS[id], d=frameDoc();
   if(!c||!c.hide||!d||!d.head||d.getElementById('portal-hide')) return;
-  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611270242';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611270242';d.head.appendChild(j)}
-  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611270242';d.head.appendChild(j)}
-  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611270242';d.head.appendChild(j)}
+  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611270254';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611270254';d.head.appendChild(j)}
+  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611270254';d.head.appendChild(j)}
+  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611270254';d.head.appendChild(j)}
   const s=d.createElement('style');s.id='portal-hide';
   s.textContent=c.hide+'{display:none!important}'+(PORTAL_FIX[id]||'');
   d.head.appendChild(s);
