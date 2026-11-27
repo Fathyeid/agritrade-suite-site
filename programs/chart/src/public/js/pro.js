@@ -178,6 +178,7 @@ const _top=App.prototype.buildTop;
 App.prototype.buildTop=function(){_top.call(this);const t=$('#top');
  t.append(el('span',{class:'pro-tools'},el('button',{title:'Bar replay: replay the market bar by bar from any date',onclick:()=>this.replayStart()},'⏪ Replay'),el('button',{title:'Auto trendlines, support/resistance and chart patterns',onclick:()=>this.autoPatterns()},'✨ Auto patterns'),
   el('button',{title:'Multi-timeframe indicators',onclick:()=>this.mtfDialog()},'⧉ MTF'),el('button',{title:'Share this chart by link',onclick:()=>this.shareChart()},'🔗 Share')))};
+window.PRO={pivots,findPatterns,atr};
 window.addEventListener('DOMContentLoaded',()=>setTimeout(openShared,300));
 window.addEventListener('hashchange',()=>{if(/share=/.test(location.hash))openShared()});
 })();

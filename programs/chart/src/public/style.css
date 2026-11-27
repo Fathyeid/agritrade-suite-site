@@ -204,3 +204,13 @@ body.term #left{display:none}body.term .tgrid{grid-template-columns:1fr 1fr}
 .rp-bar{position:absolute;left:8px;right:8px;top:30px;margin:0 auto;width:fit-content;z-index:6;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;max-width:calc(100% - 16px);box-sizing:border-box;background:var(--panel);border:1px solid #2962ff;border-radius:8px;padding:6px 8px;box-shadow:0 6px 20px rgba(0,0,0,.45);font-size:12px}
 .rp-bar b{color:#2962ff}.rp-bar button,.rp-bar select,.rp-bar input{padding:3px 8px;font-size:12px}.rp-info{color:var(--mut);unicode-bidi:plaintext}.rp-pnl{font-weight:700;unicode-bidi:plaintext}
 @media(max-width:700px){.rp-bar{top:28px;gap:4px;padding:5px}.rp-bar input[type=date]{width:118px!important}}
+/* insights */
+.ins-box{margin-top:6px}.ins-bars{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.ins-row{display:grid;grid-template-columns:42px 1fr 64px;gap:6px;align-items:center;font-size:12px}.ins-row span{text-align:end;unicode-bidi:plaintext}
+.ins-track{position:relative;height:12px;background:rgba(128,128,128,.12);border-radius:6px;direction:ltr}.ins-track i{position:absolute;top:0;bottom:0;border-radius:6px}.ins-track i.pos{background:var(--g)}.ins-track i.neg{background:var(--r)}
+.ins-rrg{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;margin:6px 0;direction:ltr}
+.ins-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:6px 0}
+.ins-card{border:1px solid var(--line);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:3px;cursor:pointer;font-size:12px}.ins-card:hover{background:var(--btnh)}.ins-card small{color:var(--mut)}.ins-card b{font-size:18px;unicode-bidi:plaintext}.ins-sp{display:block;max-width:100%}
+.pos-panel{position:absolute;top:30px;inset-inline-end:70px;z-index:7;background:var(--panel);border:1px solid #2962ff;border-radius:8px;padding:8px 10px;width:min(300px,90%);font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:6px}
+.pos-h{display:flex;gap:6px;align-items:center}.pos-h b{flex:1;color:#2962ff}.pos-out{display:flex;flex-direction:column;gap:3px;unicode-bidi:plaintext}.pos-big{font-size:18px;font-weight:700}
+.ins-an p{line-height:1.8;margin:0 0 8px;font-size:14px}

@@ -45,6 +45,7 @@ async function getList(){if(LIST)return LIST;if(!LISTP)LISTP=srv('').catch(()=>d
 const HIST={};
 async function getHist(code,rep){const kk=rep+'|'+code;if(HIST[kk])return HIST[kk];const rows=await srv('?code='+encodeURIComponent(code)+'&rep='+rep+'&weeks=156').catch(()=>directHist(code,rep));HIST[kk]=rows;return rows}
 
+window.COTX={getList,getHist,MK,net,grpOf};
 App.prototype.tCOT=function(){
  const c=this.tabc,st=Store.get('cotcfg',{g:'All',q:''});
  const q=el('input',{placeholder:'Search market…',value:st.q||'',style:'width:100%'});
