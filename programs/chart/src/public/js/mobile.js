@@ -23,6 +23,8 @@ function init(){if(!window.app||!app.tfBox||ready)return false;ready=true;
   const g=(items)=>{const d=document.createElement('div');d.className='mg';items.forEach(([t,f])=>{const b=document.createElement('button');b.textContent=t;b.onclick=f;d.append(b)});sheet.append(d)};
   h('Terminal');g([['Terminal workspace',()=>{closeAll();mark('Chart');if(typeof DASH!=='undefined'&&DASH.tbtn&&!document.body.classList.contains('term'))DASH.tbtn.click()}]]);
   h('Language');g([['عربي / English',()=>{closeAll();window.I18N&&I18N.toggle()}]]);
+  const tools=[...document.querySelectorAll('#top .pro-tools button')].filter(b=>b.textContent.trim());
+  if(tools.length){h('Smart tools');g(tools.map(b=>[b.textContent.trim(),()=>{closeAll();mark('Chart');b.click()}]))}
   h('Tabs');g(Object.keys(app.tabDefs).map(k=>[k,()=>openTab(k)]));
   h('Chart');g([['Drawing tools',()=>{closeAll();mark('Chart');document.getElementById('left').classList.add('open')}],['Chart settings',()=>{document.body.classList.toggle('cpon');closeAll();mark('Chart')}],['Details panel',()=>{closeAll();mark('Chart');const d=document.getElementById('detail');d&&d.scrollIntoView()}],['Dashboard',()=>{closeAll();typeof DASH!=='undefined'&&DASH.show()}],['Settings',()=>{closeAll();app.settings()}],['Theme',()=>app.toggleTheme()]].concat(/android/i.test(navigator.userAgent)&&!/wv\)|; wv/i.test(navigator.userAgent)?[['Android app (APK download)',()=>{location.href='GlobalChart.apk'}]]:[]))}
  window.MOB={go,openTab};

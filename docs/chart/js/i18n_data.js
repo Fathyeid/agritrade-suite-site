@@ -17,3 +17,4 @@ Object.assign(window.I18N_AR,{"Live: Crypto": "لحظي: العملات المش
 Object.assign(window.I18N_AR,{"🛰️ HUD":"🛰️ مركز القيادة","Command center: all your markets on one screen":"مركز القيادة: كل أسواقك في شاشة واحدة"});
 
 Object.assign(window.I18N_AR,{"Plan":"خطة التداول","Academy":"الأكاديمية","🧩 SMC+":"🧩 سمارت موني+","Smart money, auto Fibonacci, harmonics, pivots":"سمارت موني، فيبوناتشي تلقائي، أنماط توافقية، نقاط ارتكاز","Voice and typed commands (Ctrl+K)":"أوامر صوتية ومكتوبة (Ctrl+K)"});
+Object.assign(window.I18N_AR,{"Smart tools":"الأدوات الذكية","🎤 Voice":"🎤 أوامر صوتية"});

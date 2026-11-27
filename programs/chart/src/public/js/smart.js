@@ -180,5 +180,5 @@ App.prototype.buildRight=function(){_right.call(this);this.tabDefs.Plan=()=>this
  const mk=k=>el('button',{'data-tab':k,onclick:()=>this.showTab(k)},k);const pp=this.tabs.querySelector('[data-tab=Paper]');const b1=mk('Plan'),b2=mk('Academy');pp?(pp.after(b1),b1.after(b2)):(this.tabs.append(b1,b2))};
 const _top=App.prototype.buildTop;
 App.prototype.buildTop=function(){_top.call(this);const box=document.querySelector('#top .pro-tools')||$('#top');
- box.append(el('button',{title:'Smart money, auto Fibonacci, harmonics, pivots',onclick:()=>this.smartDialog()},'🧩 SMC+'),el('button',{title:'Voice and typed commands (Ctrl+K)',onclick:()=>this.commandBox()},'🎤'))};
+ box.append(el('button',{title:'Smart money, auto Fibonacci, harmonics, pivots',onclick:()=>this.smartDialog()},'🧩 SMC+'),el('button',{title:'Voice and typed commands (Ctrl+K)',onclick:()=>this.commandBox()},'🎤 Voice'))};
 })();
