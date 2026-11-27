@@ -2,6 +2,12 @@
 // Free plan = 12,200 calls/month, so every response is cached (in memory + CDN): 10 min while the market is open, 3 h otherwise.
 const BASE = 'https://api.oanor.com/egx-api/v1/';
 const mem = new Map();
+// Free plan allows 2 requests/second: space upstream calls at least 700 ms apart (per server instance) and retry a 429 once.
+let chain = Promise.resolve(), lastAt = 0;
+const gate = () => { const p = chain.then(async () => { const w = lastAt + 700 - Date.now(); if (w > 0) await new Promise(r => setTimeout(r, w)); lastAt = Date.now(); }); chain = p.catch(() => {}); return p; };
+async function upstream(url, key) {
+  for (let i = 0; i < 2; i++) { await gate(); const r = await fetch(url, { headers: { 'x-oanor-key': key } }); if (r.status !== 429 || i) return r; await new Promise(r2 => setTimeout(r2, 1500)); }
+}
 function cairoOpen() {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Cairo', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date()).map(x => [x.type, x.value]));
   const m = (+p.hour) * 60 + (+p.minute);
@@ -26,9 +32,9 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', `public, s-maxage=${ttl / 1000}, stale-while-revalidate=${ttl / 1000}`);
   if (hit && now - hit.at < ttl) return res.status(200).json({ ...hit.v, cached: true });
   try {
-    const r = await fetch(BASE + path, { headers: { 'x-oanor-key': key } });
+    const r = await upstream(BASE + path, key);
     const j = await r.json().catch(() => null);
-    if (r.status === 429) throw new Error('monthly or per-second quota reached');
+    if (r.status === 429) throw new Error('rate limit reached (2 requests/second or monthly quota on the free plan), try again shortly');
     if (!r.ok || !j || !j.data) throw new Error('upstream ' + r.status);
     const v = { op, data: j.data, source: 'oanor EGX API (The Egyptian Exchange via TradingView screener). Free plan, not official, may be delayed.', fetched: new Date().toISOString() };
     mem.set(path, { at: now, v });
