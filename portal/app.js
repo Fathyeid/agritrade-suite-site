@@ -16,7 +16,7 @@ const MODS = [
   n:{ar:'تركيب الأعلاف',en:'Feed Formulation'},d:{ar:'حساب تركيبة الأعلاف وأقل تكلفة وتحليل العناصر الغذائية.',en:'Feed formulation, least-cost mixes and nutrient analysis.'}},
  {id:'poultry',ic:'🐔',col:'gold',url:'/poultry/',embed:true,
   n:{ar:'منصة الدواجن الذكية',en:'Poultry Intelligence'},d:{ar:'القطعان والأعلاف والبيطري والمبيعات والمالية لشركات الدواجن.',en:'Flocks, feed, veterinary, sales and finance for poultry companies.'}},
- {id:'hud',ic:'🛰️',col:'gold',url:'/hud/',embed:true,
+ {id:'hud',ic:'🛰️',col:'gold',url:'/hud/index.html',embed:true,
   n:{ar:'مركز القيادة',en:'Command Center'},d:{ar:'كل البرامج في لوحة واحدة بأسلوب مركز التحكم: ما يتحرك وما ينتظر قرارك.',en:'Every program on one mission-control screen: what moves and what waits for you.'}},
  {id:'chart',ic:'📈',col:'blue',url:'/chart/',embed:true,
   n:{ar:'شارت العقود الآجلة',en:'Futures Charts'},d:{ar:'رسوم العقود الآجلة للسلع.',en:'Commodity futures charts.'}}
