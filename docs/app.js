@@ -142,7 +142,7 @@ function frameDoc(){try{return $('#frame').contentDocument}catch{return null}}
 const ICONS=[
  [/^مهامي$/,'✅'],[/^مهام الفريق$/,'👥'],[/سجل النشاط/,'🕒'],[/تغذية الإدارة/,'📣'],[/مركز الموافقات/,'🛡️'],[/الاجتماع اليومي/,'🗓️'],[/تسليم العمل/,'🤝'],[/^الإعلانات$/,'📢'],
  [/نتائج البحث/,'🔎'],[/جمعيات الحبوب/,'🌾'],[/التحكيم وتسوية/,'⚖️'],[/المنظمات التجارية الدولية/,'🌐'],[/هيئات الجمارك/,'🛃'],[/سلامة الغذاء/,'🧪'],[/المنظمات البحرية/,'🚢'],[/البنوك وتمويل/,'🏦'],[/الفحص والشهادات/,'✅'],[/الهيئات الحكومية/,'🏛️'],[/الجهات المصرية/,'🇪🇬'],[/مكتبة القواعد/,'📚'],[/حسب الدولة/,'📇'],[/مصفوفة الجهات/,'🧮'],[/دليل نزاعات/,'🧭'],[/أخبار وتحديثات/,'📰'],[/خريطة علاقات/,'🕸️'],[/خبير التجارة/,'🤖'],[/أدوات وميزات/,'🛠️'],[/المصادر والتحقق/,'🔗'],
- [/^cot$|مراكز المتعاملين/i,'🏦'],[/^الأسواق$/,'🌍'],[/قائمة المراقبة/,'⭐'],[/^الماسح$|^الماسحات$/,'🔎'],[/^الارتباط$/,'🔗'],[/^اليوميات$/,'📓'],[/^تجريبي$/,'🧾'],[/^المحفظة$/,'💼'],[/^التحوط$/,'🛡️'],[/العقود الآجلة/,'📅'],[/^العقود$/,'📃'],[/^الخيارات$/,'🎯'],[/^الروبوتات$/,'🤖'],[/^السكربت$/,'💻'],[/^المحلل$/,'🧠'],[/مساحة العمل/,'🗂️'],[/^الأخبار$/,'📰'],[/^المزودون$/,'🔌'],[/الاختبار الرجعي/,'⏪'],[/الأدوار والصلاحيات/,'👥'],[/contracts.{1,5}parties/i,'📄'],[/categor/i,'🏷️'],[/sample data/i,'🧪'],
+ [/^cot$|مراكز المتعاملين/i,'🏦'],[/^insights$|رؤى السوق/i,'🔭'],[/^optimizer$|المُحسِّن|المحسن/i,'🎛️'],[/^egx$|البورصة المصرية/i,'🇪🇬'],[/^commodities$|^السلع$/i,'🛢️'],[/^positioning$|المراكز/i,'📊'],[/^quote$|^السعر$/i,'💲'],[/^الأسواق$/,'🌍'],[/قائمة المراقبة/,'⭐'],[/^الماسح$|^الماسحات$/,'🔎'],[/^الارتباط$/,'🔗'],[/^اليوميات$/,'📓'],[/^تجريبي$/,'🧾'],[/^المحفظة$/,'💼'],[/^التحوط$/,'🛡️'],[/العقود الآجلة/,'📅'],[/^العقود$/,'📃'],[/^الخيارات$/,'🎯'],[/^الروبوتات$/,'🤖'],[/^السكربت$/,'💻'],[/^المحلل$/,'🧠'],[/مساحة العمل/,'🗂️'],[/^الأخبار$/,'📰'],[/^المزودون$/,'🔌'],[/الاختبار الرجعي/,'⏪'],[/الأدوار والصلاحيات/,'👥'],[/contracts.{1,5}parties/i,'📄'],[/categor/i,'🏷️'],[/sample data/i,'🧪'],
  [/facilit/i,'🏭'],[/silos? manag/i,'🗄️'],[/readings|monitoring/i,'📈'],[/storage inventory|^inventory/i,'📦'],[/pest/i,'🐛'],[/aeration/i,'🌀'],[/fumigation/i,'☁️'],[/sensors/i,'📡'],[/equipment/i,'🔧'],[/costs/i,'💲'],[/thresholds/i,'🚨'],[/register new/i,'➕'],[/all disputes/i,'📋'],[/evidence/i,'🗂️'],[/correspondence/i,'✉️'],[/claims/i,'⚖️'],[/contracts & parties/i,'📄'],[/institutions$/i,'🏛️'],[/settlement/i,'🤝'],[/document generator/i,'📝'],[/experts/i,'👤'],[/legal library/i,'📖'],[/collaboration/i,'💬'],[/case management/i,'🧭'],[/financial exposure/i,'💰'],[/settings/i,'⚙️'],[/visual monitoring/i,'👁️'],[/users & roles|roles/i,'👥'],[/records assistant/i,'🤖'],[/case law|rules library/i,'📚'],
  [/^planning$|^التخطيط$/i,'🗓️'],[/^ledger$|دفتر الحسابات/i,'📒'],
  [/^control tower$|مركز القيادة/i,'🗼'],[/^flocks$|القطعان/i,'🐥'],[/stock & feed mill|المخزون ومصنع/i,'🏭'],[/^veterinary$|الطب البيطري/i,'💉'],[/sales & slaughter|المبيعات والمجزر/i,'🧾'],[/^finance$|^المالية$/i,'💰'],
@@ -183,9 +183,9 @@ function readSubs(){
 function injectHide(){
   const id=$('#frame').dataset.mod, c=SUBS[id], d=frameDoc();
   if(!c||!c.hide||!d||!d.head||d.getElementById('portal-hide')) return;
-  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611271706';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611271706';d.head.appendChild(j)}
-  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611271706';d.head.appendChild(j)}
-  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611271706';d.head.appendChild(j)}
+  if(!d.getElementById('ds-css')){const l=d.createElement('link');l.id='ds-css';l.rel='stylesheet';l.href='/ds/ds.css?v=202611271713';d.head.appendChild(l);const j=d.createElement('script');j.src='/ds/ds.js?v=202611271713';d.head.appendChild(j)}
+  if(id==='iom'&&!d.getElementById('id-js')){const j=d.createElement('script');j.id='id-js';j.src='/ds/iom-dash.js?v=202611271713';d.head.appendChild(j)}
+  if(id==='poultry'&&!d.getElementById('pd-js')){const j=d.createElement('script');j.id='pd-js';j.src='/ds/poultry-dash.js?v=202611271713';d.head.appendChild(j)}
   const s=d.createElement('style');s.id='portal-hide';
   s.textContent=c.hide+'{display:none!important}'+(PORTAL_FIX[id]||'');
   d.head.appendChild(s);
