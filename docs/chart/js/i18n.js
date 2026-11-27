@@ -30,6 +30,7 @@ function buildPrefixes(){PREFIX.length=0;for(const k in D){if(k.length>3&&/[\s:(
 const MON={Jan:'يناير',Feb:'فبراير',Mar:'مارس',Apr:'أبريل',May:'مايو',Jun:'يونيو',Jul:'يوليو',Aug:'أغسطس',Sep:'سبتمبر',Oct:'أكتوبر',Nov:'نوفمبر',Dec:'ديسمبر'};
 const AP=x=>String(x).replace(/ AM\b/,' ص').replace(/ PM\b/,' م');
 const RULES=[
+ [/^EGX 30 unavailable: (.*)$/,(m)=>`EGX 30 غير متاح: ${m[1]}`],[/^Day open ([\d.,]+)\s+high ([\d.,]+)\s+low ([\d.,]+)$/,(m)=>`افتتاح اليوم ${m[1]}  الأعلى ${m[2]}  الأدنى ${m[3]}`],
  [/^Could not load (.+?) \(([^)]+)\)\. (Intraday history is limited by the free feed\. )?Try another timeframe\.$/,(m)=>`تعذر تحميل ${m[1]} (${m[2]}). ${m[3]?'الأطر الزمنية اللحظية محدودة في المصدر المجاني. ':''}جرّب إطاراً زمنياً آخر.`],
  [/^Could not load: (.*)$/,(m)=>`تعذر التحميل: ${m[1]==='bad response'?'استجابة غير صالحة':m[1]}`],
  [/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) '(\d\d)$/,(m)=>`${MON[m[1]]} '${m[2]}`],
