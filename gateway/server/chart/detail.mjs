@@ -102,6 +102,39 @@ export default async function handler(req, res) {
       for (let i = 0; i < Math.min(40, f.form.length); i++) items.push({ form: f.form[i], date: f.filingDate[i], at: f.acceptanceDateTime && f.acceptanceDateTime[i] ? Date.parse(f.acceptanceDateTime[i]) : null, desc: f.primaryDocDescription[i] || '', url: `https://www.sec.gov/Archives/edgar/data/${v.cik_str}/${f.accessionNumber[i].replace(/-/g, '')}/${f.primaryDocument[i].replace(/^xsl[^/]*\//, '')}` });
       return res.status(200).json({ source: 'SEC EDGAR (official, free)', company: s.name, cik: v.cik_str, items });
     }
+    if (kind === 'insider') {
+      // SEC Form 4 (official, free): last ~20 insider filings, parsed to transactions (P buy, S sell, A award, M exercise, F tax, G gift)
+      const H = { headers: { 'User-Agent': 'GlobalChartTerminal contact@example.com' } };
+      const m = await (await fetch('https://www.sec.gov/files/company_tickers.json', H)).json();
+      const v = Object.values(m).find(x => x.ticker === symbol.toUpperCase().replace('.', '-'));
+      if (!v) return res.status(404).json({ error: 'not an SEC-registered US ticker (SEC EDGAR covers US filers only)' });
+      const s = await (await fetch(`https://data.sec.gov/submissions/CIK${String(v.cik_str).padStart(10, '0')}.json`, H)).json();
+      const f = s.filings.recent, idx = [];
+      for (let i = 0; i < f.form.length && idx.length < 20; i++) if (f.form[i] === '4') idx.push(i);
+      const tag = (x, t) => { const r = x.match(new RegExp(`<${t}>\\s*(?:<value>)?([^<]*)`)); return r ? r[1].trim() : ''; };
+      const tx = [];
+      await Promise.all(idx.map(async i => { try {
+        const url = `https://www.sec.gov/Archives/edgar/data/${v.cik_str}/${f.accessionNumber[i].replace(/-/g, '')}/${f.primaryDocument[i].replace(/^xsl[^/]*\//, '')}`;
+        const x = await (await fetch(url, H)).text();
+        const owner = tag(x, 'rptOwnerName'), title = tag(x, 'officerTitle'), dir = /<isDirector>\s*(1|true)/.test(x), ten = /<isTenPercentOwner>\s*(1|true)/.test(x);
+        for (const b of x.match(/<nonDerivativeTransaction>[\s\S]*?<\/nonDerivativeTransaction>/g) || []) {
+          tx.push({ date: tag(b, 'transactionDate'), filed: f.filingDate[i], owner, role: title || (dir ? 'Director' : ten ? '10% owner' : ''), code: tag(b, 'transactionCode'), shares: +tag(b, 'transactionShares') || 0, price: +tag(b, 'transactionPricePerShare') || null, ad: tag(b, 'transactionAcquiredDisposedCode'), after: +tag(b, 'sharesOwnedFollowingTransaction') || null, url });
+        }
+      } catch (e) {} }));
+      tx.sort((a, b) => a.date < b.date ? 1 : -1);
+      res.setHeader('Cache-Control', 's-maxage=1800');
+      return res.status(200).json({ source: 'SEC EDGAR Form 4 (official, free)', company: s.name, tx });
+    }
+    if (kind === 'earn') {
+      const { status, json } = await yget('/v10/finance/quoteSummary/' + encodeURIComponent(symbol), 'modules=earningsHistory,earnings,calendarEvents');
+      const r = json && json.quoteSummary && json.quoteSummary.result && json.quoteSummary.result[0];
+      if (!r) return res.status(404).json({ error: 'no earnings data from Yahoo for this symbol', status });
+      const raw = o => o && typeof o === 'object' ? (o.raw ?? null) : (o ?? null);
+      const hist = ((r.earningsHistory && r.earningsHistory.history) || []).map(h => ({ q: raw(h.quarter), period: h.period, est: raw(h.epsEstimate), act: raw(h.epsActual), surprise: raw(h.surprisePercent) }));
+      const qe = ((r.earnings && r.earnings.earningsChart && r.earnings.earningsChart.quarterly) || []).map(x => ({ date: x.date, est: raw(x.estimate), act: raw(x.actual) }));
+      const ce = r.calendarEvents && r.calendarEvents.earnings || {};
+      return res.status(200).json({ source: 'Yahoo Finance quoteSummary (unofficial)', hist, quarterly: qe, next: (ce.earningsDate || []).map(raw), epsAvg: raw(ce.earningsAverage), revAvg: raw(ce.revenueAverage) });
+    }
     return res.status(400).json({ error: 'bad kind' });
   } catch (e) { return res.status(502).json({ error: 'fetch failed: ' + String(e.message || e).slice(0, 80) }); }
 }
